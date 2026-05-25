@@ -1,0 +1,328 @@
+{
+  "corpus_name": "PaperGym 6-Month AI Research Workout Corpus",
+  "created_at": "2026-05-25",
+  "source_of_truth": {
+    "roadmap": "../00-ai-paper-archive-index.md",
+    "paper_archive": "../papers/README.md",
+    "core_pdf_dir": "../papers/core/",
+    "supplemental_pdf_dir": "../papers/supplemental/"
+  },
+  "program_principle": {
+    "weeks_1_to_8": {
+      "foundation": "70%",
+      "current_updates": "30%",
+      "why": "Build the classification map first: reasoning, tool use, alignment, foundation models."
+    },
+    "weeks_9_to_24": {
+      "foundation": "60%",
+      "current_updates": "40%",
+      "why": "Use the map to interpret current model and product updates."
+    },
+    "monthly_review_week": {
+      "foundation": "40%",
+      "current_updates": "60%",
+      "why": "Reconnect paper knowledge to live AI market and model shifts."
+    }
+  },
+  "core_papers": [
+    {
+      "id": "react-2210.03629",
+      "order": 1,
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "short_title": "ReAct",
+      "authors": "Shunyu Yao et al.",
+      "venue_year": "ICLR 2023",
+      "track": "Agent / Reasoning",
+      "difficulty": "beginner-medium",
+      "program_fit": "Month 1 / Claude Code agent loop",
+      "arxiv_abs": "https://arxiv.org/abs/2210.03629",
+      "pdf": "../papers/core/01-react-2210.03629.pdf",
+      "why_it_matters": "It explains the Thought → Action → Observation loop that makes Claude Code feel like an agent rather than a chatbot.",
+      "best_30min_sections": ["Abstract", "Figure 1", "§1 Introduction", "§3 ReAct Prompting"],
+      "guide_questions": [
+        "What does ReAct add on top of Chain-of-Thought?",
+        "Why is Observation necessary after Action?",
+        "Where do you see ReAct behavior in Claude Code?",
+        "What failure mode does ReAct reduce compared with reasoning-only prompting?",
+        "If you were designing a PR-writing agent, what would Thought, Action, Observation be?"
+      ],
+      "business_translation": "An agent is not just a model that thinks. It is a loop that reasons, uses tools, observes results, and updates its next step."
+    },
+    {
+      "id": "cot-2201.11903",
+      "order": 2,
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "short_title": "Chain-of-Thought",
+      "authors": "Jason Wei et al.",
+      "venue_year": "NeurIPS 2022",
+      "track": "Prompting / Reasoning",
+      "difficulty": "beginner",
+      "program_fit": "Month 1 / reasoning foundation",
+      "arxiv_abs": "https://arxiv.org/abs/2201.11903",
+      "pdf": "../papers/core/02-chain-of-thought-2201.11903.pdf",
+      "why_it_matters": "It formalized the idea that prompting models to write intermediate reasoning steps can unlock better performance on complex tasks.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§2 Chain-of-thought prompting"],
+      "guide_questions": [
+        "Why does writing intermediate reasoning steps improve performance?",
+        "What kinds of tasks benefit most from CoT?",
+        "Why does CoT become more useful as models scale?",
+        "What is the difference between asking for an answer and asking for a reasoning path?",
+        "How would CoT change a Claude Code prompt for writing a PR article?"
+      ],
+      "business_translation": "A good AI prompt is not just an instruction. It is a structure for how the model should think through the task."
+    },
+    {
+      "id": "instructgpt-2203.02155",
+      "order": 3,
+      "title": "Training language models to follow instructions with human feedback",
+      "short_title": "InstructGPT / RLHF",
+      "authors": "Long Ouyang et al.",
+      "venue_year": "OpenAI 2022",
+      "track": "Alignment / Post-training",
+      "difficulty": "medium",
+      "program_fit": "Month 2 / assistant training",
+      "arxiv_abs": "https://arxiv.org/abs/2203.02155",
+      "pdf": "../papers/core/03-instructgpt-2203.02155.pdf",
+      "why_it_matters": "It shows how base language models become instruction-following assistants through supervised fine-tuning and human preference optimization.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 2", "§3 Methods"],
+      "guide_questions": [
+        "Why are bigger language models not automatically better at following user intent?",
+        "What are the three major steps in the InstructGPT training pipeline?",
+        "What does the reward model learn?",
+        "Why can a smaller InstructGPT be preferred over a much larger GPT-3?",
+        "What does this explain about Claude or ChatGPT tone and behavior?"
+      ],
+      "business_translation": "Helpful AI behavior is trained, not accidental. Assistant models are base models shaped by human demonstrations, rankings, and safety preferences."
+    },
+    {
+      "id": "toolformer-2302.04761",
+      "order": 4,
+      "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+      "short_title": "Toolformer",
+      "authors": "Timo Schick et al.",
+      "venue_year": "Meta AI 2023",
+      "track": "Tool Use",
+      "difficulty": "medium",
+      "program_fit": "Month 1 / tool use bridge",
+      "arxiv_abs": "https://arxiv.org/abs/2302.04761",
+      "pdf": "../papers/core/04-toolformer-2302.04761.pdf",
+      "why_it_matters": "It studies how language models can learn when and how to call external tools such as calculators, search, and translation APIs.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§2 Approach"],
+      "guide_questions": [
+        "What kinds of problems are better solved with tools than with model weights?",
+        "How does Toolformer generate training data for tool calls?",
+        "What does it mean for a model to decide whether a tool call is useful?",
+        "How is Toolformer related to Claude Code tool use?",
+        "What tools would a marketing agent need?"
+      ],
+      "business_translation": "The future of AI work is not just smarter models. It is models that know when to call the right tool."
+    },
+    {
+      "id": "attention-1706.03762",
+      "order": 5,
+      "title": "Attention Is All You Need",
+      "short_title": "Transformer",
+      "authors": "Ashish Vaswani et al.",
+      "venue_year": "NeurIPS 2017",
+      "track": "LLM Foundation",
+      "difficulty": "medium-hard",
+      "program_fit": "Month 3 / foundation architecture",
+      "arxiv_abs": "https://arxiv.org/abs/1706.03762",
+      "pdf": "../papers/core/05-attention-is-all-you-need-1706.03762.pdf",
+      "why_it_matters": "It introduced the Transformer architecture, the foundation of modern LLMs.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§3 Model Architecture"],
+      "guide_questions": [
+        "What problem did attention solve compared with earlier sequence models?",
+        "Why does the Transformer process tokens differently from RNNs?",
+        "What is self-attention in plain language?",
+        "Why did this architecture scale so well?",
+        "Which parts are essential to understand, and which can be skipped for now?"
+      ],
+      "business_translation": "Modern AI assistants are built on an architecture that lets models weigh relationships between words and concepts at scale."
+    },
+    {
+      "id": "gpt3-2005.14165",
+      "order": 6,
+      "title": "Language Models are Few-Shot Learners",
+      "short_title": "GPT-3",
+      "authors": "Tom Brown et al.",
+      "venue_year": "NeurIPS 2020",
+      "track": "LLM Foundation",
+      "difficulty": "medium",
+      "program_fit": "Month 3 / emergent capability",
+      "arxiv_abs": "https://arxiv.org/abs/2005.14165",
+      "pdf": "../papers/core/06-gpt3-few-shot-2005.14165.pdf",
+      "why_it_matters": "It showed that sufficiently large language models can perform many tasks from natural language instructions and a few examples without task-specific fine-tuning.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1.1", "§2 Approach"],
+      "guide_questions": [
+        "What is few-shot learning?",
+        "Why was GPT-3 a turning point for general-purpose language models?",
+        "What changed when tasks could be specified in prompts instead of training datasets?",
+        "What are the limits of few-shot prompting?",
+        "How does this connect to modern prompt workflows?"
+      ],
+      "business_translation": "GPT-3 made it plausible that one general model could be steered into many business tasks through examples and instructions."
+    },
+    {
+      "id": "scaling-laws-2001.08361",
+      "order": 7,
+      "title": "Scaling Laws for Neural Language Models",
+      "short_title": "Scaling Laws",
+      "authors": "Jared Kaplan et al.",
+      "venue_year": "OpenAI 2020",
+      "track": "Scaling",
+      "difficulty": "medium-hard",
+      "program_fit": "Month 3 / why bigger worked",
+      "arxiv_abs": "https://arxiv.org/abs/2001.08361",
+      "pdf": "../papers/core/07-scaling-laws-2001.08361.pdf",
+      "why_it_matters": "It quantified how model performance improves with compute, dataset size, and parameter count.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§6 Discussion"],
+      "guide_questions": [
+        "What are scaling laws trying to predict?",
+        "Why did this paper encourage the industry to train larger models?",
+        "What does compute-optimal mean?",
+        "What does this paper not explain about model usefulness?",
+        "How should marketers read claims about larger models?"
+      ],
+      "business_translation": "Scaling laws turned model building into an investment curve: more compute and data predictably improved loss, but not automatically product usefulness."
+    },
+    {
+      "id": "chinchilla-2203.15556",
+      "order": 8,
+      "title": "Training Compute-Optimal Large Language Models",
+      "short_title": "Chinchilla",
+      "authors": "Jordan Hoffmann et al.",
+      "venue_year": "DeepMind 2022",
+      "track": "Scaling / Data",
+      "difficulty": "medium-hard",
+      "program_fit": "Month 3 / data-compute balance",
+      "arxiv_abs": "https://arxiv.org/abs/2203.15556",
+      "pdf": "../papers/core/08-chinchilla-2203.15556.pdf",
+      "why_it_matters": "It argued many large models were undertrained and that compute-optimal training requires more data relative to parameters.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 2", "§4 Chinchilla"],
+      "guide_questions": [
+        "What did Chinchilla correct about the earlier scaling intuition?",
+        "Why can a smaller model outperform a larger undertrained model?",
+        "What is the relationship between parameters and training tokens?",
+        "How does this affect open model strategy?",
+        "What does this teach us about more vs better data?"
+      ],
+      "business_translation": "Bigger is not enough. The model has to be trained with the right amount and quality of data for its size."
+    },
+    {
+      "id": "constitutional-ai-2212.08073",
+      "order": 9,
+      "title": "Constitutional AI: Harmlessness from AI Feedback",
+      "short_title": "Constitutional AI",
+      "authors": "Yuntao Bai et al.",
+      "venue_year": "Anthropic 2022",
+      "track": "Alignment",
+      "difficulty": "medium",
+      "program_fit": "Month 2 / Claude alignment",
+      "arxiv_abs": "https://arxiv.org/abs/2212.08073",
+      "pdf": "../papers/core/09-constitutional-ai-2212.08073.pdf",
+      "why_it_matters": "It introduced a method for training AI assistants using explicit principles and AI-generated feedback, central to understanding Claude's design philosophy.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§2 Methods"],
+      "guide_questions": [
+        "What is the constitution in Constitutional AI?",
+        "How is AI feedback different from human feedback?",
+        "Why does Anthropic care about harmlessness and helpfulness together?",
+        "How does this explain Claude's refusal behavior?",
+        "How would a brand or company define its own assistant constitution?"
+      ],
+      "business_translation": "Assistant behavior can be shaped by explicit principles, not just examples. This is the bridge between model training and brand/policy behavior."
+    },
+    {
+      "id": "rag-2005.11401",
+      "order": 10,
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "short_title": "RAG",
+      "authors": "Patrick Lewis et al.",
+      "venue_year": "NeurIPS 2020",
+      "track": "RAG / Retrieval",
+      "difficulty": "medium",
+      "program_fit": "Month 4 / external knowledge",
+      "arxiv_abs": "https://arxiv.org/abs/2005.11401",
+      "pdf": "../papers/core/10-rag-2005.11401.pdf",
+      "why_it_matters": "It established the pattern of combining parametric model knowledge with retrieved external documents.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§2 Methods"],
+      "guide_questions": [
+        "Why is retrieval needed if the model already has knowledge?",
+        "What is the difference between parametric and non-parametric memory?",
+        "What kinds of tasks benefit from RAG?",
+        "What can go wrong in retrieval?",
+        "How is RAG different from long context or personal memory?"
+      ],
+      "business_translation": "RAG is how an AI system grounds its answer in external documents instead of relying only on what the model memorized during training."
+    },
+    {
+      "id": "memgpt-2310.08560",
+      "order": 11,
+      "title": "MemGPT: Towards LLMs as Operating Systems",
+      "short_title": "MemGPT",
+      "authors": "Charles Packer et al.",
+      "venue_year": "2023",
+      "track": "Memory / Context Engineering",
+      "difficulty": "medium",
+      "program_fit": "Month 4 / agent memory",
+      "arxiv_abs": "https://arxiv.org/abs/2310.08560",
+      "pdf": "../papers/core/11-memgpt-2310.08560.pdf",
+      "why_it_matters": "It frames LLM memory management like an operating system managing limited context and larger external storage.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§2 MemGPT"],
+      "guide_questions": [
+        "Why is context window a memory bottleneck?",
+        "What does it mean for an LLM to manage memory explicitly?",
+        "How is MemGPT different from simple RAG?",
+        "Why is this relevant to Claude Memory or Obsidian workflows?",
+        "What should an AI assistant remember about Ann over months?"
+      ],
+      "business_translation": "A useful AI employee needs memory management: what to keep in active context, what to store, and what to retrieve later."
+    },
+    {
+      "id": "reflexion-2303.11366",
+      "order": 12,
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "short_title": "Reflexion",
+      "authors": "Noah Shinn et al.",
+      "venue_year": "NeurIPS 2023",
+      "track": "Agent / Learning from Failure",
+      "difficulty": "medium",
+      "program_fit": "Month 1 or 6 / agent self-improvement",
+      "arxiv_abs": "https://arxiv.org/abs/2303.11366",
+      "pdf": "../papers/core/12a-reflexion-2303.11366.pdf",
+      "why_it_matters": "It shows how language agents can improve future attempts by converting failure feedback into verbal memory.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§3 Reflexion"],
+      "guide_questions": [
+        "What kind of memory does Reflexion store?",
+        "How does verbal feedback help future attempts?",
+        "How is this different from model fine-tuning?",
+        "Where do we see this in Claude Code loops?",
+        "How could PaperGym use wrong answers to improve the next prescription?"
+      ],
+      "business_translation": "Agents improve not only by retraining models, but by remembering what went wrong and changing the next attempt."
+    },
+    {
+      "id": "tree-of-thoughts-2305.10601",
+      "order": 13,
+      "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+      "short_title": "Tree of Thoughts",
+      "authors": "Shunyu Yao et al.",
+      "venue_year": "NeurIPS 2023",
+      "track": "Reasoning / Search",
+      "difficulty": "medium",
+      "program_fit": "Month 1 or 6 / reasoning strategies",
+      "arxiv_abs": "https://arxiv.org/abs/2305.10601",
+      "pdf": "../papers/core/12b-tree-of-thoughts-2305.10601.pdf",
+      "why_it_matters": "It extends chain-of-thought from a single reasoning path to searching over multiple possible reasoning paths.",
+      "best_30min_sections": ["Abstract", "§1 Introduction", "Figure 1", "§3 Tree of Thoughts"],
+      "guide_questions": [
+        "What is the difference between a chain and a tree of thoughts?",
+        "Why might multiple candidate reasoning paths help?",
+        "What does evaluation mean inside the search process?",
+        "When is ToT overkill?",
+        "How could proposal strategy work use a tree of options?"
+      ],
+      "business_translation": "For complex decisions, AI should not just produce one answer. It should explore candidate paths, evaluate them, and choose."
+    }
+  ]
+}

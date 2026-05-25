@@ -1,0 +1,116 @@
+{
+  "examples": [
+    {
+      "id": "react-korean-scaffold",
+      "paper": {
+        "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+        "short_title": "ReAct",
+        "source": "https://arxiv.org/abs/2210.03629",
+        "local_pdf": "../papers/core/01-react-2210.03629.pdf"
+      },
+      "korean_scaffold": {
+        "warmup_ko": [
+          "이 논문은 AI가 생각만 하는 것이 아니라, 생각하고 행동하고 결과를 관찰하는 루프를 제안합니다.",
+          "Claude Code가 파일을 읽고, 수정하고, 실행 결과를 본 뒤 다시 판단하는 방식이 이 논문과 직접 연결됩니다.",
+          "오늘은 실험 결과 전체가 아니라 Thought → Action → Observation 구조만 잡으면 성공입니다."
+        ],
+        "key_terms": [
+          {
+            "en": "reasoning",
+            "ko": "추론",
+            "plain_ko": "답을 바로 내지 않고 중간 판단 과정을 거치는 것"
+          },
+          {
+            "en": "acting",
+            "ko": "행동",
+            "plain_ko": "검색, 도구 호출, 환경 조작처럼 모델 바깥에서 실제 작업을 하는 것"
+          },
+          {
+            "en": "observation",
+            "ko": "관찰 결과",
+            "plain_ko": "행동 뒤에 돌아온 결과. 다음 생각을 수정하는 재료"
+          },
+          {
+            "en": "trajectory",
+            "ko": "작업 궤적",
+            "plain_ko": "생각-행동-관찰이 이어진 전체 경로"
+          },
+          {
+            "en": "hallucination",
+            "ko": "환각 / 그럴듯한 오답",
+            "plain_ko": "모델이 실제 근거 없이 그럴듯한 답을 만들어내는 현상"
+          }
+        ],
+        "read_this": ["Abstract", "Figure 1", "§1 Introduction", "§3 ReAct Prompting"],
+        "skip_this": ["전체 실험표", "Appendix", "세부 benchmark 설정", "수식이 나오는 부분"],
+        "recall_questions_ko": [
+          "ReAct는 Chain-of-Thought와 무엇이 다른가요?",
+          "Thought, Action, Observation을 Claude Code 예시로 바꿔 설명해보세요.",
+          "ReAct가 hallucination을 줄일 수 있는 이유는 무엇인가요?",
+          "내 업무에서 ReAct 루프를 적용할 수 있는 작업 하나를 고르면 무엇인가요?"
+        ],
+        "ann_work_connection_ko": [
+          "PR 작성: 원문 읽기(Action) → 핵심 메시지 판단(Thought) → 한국 미디어 맥락 확인(Action) → 초안 수정(Observation 기반 Thought)",
+          "제안서 작성: 고객 자료 읽기 → 시장 자료 확인 → 구조화 → 검토 루프",
+          "Claude Code 사용: 파일 읽기 → 수정 → 테스트 → 오류 관찰 → 재수정"
+        ]
+      }
+    },
+    {
+      "id": "cot-korean-scaffold",
+      "paper": {
+        "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+        "short_title": "Chain-of-Thought",
+        "source": "https://arxiv.org/abs/2201.11903",
+        "local_pdf": "../papers/core/02-chain-of-thought-2201.11903.pdf"
+      },
+      "korean_scaffold": {
+        "warmup_ko": [
+          "이 논문은 AI에게 답만 요구하지 않고 중간 생각 과정을 쓰게 하면 복잡한 문제를 더 잘 풀 수 있음을 보여줍니다.",
+          "핵심은 영어 문장을 길게 쓰는 것이 아니라, 문제를 푸는 사고 경로를 명시적으로 만드는 것입니다.",
+          "오늘은 Figure 1과 예시를 통해 '좋은 프롬프트는 사고 구조를 만든다'는 감각을 잡으면 성공입니다."
+        ],
+        "key_terms": [
+          {
+            "en": "chain-of-thought",
+            "ko": "사고의 연쇄 / 생각 과정",
+            "plain_ko": "답에 이르기까지의 중간 추론 단계를 글로 풀어낸 것"
+          },
+          {
+            "en": "prompting",
+            "ko": "프롬프트 설계",
+            "plain_ko": "모델이 어떤 방식으로 생각하고 답할지 입력으로 유도하는 것"
+          },
+          {
+            "en": "emergent ability",
+            "ko": "창발 능력",
+            "plain_ko": "모델이 충분히 커졌을 때 갑자기 나타나는 것처럼 보이는 능력"
+          },
+          {
+            "en": "few-shot",
+            "ko": "소수 예시",
+            "plain_ko": "몇 개의 예시만 보고 작업 방식을 따라 하는 것"
+          },
+          {
+            "en": "intermediate steps",
+            "ko": "중간 단계",
+            "plain_ko": "최종 답 전에 거치는 계산, 판단, 설명 단계"
+          }
+        ],
+        "read_this": ["Abstract", "§1 Introduction", "Figure 1", "§2 Chain-of-thought prompting"],
+        "skip_this": ["모든 benchmark 결과", "수식", "Appendix", "모든 비교표 정독"],
+        "recall_questions_ko": [
+          "CoT는 단순히 답변을 길게 쓰는 것과 무엇이 다른가요?",
+          "왜 중간 추론 단계를 쓰면 성능이 올라갈 수 있나요?",
+          "Claude에게 PR 기사 작성을 맡길 때 CoT식 프롬프트는 어떻게 생겼을까요?",
+          "CoT의 한계는 무엇이고, 왜 다음 단계로 ReAct가 필요한가요?"
+        ],
+        "ann_work_connection_ko": [
+          "PR: 핵심 메시지 → 한국 독자 맥락 → 인용구 → 제목 순서로 사고 구조를 강제",
+          "제안서: 문제 → 병목 → 대안 → 추천안 순서로 생각하게 만들기",
+          "Claude Code: 구현 전에 문제 이해 → 계획 → 실행 → 검증을 말하게 하기"
+        ]
+      }
+    }
+  ]
+}

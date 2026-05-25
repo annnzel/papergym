@@ -1,0 +1,63 @@
+{
+  "week_of": "2026-06-01",
+  "generated_on": "2026-05-31",
+  "program_week": 1,
+  "phase": "Form Building",
+  "ratio": {
+    "foundation": "70%",
+    "current_updates": "30%"
+  },
+  "main_paper": {
+    "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+    "short_title": "Chain-of-Thought",
+    "lineage": "Prompting / Reasoning",
+    "local_pdf": "../papers/core/02-chain-of-thought-2201.11903.pdf",
+    "source": "https://arxiv.org/abs/2201.11903",
+    "paper_questions": [
+      "CoT는 단순히 답변을 길게 쓰는 것과 무엇이 다른가?",
+      "왜 중간 추론 단계가 복잡한 문제 해결에 도움이 되는가?",
+      "최신 reasoning model 업데이트는 CoT와 어떻게 연결되는가?"
+    ]
+  },
+  "current_update_reps": [
+    {
+      "title": "Reasoning model update to be selected on Sunday",
+      "source": "TBD by Sunday curation",
+      "date_seen": "2026-05-31",
+      "update_type": "model_release",
+      "lineage_connection": "Connect to Chain-of-Thought, Self-Consistency, or Tree of Thoughts depending on the actual update.",
+      "read_time_min": 10,
+      "question": "이 업데이트는 모델이 더 오래 생각하게 만든 것인가, 더 좋은 탐색 구조를 만든 것인가, 아니면 post-training 개선인가?",
+      "actionability": "watch",
+      "hype_check": {
+        "real_progress": "To be filled after source review.",
+        "possible_hype": "To be filled after source review.",
+        "unknowns": "To be filled after source review."
+      }
+    }
+  ],
+  "korean_scaffold": {
+    "terms": [
+      {
+        "en": "reasoning",
+        "ko": "추론",
+        "plain_ko": "답을 바로 내지 않고 중간 판단 과정을 거치는 것"
+      },
+      {
+        "en": "chain-of-thought",
+        "ko": "사고의 연쇄 / 생각 과정",
+        "plain_ko": "답에 이르기까지의 중간 추론 단계를 글로 풀어낸 것"
+      },
+      {
+        "en": "self-consistency",
+        "ko": "자기 일관성",
+        "plain_ko": "여러 추론 경로를 만든 뒤 가장 일관된 답을 고르는 방식"
+      }
+    ],
+    "weekly_recall_questions_ko": [
+      "이번 주 기본 논문과 최신 업데이트는 어떤 공통 질문을 다루나요?",
+      "최신 업데이트가 CoT의 한계를 해결한다면 어떤 방식인가요?",
+      "내 업무 프롬프트에 바로 적용할 수 있는 변화는 무엇인가요?"
+    ]
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "examples": [
+    {
+      "id": "week1-cot-prescription",
+      "stage": "S1_PRESCRIPTION",
+      "program_context": {
+        "program": "6-Month AI PaperGym",
+        "week": 1,
+        "total_weeks": 24,
+        "phase": "Form Building",
+        "ratio": "70% Foundation / 30% Current Updates",
+        "track": "Prompting / Reasoning",
+        "today_load": "Light-Medium"
+      },
+      "paper": {
+        "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+        "short_title": "Chain-of-Thought",
+        "url": "https://arxiv.org/abs/2201.11903",
+        "local_pdf": "../papers/core/02-chain-of-thought-2201.11903.pdf",
+        "venue": "NeurIPS 2022",
+        "source_type": "primary_paper"
+      },
+      "three_sentence_teaser": [
+        "이 논문은 AI에게 답만 요구하지 않고, 중간 생각 과정을 쓰게 하면 복잡한 문제 해결 능력이 좋아진다는 것을 보여준다.",
+        "핵심은 '더 긴 답변'이 아니라, 모델이 문제를 푸는 사고 경로를 명시적으로 만들게 하는 것이다.",
+        "Claude Code에게 일을 시킬 때도 단순 명령보다 사고 구조를 주는 프롬프트가 왜 중요한지 이해하는 첫 운동이다."
+      ],
+      "reading_sections": [
+        "Abstract",
+        "§1 Introduction",
+        "Figure 1",
+        "§2 Chain-of-thought prompting"
+      ],
+      "estimated_minutes": 30,
+      "guide_questions": [
+        "CoT는 단순히 답변을 길게 쓰는 것과 무엇이 다른가?",
+        "왜 중간 추론 단계를 쓰면 성능이 올라갈 수 있는가?",
+        "이 논문에서 CoT가 특히 잘 먹히는 문제 유형은 무엇인가?",
+        "Claude Code에게 PR 기사 작성을 맡길 때 CoT식 프롬프트는 어떻게 생겼을까?",
+        "CoT의 한계는 무엇이고, 왜 다음 운동인 ReAct가 필요한가?"
+      ],
+      "margin_note_prompt": "각 섹션 옆 여백에 '이게 내 업무와 무슨 상관인가?'를 한 문장으로 적기",
+      "success_criterion": "논문을 덮고 '좋은 프롬프트는 명령이 아니라 사고 구조다'를 자신의 말로 설명할 수 있으면 성공",
+      "next_workout": "ReAct — thinking에 action과 observation을 붙인다"
+    },
+    {
+      "id": "week2-react-prescription",
+      "stage": "S1_PRESCRIPTION",
+      "program_context": {
+        "program": "6-Month AI PaperGym",
+        "week": 2,
+        "total_weeks": 24,
+        "phase": "Form Building",
+        "ratio": "70% Foundation / 30% Current Updates",
+        "track": "Agent / Reasoning",
+        "today_load": "Medium"
+      },
+      "paper": {
+        "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+        "short_title": "ReAct",
+        "url": "https://arxiv.org/abs/2210.03629",
+        "local_pdf": "../papers/core/01-react-2210.03629.pdf",
+        "venue": "ICLR 2023",
+        "source_type": "primary_paper"
+      },
+      "three_sentence_teaser": [
+        "CoT가 '생각하기'를 가르쳤다면, ReAct는 '생각하고 행동하고 관찰하기'를 가르친다.",
+        "이 논문은 Claude Code가 파일을 읽고, 도구를 쓰고, 결과를 본 뒤 다시 판단하는 agent loop의 핵심 계보다.",
+        "오늘 목표는 모든 실험 결과를 외우는 것이 아니라 Thought → Action → Observation 루프를 내 업무 언어로 번역하는 것이다."
+      ],
+      "reading_sections": [
+        "Abstract",
+        "Figure 1",
+        "§1 Introduction",
+        "§3 ReAct Prompting"
+      ],
+      "estimated_minutes": 30,
+      "guide_questions": [
+        "ReAct는 Chain-of-Thought와 구조적으로 무엇이 다른가?",
+        "Action 없이 Thought만 있을 때 생기는 문제는 무엇인가?",
+        "Observation은 왜 다음 Thought의 품질을 바꾸는가?",
+        "Claude Code의 Read/Edit/Bash/Test 루프는 ReAct와 어떻게 연결되는가?",
+        "마케팅 리서치 agent를 만든다면 Thought, Action, Observation은 각각 무엇인가?"
+      ],
+      "margin_note_prompt": "Figure 1 옆에 Claude Code가 실제로 하는 행동을 대응시켜 적기",
+      "success_criterion": "논문을 덮고 'agent는 모델이 아니라 루프다'를 예시와 함께 설명할 수 있으면 성공",
+      "next_workout": "Toolformer — agent가 어떤 도구를 언제 써야 하는지로 이동"
+    },
+    {
+      "id": "week5-instructgpt-prescription",
+      "stage": "S1_PRESCRIPTION",
+      "program_context": {
+        "program": "6-Month AI PaperGym",
+        "week": 5,
+        "total_weeks": 24,
+        "phase": "Assistant Training",
+        "ratio": "70% Foundation / 30% Current Updates",
+        "track": "Alignment / RLHF",
+        "today_load": "Medium-Heavy"
+      },
+      "paper": {
+        "title": "Training language models to follow instructions with human feedback",
+        "short_title": "InstructGPT / RLHF",
+        "url": "https://arxiv.org/abs/2203.02155",
+        "local_pdf": "../papers/core/03-instructgpt-2203.02155.pdf",
+        "venue": "OpenAI 2022",
+        "source_type": "primary_paper"
+      },
+      "three_sentence_teaser": [
+        "큰 언어모델은 인터넷 문장을 잘 이어 쓰도록 훈련됐지, 처음부터 사람 말을 잘 듣도록 훈련된 것이 아니다.",
+        "InstructGPT는 사람의 데모와 선호 평가를 사용해 base model을 instruction-following assistant로 바꾸는 과정을 보여준다.",
+        "오늘 목표는 RLHF 수식을 외우는 것이 아니라 '왜 ChatGPT와 Claude가 assistant처럼 행동하는가'를 이해하는 것이다."
+      ],
+      "reading_sections": [
+        "Abstract",
+        "§1 Introduction",
+        "Figure 1 or Figure 2 training pipeline",
+        "§3 Methods overview"
+      ],
+      "estimated_minutes": 30,
+      "guide_questions": [
+        "왜 모델을 크게 만드는 것만으로는 user intent를 잘 따르지 못하는가?",
+        "SFT, Reward Model, PPO는 각각 어떤 단계인가?",
+        "사람의 선호 데이터는 모델 행동을 어떻게 바꾸는가?",
+        "왜 1.3B InstructGPT가 훨씬 큰 GPT-3보다 선호될 수 있었는가?",
+        "PaperGym mentor의 '하드코어하지만 도움이 되는' 성격은 어떤 feedback으로 만들어질 수 있는가?"
+      ],
+      "margin_note_prompt": "각 단계 옆에 '이건 assistant의 어떤 행동을 만든다'를 적기",
+      "success_criterion": "논문을 덮고 base model, SFT model, RLHF model의 차이를 말할 수 있으면 성공",
+      "next_workout": "Constitutional AI — human feedback에서 principle feedback으로 이동"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PaperGym Next Week Plan",
+  "type": "object",
+  "required": ["week_of", "generated_on", "program_week", "ratio", "main_paper", "current_update_reps"],
+  "properties": {
+    "week_of": {
+      "type": "string",
+      "description": "Monday date for the learning week, YYYY-MM-DD"
+    },
+    "generated_on": {
+      "type": "string",
+      "description": "Sunday curation date, YYYY-MM-DD"
+    },
+    "program_week": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 24
+    },
+    "ratio": {
+      "type": "object",
+      "required": ["foundation", "current_updates"],
+      "properties": {
+        "foundation": { "type": "string" },
+        "current_updates": { "type": "string" }
+      }
+    },
+    "phase": {
+      "type": "string",
+      "description": "e.g. Form Building, Assistant Training, Memory/RAG"
+    },
+    "main_paper": {
+      "type": "object",
+      "required": ["title", "short_title", "lineage", "local_pdf", "source", "paper_questions"],
+      "properties": {
+        "title": { "type": "string" },
+        "short_title": { "type": "string" },
+        "lineage": { "type": "string" },
+        "local_pdf": { "type": "string" },
+        "source": { "type": "string" },
+        "paper_questions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "current_update_reps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["title", "source", "update_type", "lineage_connection", "read_time_min", "question", "actionability"],
+        "properties": {
+          "title": { "type": "string" },
+          "source": { "type": "string" },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "tier": { "type": "string", "enum": ["Tier 1", "Tier 2", "Tier 3"] },
+                "role": { "type": "string", "enum": ["primary", "verification", "context"] }
+              }
+            }
+          },
+          "date_seen": { "type": "string" },
+          "update_type": {
+            "type": "string",
+            "enum": ["model_release", "research_blog", "benchmark", "product_update", "open_source", "market_signal"]
+          },
+          "lineage_connection": { "type": "string" },
+          "read_time_min": { "type": "integer", "minimum": 5, "maximum": 30 },
+          "question": { "type": "string" },
+          "actionability": {
+            "type": "string",
+            "enum": ["use_now", "watch", "archive_only"]
+          },
+          "hype_check": {
+            "type": "object",
+            "properties": {
+              "real_progress": { "type": "string" },
+              "possible_hype": { "type": "string" },
+              "unknowns": { "type": "string" }
+            }
+          },
+          "source_score": {
+            "type": "object",
+            "properties": {
+              "source_quality": { "type": "integer", "minimum": 0, "maximum": 3 },
+              "lineage_fit": { "type": "integer", "minimum": 0, "maximum": 3 },
+              "learning_value": { "type": "integer", "minimum": 0, "maximum": 2 },
+              "practical_relevance": { "type": "integer", "minimum": 0, "maximum": 1 },
+              "hype_resistance": { "type": "integer", "minimum": 0, "maximum": 1 },
+              "total": { "type": "integer", "minimum": 0, "maximum": 10 }
+            }
+          }
+        }
+      }
+    },
+    "korean_scaffold": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "en": { "type": "string" },
+              "ko": { "type": "string" },
+              "plain_ko": { "type": "string" }
+            }
+          }
+        },
+        "weekly_recall_questions_ko": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
