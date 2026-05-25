@@ -647,8 +647,73 @@
         <a href="https://papergym.vercel.app" class="text-3xl font-black hover:underline">papergym.vercel.app</a>
       </div>
       <p class="mt-8 text-sm text-stone-700">
-        Ann · 2026-05-25
+        Ann · 2026-05-25 · Q&amp;A 백업은 ↓ 또는 → 키로 다음 슬라이드
       </p>
+    </div>
+  </section>
+
+  <!-- ============================== 15: Q&A 백업 — 큐레이션 기준 ============================== -->
+  <section class="slide bg-stone-900 text-stone-50">
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="text-sm uppercase tracking-widest text-amber-400 font-black mb-3">Q&amp;A BACKUP</div>
+      <h2 class="text-4xl md:text-6xl font-black leading-tight mb-4">
+        🎯 29편 큐레이션 기준
+      </h2>
+      <p class="text-xl text-stone-300 italic mb-6">
+        "6개월 후 새 AI 업데이트가 어디서 온 변화인지 <strong class="text-amber-300 not-italic">분류할 수 있는</strong> 사람이 되는 목표에서 <strong class="text-amber-300 not-italic">역산</strong>."
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <!-- 7개 축 -->
+        <div class="bg-stone-800 border border-amber-500/40 rounded-xl p-4">
+          <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">📐 7개 축 (Pillar)</div>
+          <div class="space-y-1.5 text-sm">
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">LLM 기초</span><span class="text-stone-300">Transformer · GPT-3 · Scaling · Chinchilla</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">Post-training</span><span class="text-stone-300">InstructGPT · Constitutional AI · DPO</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">Prompting</span><span class="text-stone-300">CoT · Tree of Thoughts · Self-Consistency</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">Agent/Tool</span><span class="text-stone-300">ReAct · Toolformer · Reflexion · SWE-bench</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">RAG/Memory</span><span class="text-stone-300">RAG · MemGPT · Generative Agents</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">Multimodal</span><span class="text-stone-300">CLIP · DDPM · Flamingo</span></div>
+            <div class="flex gap-2"><span class="text-amber-400 font-bold w-32 shrink-0">Evaluation</span><span class="text-stone-300">HELM · MMLU · HumanEval</span></div>
+          </div>
+        </div>
+
+        <!-- 선정 기준 -->
+        <div class="bg-stone-800 border border-amber-500/40 rounded-xl p-4">
+          <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">🔍 선정 기준 4개</div>
+          <ul class="space-y-2 text-sm text-stone-300">
+            <li><strong class="text-amber-300">1. 1차 소스 only</strong> — NeurIPS · ICLR · Anthropic · OpenAI · DeepMind 공식 publication</li>
+            <li><strong class="text-amber-300">2. 지금 도구의 뿌리</strong> — Claude Code·ChatGPT·MCP·RAG의 origin 논문</li>
+            <li><strong class="text-amber-300">3. AI 빌더 관점</strong> — 연구자 양성 X / 업무·제안서·agent에 연결되는 논문</li>
+            <li><strong class="text-amber-300">4. 6개월 24주 운영 가능</strong> — Core 13 (한 주 1편) + Supplemental 16 (보조)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 구성 비율 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div class="bg-stone-800 rounded-lg p-3 text-center">
+          <div class="text-3xl font-black text-amber-300">13</div>
+          <div class="text-xs text-stone-400 mt-1">Core (Level 1)</div>
+        </div>
+        <div class="bg-stone-800 rounded-lg p-3 text-center">
+          <div class="text-3xl font-black text-amber-300">16</div>
+          <div class="text-xs text-stone-400 mt-1">Supplemental (Level 2)</div>
+        </div>
+        <div class="bg-stone-800 rounded-lg p-3 text-center">
+          <div class="text-3xl font-black text-amber-300">29</div>
+          <div class="text-xs text-stone-400 mt-1">총 큐레이션</div>
+        </div>
+        <div class="bg-stone-800 rounded-lg p-3 text-center">
+          <div class="text-3xl font-black text-amber-300">26<span class="text-base text-stone-400">주</span></div>
+          <div class="text-xs text-stone-400 mt-1">운영 기간</div>
+        </div>
+      </div>
+
+      <!-- 출처 -->
+      <div class="bg-amber-500/10 border-l-4 border-amber-500 rounded-r p-3 text-sm text-stone-300">
+        <strong class="text-amber-300">📂 출처 문서</strong>: <code class="text-amber-200">~/HQ/ai-study/00-ai-paper-archive-index.md</code> (Ann이 정의한 6개월 학습 로드맵) · <code class="text-amber-200">handoff/papergym-paper-corpus.json</code> (논문별 풀 메타) · <code class="text-amber-200">weekly-update-system/source-governance.md</code> (Tier 1/2/3 소스 체계)
+      </div>
     </div>
   </section>
 
