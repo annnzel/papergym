@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaperGym 🏋️ — 16주 AI 빌더 커리큘럼</title>
+  <meta name="description" content="비개발자 AI 빌더와 팀 스터디를 위한 16주 커리큘럼 — 13편 정전, 최신 보강 자료, 주간 산출물" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    body { font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif; }
+    .grain { background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px); background-size: 4px 4px; }
+    .shadow-brut { box-shadow: 6px 6px 0 0 rgba(0,0,0,1); }
+    .ph1 { background: #fef3c7; border-color: #d97706; }      /* amber - Form Building */
+    .ph2 { background: #fce7f3; border-color: #be185d; }       /* rose - Assistant Training */
+    .ph3 { background: #d1fae5; border-color: #047857; }       /* emerald - LLM Foundation */
+    .ph4 { background: #ede9fe; border-color: #6d28d9; }       /* violet - Memory & Synthesis */
+    .ph1-text { color: #92400e; }
+    .ph2-text { color: #9f1239; }
+    .ph3-text { color: #065f46; }
+    .ph4-text { color: #5b21b6; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-900 grain">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b-2 border-stone-900">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="text-3xl">🏋️</div>
+        <div>
+          <a href="/" class="font-black text-xl tracking-tight hover:underline">PaperGym</a>
+          <div class="text-xs text-stone-500 -mt-0.5">16주 AI 빌더 커리큘럼 · Team Study Guide</div>
+        </div>
+      </div>
+      <a href="/" class="text-sm bg-stone-900 text-white px-4 py-2 rounded-md hover:bg-stone-700 font-semibold">← 메인 앱</a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-10 space-y-12">
+
+    <!-- HERO -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-amber-700 font-black mb-3">TEAM CURRICULUM</div>
+      <h1 class="text-4xl md:text-6xl font-black leading-tight mb-4">
+        16주 후, AI 변화에 <span class="text-amber-600">휘둘리지 않는 팀</span>
+      </h1>
+      <p class="text-lg text-stone-700 leading-relaxed max-w-3xl">
+        PaperGym v2는 연구자 양성 과정이 아닙니다. 비개발자 AI 빌더, 마케터, 기획자, 오퍼레이터가
+        13편의 핵심 논문으로 기본기를 만들고, 매주 PaperGym이 지정한 보강 자료를 그 위에 연결하는 팀 스터디입니다.
+        새로운 모델·도구·뉴스가 나와도 “이게 뭔지, 왜 중요한지, 우리 일에 쓸 만한지”를 판단할 수 있게 만듭니다.
+      </p>
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl">
+        <div class="bg-stone-900 text-amber-300 rounded-lg px-5 py-3">
+          <div class="text-xs uppercase tracking-widest font-bold">일정</div>
+          <div class="font-black">2026-06-01 → 2026-09-20 · 16주</div>
+        </div>
+        <div class="bg-white border-2 border-stone-900 rounded-lg px-5 py-3">
+          <div class="text-xs uppercase tracking-widest font-bold text-stone-500">대상</div>
+          <div class="font-black">AI 빌더 · 비개발자 · 팀 스터디</div>
+        </div>
+        <div class="bg-white border-2 border-stone-900 rounded-lg px-5 py-3">
+          <div class="text-xs uppercase tracking-widest font-bold text-stone-500">성과</div>
+          <div class="font-black">논문 지도 + 최신 뉴스 분류력</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4가지 선정 기준 -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">SELECTION CRITERIA</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">📐 4가지 선정 기준</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white border-2 border-stone-900 rounded-xl p-5 shadow-brut">
+          <div class="text-2xl mb-2">📜</div>
+          <div class="font-black text-lg mb-2">1. 1차 소스 (Primary Source)</div>
+          <p class="text-sm text-stone-700 leading-relaxed">NeurIPS · ICLR · OpenAI · Anthropic · DeepMind 공식 publication만. 블로그 요약·해설 X. 모든 후속 논문의 *baseline*이 되는 원조.</p>
+        </div>
+        <div class="bg-white border-2 border-stone-900 rounded-xl p-5 shadow-brut">
+          <div class="text-2xl mb-2">⏳</div>
+          <div class="font-black text-lg mb-2">2. Classic (시간 견딘 정전)</div>
+          <p class="text-sm text-stone-700 leading-relaxed">최소 1년 이상 인용 누적 + 후속 연구의 *기준점*으로 작동. *한때 인기*가 아니라 *교과서급 정전*. 5,000+ citation 기본.</p>
+        </div>
+        <div class="bg-white border-2 border-stone-900 rounded-xl p-5 shadow-brut">
+          <div class="text-2xl mb-2">🔧</div>
+          <div class="font-black text-lg mb-2">3. 지금 도구의 뿌리</div>
+          <p class="text-sm text-stone-700 leading-relaxed">Claude Code·ChatGPT·MCP·RAG의 *origin 논문*. 새 모델 발표를 이 13편 중 어디 계열인지 *분류 가능*해야 함.</p>
+        </div>
+        <div class="bg-white border-2 border-stone-900 rounded-xl p-5 shadow-brut">
+          <div class="text-2xl mb-2">🏗️</div>
+          <div class="font-black text-lg mb-2">4. 비개발자 AI 빌더 관점</div>
+          <p class="text-sm text-stone-700 leading-relaxed">연구자 양성 X. 수식 완전 정복보다 *업무 판단력*이 목표. 각 논문은 제안서, 콘텐츠, 리서치, 자동화, 에이전트 설계에 연결된다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16주 4 Phase -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">16-WEEK STRUCTURE</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">🗓️ 16주 · 4 Phase</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="ph1 border-2 rounded-xl p-5">
+          <div class="text-xs uppercase tracking-widest ph1-text font-black mb-2">PHASE 1 · W1-4</div>
+          <div class="font-black text-lg ph1-text mb-2">Form Building</div>
+          <div class="text-xs text-stone-700 mb-2">"Claude Code가 왜 이렇게 일하나"</div>
+          <ul class="text-sm space-y-1 text-stone-800 mt-3">
+            <li>W1 CoT</li>
+            <li>W2 ReAct</li>
+            <li>W3 Toolformer</li>
+            <li class="text-stone-500 italic">W4 Review</li>
+          </ul>
+        </div>
+        <div class="ph2 border-2 rounded-xl p-5">
+          <div class="text-xs uppercase tracking-widest ph2-text font-black mb-2">PHASE 2 · W5-8</div>
+          <div class="font-black text-lg ph2-text mb-2">Assistant Training</div>
+          <div class="text-xs text-stone-700 mb-2">"ChatGPT/Claude가 왜 친절한가"</div>
+          <ul class="text-sm space-y-1 text-stone-800 mt-3">
+            <li>W5 InstructGPT</li>
+            <li>W6 Constitutional AI</li>
+            <li>W7 Reflexion</li>
+            <li class="text-stone-500 italic">W8 Review</li>
+          </ul>
+        </div>
+        <div class="ph3 border-2 rounded-xl p-5">
+          <div class="text-xs uppercase tracking-widest ph3-text font-black mb-2">PHASE 3 · W9-12</div>
+          <div class="font-black text-lg ph3-text mb-2">LLM Foundation</div>
+          <div class="text-xs text-stone-700 mb-2">"왜 큰 모델이 잘하나"</div>
+          <ul class="text-sm space-y-1 text-stone-800 mt-3">
+            <li>W9 Attention</li>
+            <li>W10 GPT-3</li>
+            <li>W11 Scaling Laws</li>
+            <li>W12 Chinchilla</li>
+          </ul>
+        </div>
+        <div class="ph4 border-2 rounded-xl p-5">
+          <div class="text-xs uppercase tracking-widest ph4-text font-black mb-2">PHASE 4 · W13-16</div>
+          <div class="font-black text-lg ph4-text mb-2">Memory & Synthesis</div>
+          <div class="text-xs text-stone-700 mb-2">"AI가 어떻게 기억·통합하나"</div>
+          <ul class="text-sm space-y-1 text-stone-800 mt-3">
+            <li>W13 RAG</li>
+            <li>W14 MemGPT</li>
+            <li>W15 Tree of Thoughts</li>
+            <li class="text-stone-500 italic">W16 Final Synthesis 🏆</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 학습 흐름 논리 -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">LEARNING FLOW</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">🌊 왜 이 순서인가</h2>
+      <div class="bg-white border-2 border-stone-900 rounded-xl p-6 shadow-brut">
+        <p class="text-base text-stone-700 leading-relaxed mb-4">
+          역사적 순서(Transformer → InstructGPT → Agent)가 아니라 <strong class="text-stone-900">"지금 쓰는 도구부터 거꾸로"</strong> 학습합니다.
+          그래야 *동기 부여*가 유지되고, *학습한 즉시 업무에 적용* 가능합니다.
+        </p>
+        <div class="flex items-center gap-2 flex-wrap text-sm">
+          <div class="ph1 ph1-text border-2 rounded-lg px-3 py-2 font-bold">Phase 1<br/><span class="text-xs font-normal">Claude Code 작동 원리</span></div>
+          <span class="text-2xl text-stone-400">→</span>
+          <div class="ph2 ph2-text border-2 rounded-lg px-3 py-2 font-bold">Phase 2<br/><span class="text-xs font-normal">왜 친절한 assistant인가</span></div>
+          <span class="text-2xl text-stone-400">→</span>
+          <div class="ph3 ph3-text border-2 rounded-lg px-3 py-2 font-bold">Phase 3<br/><span class="text-xs font-normal">왜 큰 모델이 가능한가</span></div>
+          <span class="text-2xl text-stone-400">→</span>
+          <div class="ph4 ph4-text border-2 rounded-lg px-3 py-2 font-bold">Phase 4<br/><span class="text-xs font-normal">AI 기억·자산화</span></div>
+        </div>
+        <p class="text-sm text-stone-600 italic mt-4">
+          16주 후, 새 AI 모델 발표를 보면 "이건 Phase 1 reasoning 개선인가, Phase 3 scaling인가, Phase 4 memory인가" *즉시 분류*할 수 있게 됩니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- Week 0 Bootcamp -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">WEEK 0</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">🧭 시작 전 1시간: LLM 최소 기초</h2>
+      <div class="bg-white border-2 border-stone-900 rounded-xl p-6 shadow-brut space-y-5">
+        <p class="text-base text-stone-700 leading-relaxed">
+          CoT, ReAct, RLHF를 바로 읽기 전에 팀 전체가 같은 언어를 가져야 합니다. Week 0은 깊은 수학이 아니라
+          논문을 읽을 때 길을 잃지 않기 위한 최소 개념 부트캠프입니다.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border-2 border-stone-200 rounded-lg p-4 bg-stone-50">
+            <div class="font-black mb-2">알아야 할 10개 단어</div>
+            <ul class="text-sm text-stone-700 space-y-1 list-disc pl-5">
+              <li>Token — 모델이 읽는 텍스트 조각</li>
+              <li>Embedding — 토큰을 숫자 공간에 놓는 방식</li>
+              <li>Attention — 토큰 사이 관계를 계산하는 구조</li>
+              <li>Transformer — 현대 LLM의 기본 뼈대</li>
+              <li>Pretraining — 다음 토큰 예측을 배우는 단계</li>
+              <li>Post-training — assistant처럼 행동하게 다듬는 단계</li>
+              <li>RLHF — 사람 선호를 반영하는 훈련</li>
+              <li>Context window — 모델이 한 번에 보는 작업 공간</li>
+              <li>Inference — 학습된 모델이 답을 생성하는 과정</li>
+              <li>Benchmark — 성능 시험. 실무 성능과 다를 수 있음</li>
+            </ul>
+          </div>
+          <div class="border-2 border-amber-300 rounded-lg p-4 bg-amber-50">
+            <div class="font-black mb-2">통과 질문</div>
+            <ol class="text-sm text-stone-700 space-y-1 list-decimal pl-5">
+              <li>LLM은 검색엔진인가, 예측기인가?</li>
+              <li>Pretraining과 post-training은 무엇이 다른가?</li>
+              <li>Context window와 memory는 무엇이 다른가?</li>
+              <li>AI agent는 왜 도구를 호출하는가?</li>
+              <li>Benchmark 점수가 높으면 실무에서도 무조건 좋은가?</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Weekly Routine -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">WEEKLY OPERATING SYSTEM</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">⏱️ 매주 5시간 운영법</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="bg-white border-2 border-stone-900 rounded-xl p-6 shadow-brut">
+          <div class="font-black text-xl mb-3">표준 루틴</div>
+          <div class="space-y-2 text-sm">
+            <div class="flex gap-3"><span class="font-black w-16">Day 1</span><span>Core paper Abstract + Introduction + Figure 1</span></div>
+            <div class="flex gap-3"><span class="font-black w-16">Day 2</span><span>핵심 Section / Table / Method 일부 읽기</span></div>
+            <div class="flex gap-3"><span class="font-black w-16">Day 3</span><span>개인 노트 제출: 5문장 요약 + 용어 5개 + 질문 1개</span></div>
+            <div class="flex gap-3"><span class="font-black w-16">Day 4</span><span>지정 보강 자료를 읽고 이번 주 핵심 논문과 연결</span></div>
+            <div class="flex gap-3"><span class="font-black w-16">Day 5</span><span>4명의 노트를 모아 Team Synthesis 작성</span></div>
+          </div>
+        </div>
+        <div class="bg-stone-900 text-stone-50 rounded-xl p-6 shadow-brut">
+          <div class="font-black text-xl mb-3 text-amber-300">바쁜 주 방어선</div>
+          <div class="space-y-2 text-sm text-stone-200">
+            <div><strong class="text-white">3시간:</strong> 논문 90분 + 지정 보강 자료 45분 + 산출물 45분</div>
+            <div><strong class="text-white">2시간:</strong> Abstract/Intro/Figure + Day 4 연결 질문 1개</div>
+            <div><strong class="text-white">1시간:</strong> 지정 보강 자료만 읽고 핵심 논문과 연결</div>
+            <div><strong class="text-white">30분:</strong> 이번 주 핵심 질문 3개만 답하기</div>
+          </div>
+          <p class="text-xs text-stone-400 mt-4">완벽한 완주보다 중요한 것은 같은 자료를 읽고 각자의 언어로 연결하는 습관입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13편 풀 가이드 -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">THE 13 PAPERS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">📚 13편 풀 가이드</h2>
+
+      <!-- Phase 1 -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-black ph1-text mb-3">Phase 1 · Form Building (Week 1-4)</h3>
+        <div class="space-y-3">
+          <div class="ph1 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W1</span>
+              <h4 class="text-xl font-black">Chain-of-Thought Prompting</h4>
+              <span class="text-xs text-stone-600">Wei et al., NeurIPS 2022 · 15,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 답에 이르는 *중간 추론 단계*를 예시로 보여주면 큰 모델의 추론 능력이 극적으로 드러난다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> 모든 reasoning 발전형(Self-Consistency·ToT·o1·R1)의 *baseline*. "Let's think step by step" 한 줄이 산업 전반 채택.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Self-Consistency, o1/R1, test-time compute를 함께 본다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 복잡한 업무를 단계별 사고 구조로 쪼개는 CoT 프롬프트 카드.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> CoT는 *생각만*. 다음 ReAct는 *생각 + 행동* 추가.</p>
+          </div>
+          <div class="ph1 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W2</span>
+              <h4 class="text-xl font-black">ReAct: Synergizing Reasoning and Acting</h4>
+              <span class="text-xs text-stone-600">Yao et al., ICLR 2023 · 4,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> Thought → Action → Observation 루프. 모델이 *생각하고 행동하고 관찰*하며 외부 정보를 활용.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> Claude Code · Cursor · Devin 등 *모든 coding agent의 작동 원리*. Agent 패러다임의 시작점.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Claude Code, Cursor, Devin 같은 coding agent 사례와 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> Thought → Action → Observation 업무 루프 카드.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> ReAct는 *도구를 어떻게 쓰는지* 보여줌. 다음 Toolformer는 *언제 어떤 도구를 써야 하는지* 학습.</p>
+          </div>
+          <div class="ph1 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W3</span>
+              <h4 class="text-xl font-black">Toolformer: LMs Can Teach Themselves to Use Tools</h4>
+              <span class="text-xs text-stone-600">Schick et al., Meta AI 2023 · 2,500+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 모델이 자기지도로 *언제 어떤 API를 호출할지* 학습. 계산기·검색·번역 등 6개 도구.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> Function calling · MCP · LangChain tool use의 *학문적 뿌리*. 모델 + 도구 패러다임의 정전.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Function calling, MCP, computer use, tool router 개념과 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 도구 사용 기준표: 언제 검색·계산·파일·문서 도구가 필요한가.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Phase 1은 *agent 작동*. 다음 Phase 2는 *왜 agent가 친절한 assistant인가*.</p>
+          </div>
+          <div class="ph1 border-2 rounded-xl p-5 border-dashed">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W4</span>
+              <h4 class="text-xl font-black">Phase 1 Review · Agent Loop Map</h4>
+              <span class="text-xs text-stone-600">CoT · ReAct · Toolformer 통합</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>활동:</strong> 세 논문을 비교해 AI agent가 왜 생각하고, 행동하고, 관찰하는지 한 장으로 정리한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> Workflow로 충분한 일과 agent가 필요한 일을 구분하는 체크리스트.</p>
+            <p class="text-sm text-stone-600 italic"><strong>성공 기준:</strong> Claude Code 같은 도구를 단순 챗봇이 아니라 agentic workflow로 설명할 수 있다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-black ph2-text mb-3">Phase 2 · Assistant Training (Week 5-8)</h3>
+        <div class="space-y-3">
+          <div class="ph2 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W5</span>
+              <h4 class="text-xl font-black">InstructGPT / RLHF</h4>
+              <span class="text-xs text-stone-600">Ouyang et al., OpenAI 2022 · 12,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> SFT + Reward Model + PPO 3단계로 base model을 instruction-following assistant로 변환.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> ChatGPT의 *직접적 부모*. 모든 modern assistant 모델 (Claude·Gemini·LLaMA Chat)의 기본 레시피.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> 최신 모델 release note를 post-training 관점에서 읽는다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> Base model과 assistant model 차이를 설명하는 1페이지 카드.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> InstructGPT는 *human feedback*. 다음 CAI는 *AI feedback + 명시적 원칙*.</p>
+          </div>
+          <div class="ph2 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W6</span>
+              <h4 class="text-xl font-black">Constitutional AI</h4>
+              <span class="text-xs text-stone-600">Bai et al., Anthropic 2022 · 3,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 명시적 *원칙 목록(constitution)*을 기준으로 AI가 자기 답변을 비판·수정. RLAIF (AI feedback).</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> *Claude의 디자인 철학 그 자체*. "원칙 기반 alignment"의 정전. 기업용 AI policy 설계의 baseline.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> 기업 AI policy, brand safety, refusal behavior와 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 팀용 AI 사용 원칙 constitution 초안.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Phase 2 마지막은 *실패에서 배우는 assistant* — Reflexion.</p>
+          </div>
+          <div class="ph2 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W7</span>
+              <h4 class="text-xl font-black">Reflexion: Verbal Reinforcement Learning</h4>
+              <span class="text-xs text-stone-600">Shinn et al., NeurIPS 2023 · 1,500+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 실패를 *자연어로 reflection*해서 memory에 저장 → 다음 시도 개선. 모델 재훈련 없이 *행동 개선*.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전 진입:</strong> Agent self-improvement의 *대표 사례*. Claude Code의 verification 루프 설계 origin.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Agent verification, self-correction, eval loop와 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 실패 후 개선 메모 템플릿: 무엇을 시도했고 무엇을 배웠나.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Phase 1-2는 *agent + assistant 사용*. 다음 Phase 3은 *그 모델이 어떻게 만들어졌나*.</p>
+          </div>
+          <div class="ph2 border-2 rounded-xl p-5 border-dashed">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W8</span>
+              <h4 class="text-xl font-black">Phase 2 Review · Assistant Training Map</h4>
+              <span class="text-xs text-stone-600">InstructGPT · CAI · Reflexion 통합</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>활동:</strong> base model이 assistant가 되는 과정을 instruction tuning, feedback, principle, reflection으로 분해한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 좋은 AI 답변을 평가하는 기준표: 유용성, 정확성, 안전성, 톤, 재시도 가능성.</p>
+            <p class="text-sm text-stone-600 italic"><strong>성공 기준:</strong> AI의 친절함과 조심스러움이 성격이 아니라 post-training의 결과임을 설명할 수 있다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-black ph3-text mb-3">Phase 3 · LLM Foundation (Week 9-12)</h3>
+        <div class="space-y-3">
+          <div class="ph3 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W9</span>
+              <h4 class="text-xl font-black">Attention Is All You Need</h4>
+              <span class="text-xs text-stone-600">Vaswani et al., NeurIPS 2017 · 120,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> Recurrence/Convolution 없이 *attention*만으로 sequence 처리. Transformer 구조 제안.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> 현대 LLM의 *뼈대*. AI 역사상 가장 인용 많은 논문 중 하나. *모든* AI 교과서 첫 챕터.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Transformer visual guide와 최신 architecture 요약을 함께 본다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> Attention을 비전문가에게 설명하는 3문장 비유.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Transformer 구조 → 다음 GPT-3는 *그 구조를 어디까지 키울 수 있나*.</p>
+          </div>
+          <div class="ph3 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W10</span>
+              <h4 class="text-xl font-black">GPT-3 / Language Models are Few-Shot Learners</h4>
+              <span class="text-xs text-stone-600">Brown et al., NeurIPS 2020 · 35,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 175B 파라미터 + few-shot prompting. fine-tuning 없이 다양한 과제 수행 가능.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> "범용 LLM" 패러다임의 *시작*. 프롬프트 엔지니어링 분야 탄생의 직접 원인.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> In-context learning과 prompt example design을 함께 본다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 좋은 예시 3개로 결과 품질을 끌어올리는 few-shot 템플릿.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> GPT-3는 *크면 좋다*. 다음 Scaling Laws는 *왜 그런가*.</p>
+          </div>
+          <div class="ph3 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W11</span>
+              <h4 class="text-xl font-black">Scaling Laws for Neural Language Models</h4>
+              <span class="text-xs text-stone-600">Kaplan et al., OpenAI 2020 · 8,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 모델 크기·데이터·compute의 power-law 관계. 큰 모델이 *sample-efficient*.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> *AI 투자 곡선*을 정의. 모든 frontier lab의 *roadmap 기반*.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> AI capex, compute race, frontier lab 발표를 함께 읽는다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 모델 발표 읽기 체크리스트: scale, data, compute, benchmark, cost.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Scaling Laws는 *큰 모델이 좋다*. 다음 Chinchilla는 *그 직관의 보정*.</p>
+          </div>
+          <div class="ph3 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W12</span>
+              <h4 class="text-xl font-black">Chinchilla / Compute-Optimal Training</h4>
+              <span class="text-xs text-stone-600">Hoffmann et al., DeepMind 2022 · 5,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 모델 크기를 두 배로 늘릴 때 *훈련 데이터*도 두 배. 기존 모델은 *undertrained*.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> Scaling Laws의 *재해석*. Llama·Mistral 등 *모든 efficient* open model의 baseline.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> LLaMA, Mistral, Qwen, DeepSeek 등 open model 흐름과 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 용도별 모델 선택 기준표: 성능, 비용, 보안, 속도, 맥락 길이.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> Phase 3은 *어떻게 만드나*. 다음 Phase 4는 *어떻게 *기억*하나*.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-black ph4-text mb-3">Phase 4 · Memory & Synthesis (Week 13-16)</h3>
+        <div class="space-y-3">
+          <div class="ph4 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W13</span>
+              <h4 class="text-xl font-black">RAG / Retrieval-Augmented Generation</h4>
+              <span class="text-xs text-stone-600">Lewis et al., NeurIPS 2020 · 8,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> Parametric memory(모델 가중치) + Non-parametric memory(외부 검색) 결합.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전:</strong> 모든 *enterprise AI assistant* (Notion AI · Copilot · Perplexity)의 baseline. RAG = AI 도입 진입점.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Enterprise RAG, Perplexity, Notion AI, Copilot류 사례와 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> RAG가 필요한 업무와 단순 prompting으로 충분한 업무를 구분하는 표.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> RAG는 *검색*. 다음 MemGPT는 *기억 관리*.</p>
+          </div>
+          <div class="ph4 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W14</span>
+              <h4 class="text-xl font-black">MemGPT: LLMs as Operating Systems</h4>
+              <span class="text-xs text-stone-600">Packer et al., UC Berkeley 2023 · 1,200+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> LLM을 OS처럼 — context window = main memory, 외부 저장소 = disk. *기억 관리* 패러다임.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전 진입:</strong> *Memory engineering* 분야의 origin. Claude Memory · Letta · Zep 등 후속의 baseline.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> Letta, Zep, Graphiti, Claude Memory, context engineering과 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 팀 지식 저장소 구조도: session, docs, memory, archive의 차이.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> MemGPT는 *기억*. 다음 ToT는 *생각의 탐색* — 마지막 reasoning 발전.</p>
+          </div>
+          <div class="ph4 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W15</span>
+              <h4 class="text-xl font-black">Tree of Thoughts</h4>
+              <span class="text-xs text-stone-600">Yao et al., NeurIPS 2023 · 2,000+ citation</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>핵심:</strong> 단일 chain-of-thought → 여러 thought 후보를 *tree 탐색*. 평가 + backtrack.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>왜 정전 진입:</strong> Test-time compute (o1·R1) 시대의 *baseline*. Reasoning 발전형의 정전.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> o1/R1, self-consistency, test-time compute와 연결한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> 중요한 의사결정을 여러 경로로 탐색하는 decision prompt template.</p>
+            <p class="text-sm text-stone-600 italic"><strong>다음과 연결:</strong> 마지막 W16은 *Final Synthesis* — 13편 전체를 하나의 지도로 묶음.</p>
+          </div>
+          <div class="ph4 border-2 rounded-xl p-5">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="text-2xl font-black">W16</span>
+              <h4 class="text-xl font-black">🏆 Final Synthesis · Graduation</h4>
+              <span class="text-xs text-stone-600">전체 통합 주차</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-2"><strong>활동:</strong> 13편을 *하나의 지도*로 통합. AI Paper Lineage Map 작성. PaperGym Graduation Note.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>최신 보강:</strong> 최근 1개월 AI 뉴스 5개를 직접 분류한다.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>팀 산출물:</strong> AI Paper Lineage Map + 팀별 업무 적용 지도 + graduation note.</p>
+            <p class="text-sm text-stone-700 mb-2"><strong>성공 기준:</strong> 새 AI 모델 발표를 보면 *Phase 1-4 중 어디 계열인지 즉시 분류 가능*.</p>
+            <p class="text-sm text-stone-600 italic">이때부터 PaperGym은 *수동적 학습 도구*에서 *능동적 분류 도구*로 바뀝니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 지정 보강 자료 -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">DESIGNATED SUPPLEMENTS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">📖 16주 지정 보강 자료</h2>
+      <p class="text-base text-stone-700 mb-6">
+        Day 4에는 각자 새 자료를 찾지 않습니다. 팀 전원이 PaperGym이 지정한 같은 보강 자료 1개를 읽고,
+        이번 주 핵심 논문과 어떻게 연결되는지 정리합니다. 바쁜 팀을 위한 기본값은 <strong>“같은 자료, 다른 해석”</strong>입니다.
+      </p>
+      <div class="overflow-x-auto bg-white border-2 border-stone-900 rounded-xl shadow-brut">
+        <table class="w-full text-sm">
+          <thead class="bg-stone-900 text-stone-50">
+            <tr>
+              <th class="text-left p-3 whitespace-nowrap">Week</th>
+              <th class="text-left p-3 whitespace-nowrap">Core paper</th>
+              <th class="text-left p-3 whitespace-nowrap">지정 보강 자료</th>
+              <th class="text-left p-3 min-w-[280px]">Day 4 질문</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y-2 divide-stone-200">
+            <tr>
+              <td class="p-3 font-black">W1</td>
+              <td class="p-3">Chain-of-Thought</td>
+              <td class="p-3 font-semibold">Self-Consistency</td>
+              <td class="p-3 text-stone-700">왜 하나의 추론 경로만 믿으면 위험한가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W2</td>
+              <td class="p-3">ReAct</td>
+              <td class="p-3 font-semibold">Anthropic — Building Effective Agents</td>
+              <td class="p-3 text-stone-700">Workflow와 agent는 무엇이 다른가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W3</td>
+              <td class="p-3">Toolformer</td>
+              <td class="p-3 font-semibold">Model Context Protocol / MCP 개념 소개</td>
+              <td class="p-3 text-stone-700">AI가 모든 걸 모델 안에서 해결하지 않고 도구를 부르는 이유는?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W4</td>
+              <td class="p-3">Phase 1 Review</td>
+              <td class="p-3 font-semibold">Claude Code / coding agent 사용 사례</td>
+              <td class="p-3 text-stone-700">Claude Code는 단순 챗봇과 무엇이 다른가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W5</td>
+              <td class="p-3">InstructGPT / RLHF</td>
+              <td class="p-3 font-semibold">Helpful & Harmless RLHF</td>
+              <td class="p-3 text-stone-700">좋은 assistant는 단순히 정답을 잘 맞히는 모델인가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W6</td>
+              <td class="p-3">Constitutional AI</td>
+              <td class="p-3 font-semibold">Claude 원칙 / Model Behavior 공식 자료</td>
+              <td class="p-3 text-stone-700">AI에게 원칙을 주는 것과 예시만 주는 것은 무엇이 다른가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W7</td>
+              <td class="p-3">Reflexion</td>
+              <td class="p-3 font-semibold">SWE-bench</td>
+              <td class="p-3 text-stone-700">단순 코드 생성 평가와 실제 issue 해결 평가는 무엇이 다른가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W8</td>
+              <td class="p-3">Phase 2 Review</td>
+              <td class="p-3 font-semibold">Direct Preference Optimization / DPO</td>
+              <td class="p-3 text-stone-700">좋은 답변을 말로 지시하는 것과 선호쌍으로 보여주는 것은 무엇이 다른가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W9</td>
+              <td class="p-3">Attention Is All You Need</td>
+              <td class="p-3 font-semibold">The Illustrated Transformer</td>
+              <td class="p-3 text-stone-700">Attention은 단순히 “중요한 단어를 본다”와 어떻게 다른가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W10</td>
+              <td class="p-3">GPT-3</td>
+              <td class="p-3 font-semibold">In-context learning / Few-shot prompting 해설</td>
+              <td class="p-3 text-stone-700">좋은 예시 3개가 결과 품질을 높이는 이유는?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W11</td>
+              <td class="p-3">Scaling Laws</td>
+              <td class="p-3 font-semibold">AI compute / capex 자료</td>
+              <td class="p-3 text-stone-700">성능 향상은 모델 크기, 데이터, compute 중 어디서 오는가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W12</td>
+              <td class="p-3">Chinchilla</td>
+              <td class="p-3 font-semibold">LLaMA: Open and Efficient Foundation Language Models</td>
+              <td class="p-3 text-stone-700">Open model이 중요한 이유는 단순히 무료라서인가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W13</td>
+              <td class="p-3">RAG</td>
+              <td class="p-3 font-semibold">RETRO</td>
+              <td class="p-3 text-stone-700">모델이 알고 있는 것과 외부 문서를 검색하는 것은 무엇이 다른가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W14</td>
+              <td class="p-3">MemGPT</td>
+              <td class="p-3 font-semibold">Generative Agents</td>
+              <td class="p-3 text-stone-700">기억은 단순 저장인가, reflection과 planning까지 포함하는가?</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-black">W15</td>
+              <td class="p-3">Tree of Thoughts</td>
+              <td class="p-3 font-semibold">DeepSeek R1 또는 OpenAI o1 공식 기술 자료</td>
+              <td class="p-3 text-stone-700">일반 LLM 답변과 reasoning model 답변은 무엇이 다른가?</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="p-3 font-black">W16</td>
+              <td class="p-3">Final Synthesis</td>
+              <td class="p-3 font-semibold">HELM / MMLU / SWE-bench 중 Evaluation 자료</td>
+              <td class="p-3 text-stone-700">Benchmark는 무엇을 잘 보여주고, 무엇을 숨기는가?</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Weekly Artifact Template -->
+    <section>
+      <div class="text-xs uppercase tracking-widest text-stone-500 font-black mb-3">TEAM OUTPUT TEMPLATE</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-6">🧾 매주 남기는 1장</h2>
+      <div class="bg-white border-2 border-stone-900 rounded-xl p-6 shadow-brut">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-stone-700">
+          <div>
+            <div class="font-black text-stone-900 mb-2">1. 한 줄 요약</div>
+            <p>이 논문은 AI 제품/모델/업무 방식에서 무엇을 바꿨나?</p>
+          </div>
+          <div>
+            <div class="font-black text-stone-900 mb-2">2. 핵심 개념 3개</div>
+            <p>팀원이 같은 언어로 말하기 위해 꼭 알아야 할 용어.</p>
+          </div>
+          <div>
+            <div class="font-black text-stone-900 mb-2">3. 지정 보강 자료 연결</div>
+            <p>PaperGym이 정한 이번 주 보강 자료가 핵심 논문과 어떻게 연결되는가?</p>
+          </div>
+          <div>
+            <div class="font-black text-stone-900 mb-2">4. 빌더 적용</div>
+            <p>리서치, 제안서, 콘텐츠, 자동화, 에이전트 설계 중 어디에 쓸 수 있는가?</p>
+          </div>
+          <div>
+            <div class="font-black text-stone-900 mb-2">5. 비전문가 설명</div>
+            <p>클라이언트나 동료에게 설명한다면 어떤 3문장으로 말할 것인가?</p>
+          </div>
+          <div>
+            <div class="font-black text-stone-900 mb-2">6. 아직 모르는 것</div>
+            <p>다음 주에 확인할 질문 1~3개.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-stone-900 text-stone-50 rounded-xl p-8 text-center">
+      <div class="text-3xl mb-3">🏋️</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3">
+        이제 <span class="text-amber-300">시작</span>할 차례입니다.
+      </h2>
+      <p class="text-stone-300 mb-6 max-w-2xl mx-auto">
+        16주 후, 팀은 AI 업데이트를 그냥 소비하지 않습니다.
+        기본기 위에서 맥락을 읽고, 업무에 쓸 것·지켜볼 것·무시할 것을 스스로 판단할 수 있게 됩니다.
+      </p>
+      <a href="/" class="inline-block bg-amber-500 hover:bg-amber-400 text-stone-900 font-black px-8 py-4 rounded-lg shadow-lg text-lg">
+        🏋️ PaperGym 시작하기 →
+      </a>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-stone-300 mt-16 py-6 text-center text-sm text-stone-500">
+    <div>Built by <strong class="text-stone-700">Ann</strong> · 2026-05 · 13편 정전 큐레이션</div>
+    <div class="mt-1">출처 문서: <code class="text-xs">~/HQ/ai-study/00-ai-paper-archive-index.md</code></div>
+  </footer>
+
+</body>
+</html>
