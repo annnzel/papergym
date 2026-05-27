@@ -1,0 +1,122 @@
+{
+  "source": "paper-abstracts/ko-translations/core-abstracts-ko.md",
+  "papers": [
+    {
+      "paper_id": "react-2210.03629",
+      "korean_abstract": "대규모 언어 모델(LLM)은 언어 이해와 상호작용적 의사결정 과제에서 인상적인 능력을 보여주었지만, 추론 능력(예: chain-of-thought prompting)과 행동 능력(예: 행동 계획 생성)은 주로 별개의 주제로 연구되어 왔다. 이 논문은 LLM이 추론 과정과 과제별 행동을 번갈아 생성하도록 하는 방법을 탐구한다. 추론 과정은 모델이 행동 계획을 유도·추적·업데이트하고 예외 상황을 처리하는 데 도움을 준다. 반대로 행동은 모델이 지식 베이스나 환경 같은 외부 소스와 상호작용해 추가 정보를 수집하게 해준다. 저자들은 이 접근법을 ReAct라고 부르며, 다양한 언어 과제와 의사결정 과제에 적용해 기존 최고 수준 기준선보다 효과적임을 보인다. HotpotQA·Fever에서는 간단한 Wikipedia API와 상호작용함으로써 chain-of-thought 추론에서 흔한 환각과 오류 전파 문제를 극복한다. ALFWorld·WebShop에서는 단 1~2개의 in-context 예시만으로도 imitation/reinforcement learning 방법보다 각각 34%p, 10%p 높은 성공률을 달성한다.",
+      "study_hook": {
+        "problem": "LLM의 \"생각하기\"와 \"행동하기\"가 따로 연구되어 agent적 작업을 설명하기 어려웠다.",
+        "core_idea": "Thought → Action → Observation을 번갈아 수행하면 추론과 외부 정보 활용이 결합된다.",
+        "why_read": "Claude Code가 파일을 읽고, 도구를 쓰고, 결과를 보고 다시 판단하는 루프를 이해하는 핵심 논문이다."
+      }
+    },
+    {
+      "paper_id": "cot-2201.11903",
+      "korean_abstract": "이 논문은 \"사고의 연쇄(chain of thought)\"를 생성하는 것, 즉 일련의 중간 추론 단계를 만드는 것이 대규모 언어 모델의 복잡한 추론 능력을 크게 향상시키는 방식을 탐구한다. 특히 충분히 큰 언어 모델에서는 chain-of-thought prompting이라는 단순한 방법을 통해 이러한 추론 능력이 자연스럽게 나타날 수 있음을 보인다. 이 방법은 프롬프트 안에 몇 개의 chain-of-thought 예시를 제공하는 방식이다. 세 개의 대규모 언어 모델 실험에서 chain-of-thought prompting은 산술·상식·기호 추론 과제 전반에서 성능을 향상시켰다. 540B 파라미터 모델에 단 8개 예시만 제공했을 때 GSM8K에서 당시 최고 수준의 정확도를 달성했으며, verifier가 붙은 fine-tuned GPT-3보다도 높은 성능을 보였다.",
+      "study_hook": {
+        "problem": "모델에게 바로 답만 요구하면 복잡한 추론 과제에서 성능이 제한된다.",
+        "core_idea": "답으로 가는 중간 생각 과정을 예시로 보여주면 큰 모델의 추론 능력이 더 잘 드러난다.",
+        "why_read": "\"좋은 프롬프트는 명령문이 아니라 사고 구조\"라는 감각을 만드는 첫 논문이다."
+      }
+    },
+    {
+      "paper_id": "instructgpt-2203.02155",
+      "korean_abstract": "언어 모델을 더 크게 만든다고 해서 자동으로 사용자의 의도를 더 잘 따르게 되는 것은 아니다. 대규모 언어 모델은 사실이 아닌 내용, 유해한 내용, 또는 사용자에게 도움이 되지 않는 출력을 생성할 수 있다. 이 논문은 인간 피드백을 이용한 fine-tuning을 통해 다양한 과제에서 언어 모델을 사용자 의도에 맞게 정렬하는 방법을 보여준다. 저자들은 라벨러 시연 데이터셋으로 GPT-3를 지도학습 fine-tuning하고, 출력 순위 데이터셋을 수집해 인간 피드백 기반 강화학습(RLHF)으로 추가 fine-tuning한다. 이렇게 만들어진 모델을 InstructGPT라고 부른다. 1.3B 파라미터 InstructGPT의 출력은 175B GPT-3보다 선호되었으며(파라미터 100배 차이), 진실성 개선과 유해 출력 감소를 동시에 달성했다.",
+      "study_hook": {
+        "problem": "큰 모델이 곧바로 \"사용자 말을 잘 듣는 assistant\"가 되는 것은 아니다.",
+        "core_idea": "사람의 시연과 선호 평가를 이용해 base model을 instruction-following assistant로 바꾼다.",
+        "why_read": "ChatGPT/Claude가 왜 친절하고 지시를 따르는지 이해하는 출발점이다."
+      }
+    },
+    {
+      "paper_id": "toolformer-2302.04761",
+      "korean_abstract": "언어 모델은 특히 규모가 커질수록 몇 개의 예시나 텍스트 지시만으로도 새로운 과제를 해결하는 놀라운 능력을 보인다. 그러나 역설적으로 산술 계산이나 사실 검색처럼 훨씬 단순하고 작은 모델도 잘하는 기본 기능에서는 어려움을 겪는다. 이 논문은 언어 모델이 간단한 API를 통해 외부 도구 사용법을 스스로 학습할 수 있음을 보인다. Toolformer는 어떤 API를 호출할지, 언제 호출할지, 어떤 인자를 넘길지, 그리고 결과를 이후 토큰 예측에 어떻게 반영할지를 결정하도록 훈련된 모델이다. 자기지도 방식으로 학습하며 각 API에 대해 소수의 시연만 필요하다. 계산기·Q&A·검색·번역·달력 등 다양한 도구를 포함한다.",
+      "study_hook": {
+        "problem": "LLM은 복잡한 언어 과제는 잘하지만 계산·검색 같은 기본 기능에서 약할 수 있다.",
+        "core_idea": "모델이 언제 어떤 외부 도구를 호출해야 하는지 학습하게 만든다.",
+        "why_read": "Claude Code, MCP, API-calling agent를 이해하는 핵심 다리다."
+      }
+    },
+    {
+      "paper_id": "attention-1706.03762",
+      "korean_abstract": "기존의 주요 sequence transduction 모델은 encoder-decoder 구조의 복잡한 RNN/CNN에 기반해 있었다. 이 논문은 recurrence와 convolution을 완전히 제거하고 attention mechanism만으로 구성된 단순한 새 네트워크 구조인 Transformer를 제안한다. 두 개의 기계번역 과제에서 실험한 결과, Transformer는 품질 면에서 더 우수하면서도 병렬화가 더 잘 되고 훈련 시간이 훨씬 적게 든다. WMT 2014 영-독에서 28.4 BLEU로 기존 최고보다 2 BLEU 이상 향상, 영-불에서는 8 GPU 3.5일 훈련으로 41.8 BLEU 신기록을 달성했다. constituency parsing에도 잘 일반화됨을 보였다.",
+      "study_hook": {
+        "problem": "기존 sequence 모델은 RNN/CNN 기반이라 훈련과 병렬화에 한계가 있었다.",
+        "core_idea": "attention만으로 sequence를 처리하는 Transformer 구조를 제안했다.",
+        "why_read": "현대 LLM의 구조적 뼈대가 어디서 왔는지 이해하는 필수 논문이다."
+      }
+    },
+    {
+      "paper_id": "gpt3-2005.14165",
+      "korean_abstract": "최근 연구는 대규모 텍스트 코퍼스 사전학습 + 과제별 fine-tuning 방식이 큰 성능 향상을 가져온다는 것을 보여주었다. 그러나 이 방식은 수천~수만 개의 과제별 데이터셋을 필요로 한다. 반면 인간은 보통 몇 개의 예시만으로 새 과제를 수행할 수 있다. 이 논문은 언어 모델을 크게 scale up하면 task-agnostic few-shot 성능이 크게 향상되며, 때로는 기존 fine-tuning 최고 성능과 경쟁할 수 있음을 보인다. 저자들은 1,750억 파라미터 autoregressive 언어 모델 GPT-3를 훈련하고 few-shot 환경에서 성능을 평가한다. GPT-3는 번역·QA·cloze 등 많은 NLP 데이터셋에서 강한 성능을 보였고, 단어 재배열·새 단어 사용·세 자리 산술처럼 즉석 추론이 필요한 과제에서도 성능을 보였다.",
+      "study_hook": {
+        "problem": "기존 NLP 모델은 과제마다 많은 fine-tuning 데이터가 필요했다.",
+        "core_idea": "충분히 큰 언어 모델은 몇 개의 예시만으로도 다양한 과제를 수행할 수 있다.",
+        "why_read": "\"하나의 범용 모델을 프롬프트로 조종한다\"는 현대 AI 사용법의 전환점이다."
+      }
+    },
+    {
+      "paper_id": "scaling-laws-2001.08361",
+      "korean_abstract": "이 논문은 language model 성능을 cross-entropy loss 기준으로 경험적 scaling law 관점에서 연구한다. 손실은 모델 크기, 데이터셋 크기, 훈련 compute 양에 대해 power-law 형태로 scale하며, 일부 경향은 7자릿수 이상의 범위에 걸쳐 나타난다. 네트워크의 width나 depth 같은 다른 구조적 세부사항은 넓은 범위 안에서는 상대적으로 작은 영향을 보였다. 저자들은 overfitting이 모델/데이터셋 크기에 어떻게 의존하는지, 훈련 속도가 모델 크기에 어떻게 의존하는지를 단순한 방정식으로 설명한다. 더 큰 모델은 sample-efficient하기 때문에, compute-efficient한 최적 훈련은 매우 큰 모델을 비교적 적은 데이터로 훈련하고 수렴 전에 멈추는 방식이 된다고 주장한다.",
+      "study_hook": {
+        "problem": "모델 크기, 데이터, compute가 성능에 어떤 관계를 갖는지 정량적으로 알고 싶었다.",
+        "core_idea": "언어 모델 성능은 scale에 따라 예측 가능한 power-law 패턴을 보인다.",
+        "why_read": "\"왜 모두가 큰 모델을 만들기 시작했는가\"를 이해하는 배경이다."
+      }
+    },
+    {
+      "paper_id": "chinchilla-2203.15556",
+      "korean_abstract": "이 논문은 주어진 compute budget 아래에서 Transformer 언어 모델을 훈련할 때 최적의 모델 크기와 훈련 토큰 수를 조사한다. 저자들은 현재의 대규모 언어 모델들이 상당히 undertrained되어 있다고 본다. 7천만~160억 개 이상 파라미터의 400개 이상 모델을 50억~5,000억 토큰으로 훈련한 결과, compute-optimal에서는 모델 크기와 훈련 토큰 수를 같은 비율로 scale해야 한다는 결론을 얻었다. 즉 모델 크기를 두 배로 늘릴 때마다 훈련 토큰 수도 두 배로 늘려야 한다. Chinchilla(70B, 4배 더 많은 데이터)는 Gopher·GPT-3·Jurassic-1·Megatron-Turing NLG를 일관되게 능가했고, MMLU에서 67.5% 평균 정확도로 Gopher보다 7%p 이상 높은 SOTA를 달성했다.",
+      "study_hook": {
+        "problem": "큰 모델을 만들 때 파라미터와 데이터의 비율이 정말 최적인가?",
+        "core_idea": "모델만 키우지 말고, 모델 크기에 맞춰 훈련 데이터도 같이 늘려야 한다.",
+        "why_read": "\"더 큰 모델\"보다 \"compute-optimal model\"이 중요하다는 감각을 만든다."
+      }
+    },
+    {
+      "paper_id": "constitutional-ai-2212.08073",
+      "korean_abstract": "이 논문은 해롭지 않은 AI assistant를 훈련하는 방법으로 Constitutional AI(CAI)를 제안한다. 지도학습 단계에서는 모델이 처음에는 유해한 질문에 응답하도록 한 뒤, 원칙 목록인 \"constitution\"을 바탕으로 자신의 응답을 비판하고 수정하게 한다. 그 다음 이렇게 수정된 응답으로 모델을 fine-tuning한다. 강화학습 단계에서는 사람의 선호 평가 대신 AI가 생성한 선호 평가를 사용한다. 모델은 constitution의 원칙을 기준으로 두 응답 중 어느 쪽이 더 나은지 판단하고, 이 데이터로 preference model을 훈련한 뒤 assistant를 강화학습한다. 이 접근은 Anthropic·Claude의 alignment 철학의 핵심이다.",
+      "study_hook": {
+        "problem": "인간 피드백만으로 안전하고 도움이 되는 assistant를 훈련하는 데는 비용과 한계가 있다.",
+        "core_idea": "명시적 원칙(constitution)을 기준으로 AI가 자신의 답변을 비판·수정하고, AI feedback으로 선호를 학습한다.",
+        "why_read": "Claude의 답변 스타일·안전성·기업용 AI constitution 설계를 이해하는 핵심 논문이다."
+      }
+    },
+    {
+      "paper_id": "rag-2005.11401",
+      "korean_abstract": "대규모 사전학습 언어 모델은 파라미터 안에 저장된 지식을 갖고 있으며, fine-tuning을 통해 downstream NLP 과제에서 좋은 성능을 낼 수 있다. 그러나 그 지식에 정확히 접근하거나 조작하는 능력은 여전히 제한적이다. 이 논문은 pre-trained parametric memory와 non-parametric memory를 결합한 Retrieval-Augmented Generation(RAG)을 제안한다. parametric memory는 사전학습된 seq2seq 모델이고, non-parametric memory는 Wikipedia의 dense vector index이며 neural retriever를 통해 접근된다. 두 구성요소를 end-to-end로 fine-tuning한다. RAG 모델은 다양한 지식 집약 NLP 과제에서 parametric-only seq2seq와 retrieval-and-extract 방식보다 높은 성능을 보이며, 답변이 더 구체적·다양·사실 기반이다.",
+      "study_hook": {
+        "problem": "모델이 학습 중 기억한 지식만으로는 최신성·정확성·출처성에 한계가 있다.",
+        "core_idea": "모델 내부 지식과 외부 문서 검색을 결합해 답변을 생성한다.",
+        "why_read": "RAG, long context, memory의 차이를 구분하는 출발점이다."
+      }
+    },
+    {
+      "paper_id": "memgpt-2310.08560",
+      "korean_abstract": "대규모 언어 모델은 강력하지만, 고정된 context window 안에서만 정보를 처리할 수 있다는 한계가 있다. 긴 대화, 장기 기억, 대규모 문서 분석처럼 context window를 넘는 작업에서는 무엇을 현재 context에 둘지, 무엇을 외부 저장소에 둘지, 언제 다시 불러올지를 관리해야 한다. MemGPT는 LLM을 운영체제처럼 바라보는 접근을 제안한다. 운영체제가 제한된 main memory와 더 큰 storage를 관리하듯, MemGPT는 제한된 context window와 외부 memory 사이에서 정보를 옮기고 관리한다. 모델은 스스로 memory read/write를 수행하고, 오래된 정보와 현재 필요한 정보를 구분하며, 장기 대화와 문서 분석 작업에서 더 효과적으로 동작한다.",
+      "study_hook": {
+        "problem": "LLM은 context window가 제한되어 장기 기억과 긴 작업에서 한계가 있다.",
+        "core_idea": "LLM이 운영체제처럼 현재 context와 외부 memory를 관리하게 한다.",
+        "why_read": "Claude Memory, Obsidian, Notion을 \"AI 업무 기억\"으로 설계하는 관점을 준다."
+      }
+    },
+    {
+      "paper_id": "reflexion-2303.11366",
+      "korean_abstract": "이 논문은 언어 에이전트가 실패 경험을 언어적 피드백으로 저장하고, 이후 시도에서 그 피드백을 활용해 성능을 개선하는 Reflexion 프레임워크를 제안한다. 기존 강화학습은 모델 파라미터를 업데이트해야 하는 경우가 많지만, Reflexion은 verbal reinforcement, 즉 자연어 형태의 반성 기록을 memory에 저장해 다음 행동을 조정한다. 에이전트는 과제를 수행한 뒤 성공 여부나 외부 피드백을 바탕으로 자신의 행동을 돌아보고, 무엇이 잘못되었는지와 다음번에 어떻게 해야 하는지를 언어로 기록한다. 이후 같은 과제나 유사한 과제를 수행할 때 이 reflection을 context로 사용한다. 코딩·의사결정·추론 과제에서 에이전트 성능을 향상시킬 수 있음을 보인다.",
+      "study_hook": {
+        "problem": "에이전트가 실패해도 그 실패를 다음 시도에 활용하지 못하면 같은 실수를 반복한다.",
+        "core_idea": "실패를 자연어 reflection으로 저장하고 다음 행동에 반영한다.",
+        "why_read": "PaperGym의 오답 피드백과 Claude Code의 검증 루프를 설계하는 데 직접 연결된다."
+      }
+    },
+    {
+      "paper_id": "tree-of-thoughts-2305.10601",
+      "korean_abstract": "이 논문은 대규모 언어 모델의 문제 해결을 단일 chain-of-thought 경로가 아니라, 여러 가능한 thought 경로를 탐색하는 tree 구조로 확장한다. 기존 chain-of-thought prompting은 하나의 중간 추론 경로를 생성하지만, 복잡한 문제에서는 여러 후보 경로를 만들고 평가하고 되돌아가는 탐색 과정이 필요할 수 있다. Tree of Thoughts(ToT)는 중간 thought들을 문제 해결의 상태로 보고, 모델이 여러 thought 후보를 생성하고, 각 후보의 유망성을 평가하며, search algorithm을 통해 더 나은 해결 경로를 찾도록 한다. 퍼즐·창의적 글쓰기·계획 수립처럼 탐색과 되돌아가기가 중요한 과제에서 더 나은 성능을 낸다.",
+      "study_hook": {
+        "problem": "하나의 사고 경로만 생성하면 복잡한 문제에서 잘못된 방향으로 가도 되돌아오기 어렵다.",
+        "core_idea": "여러 thought 후보를 tree처럼 탐색하고 평가해 더 나은 경로를 고른다.",
+        "why_read": "전략·제안서·문제 해결에서 AI에게 여러 선택지를 탐색하게 만드는 법을 배운다."
+      }
+    }
+  ]
+}
