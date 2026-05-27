@@ -456,12 +456,14 @@
 
       // cores.papers[i].paper_id = "{slug}-{arxiv}". curriculum의 paperId와 매칭 (cai/tot 별칭 처리)
       const coreIdMap = { 'constitutional-ai': 'cai', 'tree-of-thoughts': 'tot' };
-      const arxivStrip = /-\d{4}\.\d{4,5}$/;
+      const arxivStrip = /-(\d{4}\.\d{4,5})$/;
       const corePapers = (cores.papers || []).map(p => {
+        const arxivMatch = p.paper_id.match(arxivStrip);
+        const arxivLink = arxivMatch ? `https://arxiv.org/abs/${arxivMatch[1]}` : '';
         const rawId = p.paper_id.replace(arxivStrip, '');
         const id = coreIdMap[rawId] || rawId;
         const week = (curriculum.weeks || []).find(w => w.paperId === id);
-        return { ...p, id, week };
+        return { ...p, id, week, arxivLink };
       }).filter(p => p.week).sort((a, b) => a.week.n - b.week.n);
 
       view.innerHTML = `
@@ -498,6 +500,7 @@
                 <summary class="cursor-pointer text-stone-500 hover:text-stone-900">한국어 초록 펼치기</summary>
                 <p class="mt-2 leading-relaxed">${escapeHtml(p.korean_abstract)}</p>
               </details>
+              ${p.arxivLink ? `<a href="${escapeHtml(p.arxivLink)}" target="_blank" class="text-xs text-blue-600 underline mt-2 inline-block">원문 →</a>` : ''}
             </div>
           `).join('')}
         </div>
