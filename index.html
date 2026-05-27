@@ -107,28 +107,31 @@
       </div>
     </div>
 
-    <!-- 4-Stage Progress Bar -->
-    <div class="max-w-5xl mx-auto px-4 pb-3 flex items-center gap-2">
-      <div id="stage-1" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
-        <div class="opacity-60">STAGE 1</div>
-        <div>처방전 🖨️</div>
+    <!-- 4-Stage Progress Bar (advanced AI mentor mode) -->
+    <details id="stage-bar-wrap" class="max-w-5xl mx-auto px-4 pb-3">
+      <summary class="text-xs text-stone-500 cursor-pointer hover:text-stone-900 select-none">고급 멘토 모드 진행 단계 보기</summary>
+      <div class="flex items-center gap-2 mt-2">
+        <div id="stage-1" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
+          <div class="opacity-60">STAGE 1</div>
+          <div>처방전 🖨️</div>
+        </div>
+        <div class="text-stone-300">→</div>
+        <div id="stage-2" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
+          <div class="opacity-60">STAGE 2</div>
+          <div>마찰 🎯</div>
+        </div>
+        <div class="text-stone-300">→</div>
+        <div id="stage-3" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
+          <div class="opacity-60">STAGE 3</div>
+          <div>채점 ⚖️</div>
+        </div>
+        <div class="text-stone-300">→</div>
+        <div id="stage-4" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
+          <div class="opacity-60">STAGE 4</div>
+          <div>결과물 🏆</div>
+        </div>
       </div>
-      <div class="text-stone-300">→</div>
-      <div id="stage-2" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
-        <div class="opacity-60">STAGE 2</div>
-        <div>마찰 🎯</div>
-      </div>
-      <div class="text-stone-300">→</div>
-      <div id="stage-3" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
-        <div class="opacity-60">STAGE 3</div>
-        <div>채점 ⚖️</div>
-      </div>
-      <div class="text-stone-300">→</div>
-      <div id="stage-4" class="stage-pending flex-1 rounded-md px-3 py-2 text-center text-xs font-bold transition-all">
-        <div class="opacity-60">STAGE 4</div>
-        <div>결과물 🏆</div>
-      </div>
-    </div>
+    </details>
   </header>
 
   <!-- ========================= MAIN ========================= -->
@@ -142,7 +145,7 @@
           <div class="flex items-center gap-2 mb-1 flex-wrap text-xs">
             <span id="today-date-label" class="font-bold uppercase tracking-widest text-amber-700">2026-XX-XX (요일)</span>
             <span class="text-stone-400">·</span>
-            <span id="today-phase-label" class="text-stone-500">PaperGym 29주 프로그램</span>
+            <span id="today-phase-label" class="text-stone-500">PaperGym 16주 프로그램</span>
           </div>
           <h1 id="today-title" class="text-2xl font-black tracking-tight mb-1 leading-snug">오늘의 운동</h1>
           <p id="today-task" class="text-stone-700 text-sm mb-2 leading-relaxed">데이터 로드 중…</p>
@@ -153,7 +156,7 @@
               ✅ 오늘 완료 체크
             </button>
             <button id="today-prescription-btn" class="bg-stone-900 hover:bg-stone-700 text-white font-bold px-4 py-2 rounded-md shadow-md transition disabled:opacity-50">
-              🖨️ 오늘의 처방전
+              🖨️ 오늘의 학습 가이드
             </button>
             <button id="reset-btn" class="bg-white border-2 border-stone-300 hover:border-stone-900 text-stone-700 font-bold px-3 py-2 rounded-md transition text-xs">
               ↺ 새 챗 세션
@@ -185,8 +188,37 @@
         </div>
         <div class="bg-stone-100 border-2 border-stone-300 rounded-lg py-3">
           <div class="text-xs uppercase tracking-wider text-stone-700 font-bold mb-1">📈 전체</div>
-          <div id="overall-num" class="font-black text-3xl text-stone-900">0<span class="text-base ml-0.5">/203</span></div>
+          <div id="overall-num" class="font-black text-3xl text-stone-900">0<span class="text-base ml-0.5">/112</span></div>
         </div>
+      </div>
+    </section>
+
+    <!-- Daily Study Material -->
+    <section id="study-material-section" class="bg-white border-2 border-stone-900 rounded-xl p-5 mb-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-black text-base">📚 오늘 읽을 자료</h2>
+        <span id="study-material-day-label" class="text-xs text-stone-500"></span>
+      </div>
+      <div id="study-material-body" class="text-sm text-stone-700 leading-relaxed"></div>
+    </section>
+
+    <!-- Daily Study Tip -->
+    <section id="study-tip-section" class="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-4">
+      <div class="text-xs uppercase tracking-widest text-amber-700 font-black mb-2">💡 오늘의 공부 팁</div>
+      <div id="study-tip-body" class="text-sm text-stone-800 leading-relaxed"></div>
+    </section>
+
+    <!-- Daily Assignment / Note -->
+    <section id="daily-note-section" class="bg-white border-2 border-stone-900 rounded-xl p-5 mb-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-black text-base">🧾 오늘의 노트</h2>
+        <span id="daily-note-status" class="text-xs text-stone-500">저장 전</span>
+      </div>
+      <div id="daily-note-body" class="space-y-3"></div>
+      <div class="mt-3 flex items-center gap-2 flex-wrap">
+        <button id="daily-note-save" class="bg-stone-900 hover:bg-stone-700 text-white font-bold px-4 py-2 rounded-md text-sm">💾 노트 저장</button>
+        <button id="daily-note-clear" class="text-xs text-stone-500 hover:text-red-600 underline">초기화</button>
+        <span class="text-xs text-stone-400">개인 기록 · 이 브라우저에만 저장됩니다</span>
       </div>
     </section>
 
@@ -207,11 +239,14 @@
       </div>
     </section>
 
-    <!-- 29-week Phase Progress -->
+    <!-- 16-week Phase Progress -->
     <section class="bg-white border-2 border-stone-900 rounded-xl p-5 mb-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
       <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <h2 class="font-black text-base">🗓️ 29주 프로그램 진행도 (6/1 ~ 12/20)</h2>
-        <span class="text-xs text-stone-500">Phase 클릭 → 해당 주차 즉시 시작</span>
+        <h2 class="font-black text-base">🗓️ 16주 프로그램 진행도 (6/1 ~ 9/20)</h2>
+        <div class="flex items-center gap-3 text-xs">
+          <a href="curriculum.html" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-md font-bold transition">📚 13편 큐레이션 가이드 →</a>
+          <span class="text-stone-500">Phase 클릭 → 즉시 시작</span>
+        </div>
       </div>
       <div id="phase-progress" class="space-y-2"></div>
     </section>
@@ -229,11 +264,11 @@
         <button data-jump="2026-06-01" class="demo-jump bg-amber-100 px-2 py-1 rounded">본 프로그램 Day 1</button>
         <button data-jump="2026-06-03" class="demo-jump bg-amber-100 px-2 py-1 rounded">Day 3</button>
         <button data-jump="2026-08-10" class="demo-jump bg-amber-100 px-2 py-1 rounded">Phase 3 시작</button>
-        <button data-jump="2026-12-20" class="demo-jump bg-amber-100 px-2 py-1 rounded">완주일</button>
+        <button data-jump="2026-09-20" class="demo-jump bg-amber-100 px-2 py-1 rounded">완주일</button>
       </div>
     </details>
 
-    <!-- Custom paper input (LLM fallback) — 29주 프로그램 외 자유 학습용 -->
+    <!-- Custom paper input (LLM fallback) — 16주 프로그램 외 자유 학습용 -->
     <details class="bg-stone-50 border-2 border-stone-300 rounded-xl p-5 mb-6">
       <summary class="cursor-pointer font-bold text-stone-800 text-base flex items-center gap-2">
         <span>🤖 다른 논문 자유 분석</span>
@@ -243,7 +278,7 @@
         <div>
           <div class="font-bold text-stone-900 mb-1">💡 언제 쓰나요?</div>
           <ul class="list-disc pl-5 space-y-1 text-sm">
-            <li><strong>29주 큐레이션 외 새 논문</strong>을 즉석에서 분석하고 싶을 때 (최신 arxiv·블로그·회사 자료 등)</li>
+            <li><strong>16주 큐레이션 외 새 논문</strong>을 즉석에서 분석하고 싶을 때 (최신 arxiv·블로그·회사 자료 등)</li>
             <li><strong>오늘의 운동을 끝낸 뒤</strong> 추가로 같은 논문에 *심화 분석*을 받고 싶을 때</li>
             <li>Claude Opus 4.7의 <strong>4단계 멘토링</strong> (3문장 티저 → 하드코어 질문 → 비판적 채점 → Mermaid 다이어그램 + 블로그 초안)을 받고 싶을 때</li>
           </ul>
@@ -267,6 +302,14 @@
       <div class="text-xs text-stone-400 mt-2">화면을 닫고 종이로 읽으세요. 끝나면 아래 입력창에 <strong class="text-amber-300">학습 완료</strong>를 입력하세요.</div>
       <button id="timer-skip" class="mt-2 text-xs underline text-stone-500 hover:text-amber-300">시연 모드: 즉시 완료</button>
     </section>
+
+    <!-- Advanced Claude Mentor Mode -->
+    <details id="advanced-mentor" class="mb-6 bg-white border-2 border-stone-300 rounded-xl p-4">
+      <summary class="cursor-pointer font-bold text-stone-800 text-sm flex items-center gap-2">
+        <span>🤖 고급 기능: Claude 멘토에게 채점받기</span>
+        <span class="text-xs bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full font-normal">옵션 · Claude API 필요</span>
+      </summary>
+      <div class="mt-4">
 
     <!-- Chat -->
     <section id="chat" class="space-y-4 mb-6"></section>
@@ -323,6 +366,9 @@
       </div>
       <div class="text-[10px] text-stone-400 mt-1.5 px-1">⚡ Claude API 키는 브라우저에만 저장됩니다 · 모델: claude-opus-4-7</div>
     </section>
+
+      </div>
+    </details>
   </main>
 
   <!-- ========================= GROUP REGISTER MODAL ========================= -->
@@ -428,6 +474,30 @@
     <footer>
       🏋️ 본문 PDF는 위 링크에서 다운받아 같이 들고 가세요. 30분 후 PaperGym으로 돌아와 "학습 완료" 입력.
     </footer>
+  </div>
+
+  <!-- ========================= STUDY GUIDE MODAL (Daily Dashboard) ========================= -->
+  <div id="study-guide-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center p-4 overflow-y-auto">
+    <div class="bg-white max-w-2xl w-full rounded-xl shadow-2xl my-4">
+      <div class="sticky top-0 bg-white border-b border-stone-200 px-6 py-4 flex items-center justify-between rounded-t-xl z-10">
+        <div>
+          <div class="text-xs uppercase tracking-widest text-amber-600 font-bold">🖨️ 오늘의 학습 가이드</div>
+          <div class="text-2xl font-black mt-0.5" id="study-guide-title">학습 가이드</div>
+        </div>
+        <button id="study-guide-close" class="text-stone-500 hover:text-stone-900 text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-100 transition shrink-0">✕</button>
+      </div>
+      <div class="px-6 py-4">
+        <div id="study-guide-content" class="space-y-4 text-sm"></div>
+      </div>
+      <div class="sticky bottom-0 bg-white border-t px-6 py-4 flex gap-2 rounded-b-xl">
+        <button id="study-guide-print-btn" class="flex-1 bg-stone-900 text-white font-bold py-3 rounded-md hover:bg-stone-700 transition">
+          🖨️ A4 인쇄 (Cmd+P로 PDF 저장 가능)
+        </button>
+        <button id="study-guide-done" class="bg-stone-100 text-stone-700 font-bold py-3 px-5 rounded-md hover:bg-stone-200 transition">
+          닫기
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ========================= TOAST ========================= -->
@@ -603,7 +673,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
     };
 
     /* ============================================================
-       CURATED DATA — 29-week program (2026-06-01 ~ 2026-12-20)
+       CURATED DATA — 16-week program (2026-06-01 ~ 2026-09-20)
        ============================================================ */
     let PAPER_CORPUS = null;
     let FULL_PRESCRIPTIONS = null;
@@ -612,7 +682,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
 
     const PROGRAM_CONFIG = {
       warmup: { start: '2026-05-26', end: '2026-05-30' },   // 화~토 5일
-      main:   { start: '2026-06-01', end: '2026-12-20', totalWeeks: 29 },  // 29편 × 1주 1편
+      main:   { start: '2026-06-01', end: '2026-09-20', totalWeeks: 16 },  // 13편 Core + 3 Review = 16주
     };
 
     // 일별 표준 루틴 (00-ai-paper-archive-index.md §1-3 기준)
@@ -634,48 +704,99 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
       { dateOffset: 4, dayName: '토', label: 'Warmup 5', task: 'Day 1 처방전 미리 보기 + 6/1 알람 세팅',         duration: 20, emoji: '🔔' },
     ];
 
-    // 29주 × 29편 = 1주 1편 (Core 13 + Supplemental 16)
+    // 16주 지정 보강 자료 (curriculum.html 표와 동일 — 팀 전원이 같은 자료를 본다)
+    const WEEK_SUPPLEMENT = {
+      1:  { title: 'Self-Consistency',                                    note: '여러 추론 경로를 만들고 가장 일관된 답을 선택하는 방법.' },
+      2:  { title: 'Anthropic — Building Effective Agents',               note: 'workflow와 agent를 구분하는 실용 가이드.' },
+      3:  { title: 'Model Context Protocol (MCP) 개념 소개',              note: 'AI가 외부 도구·시스템을 부르는 표준 인터페이스.' },
+      4:  { title: 'Claude Code / coding agent 사용 사례',                note: 'CoT·ReAct·Toolformer가 실제 도구에서 어떻게 살아 있는지.' },
+      5:  { title: 'Helpful & Harmless RLHF',                             note: '좋은 assistant는 유용함과 안전함을 함께 본다.' },
+      6:  { title: 'Claude 원칙 / Model Behavior 공식 자료',              note: 'AI에게 원칙을 주는 것의 의미.' },
+      7:  { title: 'SWE-bench',                                           note: '실제 GitHub issue를 푸는 능력을 보는 코딩 agent 평가.' },
+      8:  { title: 'Direct Preference Optimization (DPO)',                note: '말로 지시하지 않고 선호쌍으로 학습시키는 방식.' },
+      9:  { title: 'The Illustrated Transformer',                         note: '토큰 사이 관계 계산을 시각으로 잡기.' },
+      10: { title: 'In-context learning / Few-shot prompting 해설',       note: '좋은 예시 3개가 결과를 바꾸는 이유.' },
+      11: { title: 'AI compute / capex 자료',                             note: 'scale·data·compute의 균형 감각.' },
+      12: { title: 'LLaMA: Open and Efficient Foundation Models',         note: 'open model이 중요한 진짜 이유.' },
+      13: { title: 'RETRO',                                               note: '모델 안 지식과 외부 검색의 차이.' },
+      14: { title: 'Generative Agents',                                   note: '기억은 저장이 아니라 reflection과 planning까지 포함한다.' },
+      15: { title: 'DeepSeek R1 / OpenAI o1 기술 자료',                   note: 'test-time compute가 만드는 reasoning model.' },
+      16: { title: 'HELM / MMLU / SWE-bench Evaluation 자료',             note: 'benchmark는 무엇을 보여주고 무엇을 숨기는가.' },
+    };
+
+    // Day type별 공부 팁 (1:월 ~ 5:금, weekend, warmup, rest, pre, completed)
+    const STUDY_TIPS = {
+      1:         '논문 전체를 이해하려 하지 마세요. Abstract와 Figure 1로 지도부터 잡으세요.',
+      2:         'Method를 완벽히 이해하려 하지 말고, 기존 방식과 무엇이 달라졌는지만 보세요.',
+      3:         '내 말로 5문장 요약이 안 되면 아직 이해한 게 아닙니다. 팀원에게 말하듯 써보세요.',
+      4:         '지정 보강 자료는 새 내용을 외우는 게 아니라, 이번 주 논문이 지금 어디에 살아 있는지 확인하는 용도입니다.',
+      5:         '팀 산출물은 정답지가 아닙니다. 다음 주에 다시 볼 공통 언어를 만드는 일입니다.',
+      weekend:   '회복도 학습입니다. 이번 주에 가장 인상 깊었던 한 줄만 다시 보세요.',
+      warmup:    '시작 전 부담을 줄이세요. 처방전 한 장 인쇄해 보는 것만으로 충분합니다.',
+      rest:      '내일 본 프로그램이 시작됩니다. Day 1 처방전을 미리 한 번 훑어두세요.',
+      pre:       '시작 전입니다. 데모 점프 버튼으로 어떤 화면이 기다리는지 미리 봐도 좋습니다.',
+      completed: '완주했습니다. 이제 새 AI 뉴스를 13편 지도 위에 직접 분류해보세요.',
+    };
+
+    // Day type별 노트 필드 (id, label, placeholder, rows)
+    const NOTE_FIELDS = {
+      1: [
+        { id: 'readSection',  label: '오늘 읽은 위치',         placeholder: '예: Abstract + §1 + Figure 1', rows: 2 },
+        { id: 'hardPart',     label: '어려웠던 부분 1개',      placeholder: '한 문장으로',                   rows: 2 },
+      ],
+      2: [
+        { id: 'keyConcepts',  label: '핵심 개념 3개',          placeholder: '1) ...\n2) ...\n3) ...',       rows: 4 },
+        { id: 'stillUnclear', label: '아직 모르겠는 것 1개',   placeholder: '구체적으로',                   rows: 2 },
+      ],
+      3: [
+        { id: 'fiveSentenceSummary', label: '5문장 요약', placeholder: '내 말로',                          rows: 5 },
+        { id: 'terms',               label: '용어 5개',  placeholder: '용어 — 한 줄 설명',                 rows: 5 },
+        { id: 'question',            label: '질문 1개',  placeholder: '다음 주에 확인할 질문',             rows: 2 },
+      ],
+      4: [
+        { id: 'supplementPoint', label: '보강 자료에서 본 핵심 1개',           placeholder: '한 줄로',         rows: 2 },
+        { id: 'connection',      label: 'Core paper와 연결되는 지점',          placeholder: '한 줄로',         rows: 2 },
+        { id: 'todayMeaning',    label: '2026 AI 흐름에서의 의미',             placeholder: '한 줄로',         rows: 2 },
+      ],
+      5: [
+        { id: 'teamPoint',          label: '팀 노트에 넣고 싶은 포인트',       placeholder: '핵심만',          rows: 3 },
+        { id: 'nonExpertExplain',   label: '비전문가에게 설명하는 3문장',      placeholder: '쉽게',            rows: 4 },
+        { id: 'nextWeekQuestion',   label: '다음 주로 넘길 질문',              placeholder: '한 줄로',         rows: 2 },
+      ],
+      weekend: [
+        { id: 'weeklyReflection', label: '이번 주 한 줄 회고', placeholder: '느낀 점 한 줄',                   rows: 2 },
+        { id: 'revisitConcept',   label: '다시 볼 개념 1개',   placeholder: '용어/개념 하나',                  rows: 2 },
+      ],
+      warmup: [
+        { id: 'goalNote', label: '내 학습 목표', placeholder: '한 줄로', rows: 2 },
+      ],
+    };
+
+    // 16주 = Core 13편 + 3 Review (Classic 정전 only)
     const WEEK_TO_PAPER_ID = {
-      1: 'cot-2201.11903',                2: 'react-2210.03629',             3: 'toolformer-2302.04761',        4: null, // Self-Consistency
-      5: 'instructgpt-2203.02155',        6: 'constitutional-ai-2212.08073', 7: null, // Helpful-Harmless       8: null, // DPO
-      9: 'attention-1706.03762',         10: 'gpt3-2005.14165',             11: 'scaling-laws-2001.08361',    12: 'chinchilla-2203.15556',
-      13: null, // LLaMA                 14: 'rag-2005.11401',              15: 'memgpt-2310.08560',          16: null, // RETRO
-      17: null, // Generative Agents     18: null, // CLIP                  19: null, // Diffusion            20: null, // Flamingo
-      21: null, // HELM                  22: null, // MMLU                  23: null, // HumanEval            24: null, // SWE-bench
-      25: 'reflexion-2303.11366',        26: 'tree-of-thoughts-2305.10601', 27: null, // MRKL                 28: null, // Gorilla
-      29: null, // Voyager 🏆
+      1:  'cot-2201.11903',         2: 'react-2210.03629',              3: 'toolformer-2302.04761',         4: null, // Phase 1 Review
+      5:  'instructgpt-2203.02155', 6: 'constitutional-ai-2212.08073',  7: 'reflexion-2303.11366',          8: null, // Phase 2 Review
+      9:  'attention-1706.03762',  10: 'gpt3-2005.14165',              11: 'scaling-laws-2001.08361',     12: 'chinchilla-2203.15556',
+      13: 'rag-2005.11401',        14: 'memgpt-2310.08560',            15: 'tree-of-thoughts-2305.10601', 16: null, // Final Synthesis
     };
 
     const WEEK_META = {
-      1:  { name: 'Chain-of-Thought',           track: 'Prompting / Reasoning',  phase: 1, phaseName: 'Form Building' },
-      2:  { name: 'ReAct',                      track: 'Agent / Reasoning',      phase: 1, phaseName: 'Form Building' },
-      3:  { name: 'Toolformer',                 track: 'Tool Use',               phase: 1, phaseName: 'Form Building' },
-      4:  { name: 'Self-Consistency',           track: 'Reasoning',              phase: 1, phaseName: 'Form Building' },
-      5:  { name: 'InstructGPT / RLHF',         track: 'Alignment / RLHF',       phase: 2, phaseName: 'Assistant Training' },
-      6:  { name: 'Constitutional AI',          track: 'Alignment',              phase: 2, phaseName: 'Assistant Training' },
-      7:  { name: 'Helpful and Harmless',       track: 'Alignment / Safety',     phase: 2, phaseName: 'Assistant Training' },
-      8:  { name: 'DPO / Preference',           track: 'Post-training',          phase: 2, phaseName: 'Assistant Training' },
-      9:  { name: 'Attention Is All You Need',  track: 'LLM Foundation',         phase: 3, phaseName: 'LLM Foundation' },
-      10: { name: 'GPT-3 / Few-shot',           track: 'LLM Foundation',         phase: 3, phaseName: 'LLM Foundation' },
-      11: { name: 'Scaling Laws',               track: 'Scaling',                phase: 3, phaseName: 'LLM Foundation' },
-      12: { name: 'Chinchilla',                 track: 'Scaling / Data',         phase: 3, phaseName: 'LLM Foundation' },
-      13: { name: 'LLaMA',                      track: 'Open Models',            phase: 3, phaseName: 'LLM Foundation' },
-      14: { name: 'RAG',                        track: 'RAG',                    phase: 4, phaseName: 'Memory & RAG' },
-      15: { name: 'MemGPT',                     track: 'Memory',                 phase: 4, phaseName: 'Memory & RAG' },
-      16: { name: 'RETRO',                      track: 'Retrieval',              phase: 4, phaseName: 'Memory & RAG' },
-      17: { name: 'Generative Agents',          track: 'Memory / Simulation',    phase: 4, phaseName: 'Memory & RAG' },
-      18: { name: 'CLIP',                       track: 'Multimodal',             phase: 5, phaseName: 'Multimodal' },
-      19: { name: 'Diffusion / DDPM',           track: 'Image Generation',       phase: 5, phaseName: 'Multimodal' },
-      20: { name: 'Flamingo',                   track: 'Vision-Language',        phase: 5, phaseName: 'Multimodal' },
-      21: { name: 'HELM',                       track: 'Evaluation',             phase: 6, phaseName: 'Evaluation' },
-      22: { name: 'MMLU',                       track: 'Evaluation',             phase: 6, phaseName: 'Evaluation' },
-      23: { name: 'HumanEval',                  track: 'Coding Eval',            phase: 6, phaseName: 'Evaluation' },
-      24: { name: 'SWE-bench',                  track: 'Coding Eval',            phase: 6, phaseName: 'Evaluation' },
-      25: { name: 'Reflexion',                  track: 'Agent / Learning',       phase: 7, phaseName: 'Advanced Agent' },
-      26: { name: 'Tree of Thoughts',           track: 'Reasoning / Search',     phase: 7, phaseName: 'Advanced Agent' },
-      27: { name: 'MRKL Systems',               track: 'Agent Architecture',     phase: 7, phaseName: 'Advanced Agent' },
-      28: { name: 'Gorilla',                    track: 'Tool Use Advanced',      phase: 7, phaseName: 'Advanced Agent' },
-      29: { name: 'Voyager 🏆',                 track: 'Embodied / Graduation',  phase: 7, phaseName: 'Advanced Agent' },
+      1:  { name: 'Chain-of-Thought',          track: 'Prompting / Reasoning',  phase: 1, phaseName: 'Form Building' },
+      2:  { name: 'ReAct',                     track: 'Agent / Reasoning',      phase: 1, phaseName: 'Form Building' },
+      3:  { name: 'Toolformer',                track: 'Tool Use',               phase: 1, phaseName: 'Form Building' },
+      4:  { name: 'Phase 1 Review',            track: 'Integration',            phase: 1, phaseName: 'Form Building' },
+      5:  { name: 'InstructGPT / RLHF',        track: 'Alignment / RLHF',       phase: 2, phaseName: 'Assistant Training' },
+      6:  { name: 'Constitutional AI',         track: 'Alignment',              phase: 2, phaseName: 'Assistant Training' },
+      7:  { name: 'Reflexion',                 track: 'Agent / Learning',       phase: 2, phaseName: 'Assistant Training' },
+      8:  { name: 'Phase 2 Review',            track: 'Integration',            phase: 2, phaseName: 'Assistant Training' },
+      9:  { name: 'Attention Is All You Need', track: 'LLM Foundation',         phase: 3, phaseName: 'LLM Foundation' },
+      10: { name: 'GPT-3 / Few-shot',          track: 'LLM Foundation',         phase: 3, phaseName: 'LLM Foundation' },
+      11: { name: 'Scaling Laws',              track: 'Scaling',                phase: 3, phaseName: 'LLM Foundation' },
+      12: { name: 'Chinchilla',                track: 'Scaling / Data',         phase: 3, phaseName: 'LLM Foundation' },
+      13: { name: 'RAG',                       track: 'RAG',                    phase: 4, phaseName: 'Memory & Synthesis' },
+      14: { name: 'MemGPT',                    track: 'Memory',                 phase: 4, phaseName: 'Memory & Synthesis' },
+      15: { name: 'Tree of Thoughts',          track: 'Reasoning / Search',     phase: 4, phaseName: 'Memory & Synthesis' },
+      16: { name: 'Final Synthesis 🏆',        track: 'Graduation',             phase: 4, phaseName: 'Memory & Synthesis' },
     };
 
     /* ============================================================
@@ -726,7 +847,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
       }
       // 본 프로그램 종료 후
       if (today > pEnd) {
-        return { phase: 'completed', totalDays: 203 };
+        return { phase: 'completed', totalDays: 112 };
       }
       // 본 프로그램 진행 중
       const daysSinceStart = dayDiff(pStart, today);
@@ -742,7 +863,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
         dayInWeek,
         isWeekend,
         programDay,
-        programTotal: 203,
+        programTotal: 112,
         paperId: WEEK_TO_PAPER_ID[weekNum],
         weekMeta: WEEK_META[weekNum],
         task,
@@ -812,6 +933,45 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
         if (k >= start && k <= end) done++;
       });
       return { done, total: totalDays };
+    }
+
+    /* ============================================================
+       PERSONAL STUDY NOTES — localStorage 기반
+       ============================================================ */
+    const NOTES_KEY = 'papergym:study-notes';
+
+    function getAllNotes() {
+      try { return JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); }
+      catch { return {}; }
+    }
+    function saveAllNotes(notes) {
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    }
+    function getNoteForDate(dateStr) {
+      const all = getAllNotes();
+      return all[dateStr] || null;
+    }
+    function saveNoteForDate(dateStr, payload) {
+      const all = getAllNotes();
+      all[dateStr] = { ...payload, updatedAt: new Date().toISOString() };
+      saveAllNotes(all);
+    }
+    function clearNoteForDate(dateStr) {
+      const all = getAllNotes();
+      delete all[dateStr];
+      saveAllNotes(all);
+    }
+
+    function getDayTypeKey(state) {
+      if (!state) return 'weekend';
+      if (state.phase === 'main') {
+        return state.dayInWeek === 'weekend' ? 'weekend' : state.dayInWeek;
+      }
+      if (state.phase === 'warmup') return 'warmup';
+      if (state.phase === 'rest-before') return 'rest';
+      if (state.phase === 'pre') return 'pre';
+      if (state.phase === 'completed') return 'completed';
+      return 'weekend';
     }
 
     async function loadCuratedData() {
@@ -948,7 +1108,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
     }
 
     /* ============================================================
-       v3 RENDER — 오늘 / 이번 주 6 슬롯 / 스트릭 / 29주 Phase
+       v3 RENDER — 오늘 / 이번 주 6 슬롯 / 스트릭 / 16주 Phase
        ============================================================ */
     let CURRENT_VIEW_DATE = null;       // 현재 보고 있는 일자 (오늘 or 회복 클릭한 과거 일)
     let CURRENT_VIEW_STATE = null;      // getProgramStateForDate 결과
@@ -962,6 +1122,9 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
       renderWeekSlots();
       renderStreakWidgets();
       renderPhaseProgress();
+      renderStudyMaterial();
+      renderStudyTip();
+      renderDailyNote();
     }
 
     function renderTodayHero() {
@@ -982,7 +1145,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
 
       if (s.phase === 'pre') {
         emojiEl.textContent = '🗓️';
-        phaseLabel.textContent = `PaperGym 29주 · 시작 전`;
+        phaseLabel.textContent = `PaperGym 16주 · 시작 전`;
         titleEl.textContent = `프로그램 시작 D-${s.daysUntilMain}`;
         taskEl.textContent = `웜업은 ${PROGRAM_CONFIG.warmup.start} (D-${s.daysUntilWarmup})부터, 본 프로그램은 ${PROGRAM_CONFIG.main.start}부터. 그 동안 데모 점프로 미리 체험해보세요.`;
         paperLineEl.textContent = '';
@@ -1000,13 +1163,13 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
         emojiEl.textContent = '☕';
         phaseLabel.textContent = `웜업 종료 · 본 프로그램 D-${s.daysUntilMain}`;
         titleEl.textContent = '휴식 — 내일 본 프로그램 시작';
-        taskEl.textContent = '내일 6/1 (월) Day 1 시작. 오늘은 알람 확인 + Day 1 처방전 미리 보기.';
+        taskEl.textContent = '내일 6/1 (월) Day 1 시작. 오늘은 알람 확인 + Day 1 자료 미리 보기.';
         paperLineEl.textContent = '';
         completeBtn.disabled = false;
-        prescriptionBtn.disabled = false;
+        prescriptionBtn.disabled = true;
       } else if (s.phase === 'completed') {
         emojiEl.textContent = '🏆';
-        phaseLabel.textContent = '29주 완주';
+        phaseLabel.textContent = '16주 완주';
         titleEl.textContent = '프로그램 완주!';
         taskEl.textContent = '6개월 182일을 다 했다면 — 이제 본인의 weekly update 패턴으로 계속.';
         paperLineEl.textContent = '';
@@ -1015,7 +1178,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
       } else if (s.phase === 'main') {
         emojiEl.textContent = s.task.emoji;
         const meta = s.weekMeta;
-        phaseLabel.textContent = `Week ${s.weekNum}/26 · Day ${s.programDay}/203 · Phase ${meta.phase} ${meta.phaseName}`;
+        phaseLabel.textContent = `Week ${s.weekNum}/16 · Day ${s.programDay}/112 · Phase ${meta.phase} ${meta.phaseName}`;
         titleEl.textContent = `${s.task.label} · ${s.task.dayName}요일`;
         taskEl.textContent = s.task.task + (s.task.optional ? ' (선택)' : '');
         const paper = s.paperId ? PAPER_CORPUS?.core_papers?.find(p => p.id === s.paperId) : null;
@@ -1025,7 +1188,8 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
           paperLineEl.innerHTML = `📄 Week ${s.weekNum}: ${escapeHtml(meta.name)} (논문 큐레이션 준비 중) · ${s.task.duration}분`;
         }
         completeBtn.disabled = false;
-        prescriptionBtn.disabled = !s.paperId;
+        // 학습 가이드는 main phase에서 항상 사용 가능 (review week도 dayGuidance + tip + 노트 폼 채워짐)
+        prescriptionBtn.disabled = false;
       }
 
       // 완료 버튼 라벨
@@ -1127,7 +1291,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
     function renderPhaseProgress() {
       const today = getEffectiveToday();
       const phases = {};
-      for (let w = 1; w <= 26; w++) {
+      for (let w = 1; w <= 16; w++) {
         const meta = WEEK_META[w];
         if (!phases[meta.phase]) {
           phases[meta.phase] = { name: meta.phaseName, weeks: [], complete: 0, total: 0 };
@@ -1177,6 +1341,347 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
           refreshAll();
         });
       });
+    }
+
+    /* ============================================================
+       DAILY STUDY DASHBOARD — Material / Tip / Note
+       ============================================================ */
+    function dayGuidanceFor(s) {
+      if (!s) return '';
+      if (s.dayInWeek === 1)         return '오늘은 Abstract + Introduction + Figure 1만 보세요.';
+      if (s.dayInWeek === 2)         return '오늘은 핵심 Section/Table을 보고 무엇이 달라졌는지에 집중하세요.';
+      if (s.dayInWeek === 3)         return '오늘은 내 말로 5문장 요약 + 용어 5개 + 질문 1개를 만듭니다.';
+      if (s.dayInWeek === 4)         return '오늘은 지정 보강 자료 1개를 읽고 이번 주 논문과 연결합니다.';
+      if (s.dayInWeek === 5)         return '오늘은 팀에 공유할 노트와 비전문가 설명을 정리합니다.';
+      if (s.dayInWeek === 'weekend') return '오늘은 회복/복습입니다. 이번 주 가장 인상 깊었던 한 줄을 다시 보세요.';
+      return '';
+    }
+
+    function renderStudyMaterial() {
+      const s = CURRENT_VIEW_STATE;
+      const body = document.getElementById('study-material-body');
+      const dayLabel = document.getElementById('study-material-day-label');
+      if (!body || !dayLabel) return;
+      if (!s) { body.innerHTML = ''; dayLabel.textContent = ''; return; }
+
+      if (s.phase !== 'main') {
+        dayLabel.textContent = s.phase === 'warmup' ? '웜업'
+          : s.phase === 'rest-before' ? '본 프로그램 시작 전'
+          : s.phase === 'completed' ? '완주'
+          : '시작 전';
+        const msg = s.phase === 'pre'         ? '본 프로그램(6/1)부터 매일 자료가 표시됩니다.'
+                  : s.phase === 'warmup'      ? '웜업 기간입니다. PaperGym 사용법과 자기 페이스를 맞추세요.'
+                  : s.phase === 'rest-before' ? '내일 Day 1 자료가 표시됩니다.'
+                  : '16주 프로그램이 끝났습니다. 새 AI 업데이트를 13편 지도 위에서 분류해보세요.';
+        body.innerHTML = `<div class="text-stone-600">${escapeHtml(msg)}</div>`;
+        return;
+      }
+
+      const meta = s.weekMeta || {};
+      const paper = s.paperId && PAPER_CORPUS ? PAPER_CORPUS.core_papers?.find(p => p.id === s.paperId) : null;
+      const sup = WEEK_SUPPLEMENT[s.weekNum] || null;
+      const isDay4 = s.dayInWeek === 4;
+      const isDay5 = s.dayInWeek === 5;
+      const isWeekend = s.dayInWeek === 'weekend';
+      // 풀 큐레이션 패키지 — paper meta + reading_sections + guide_questions + key_terms + korean_abstract + study_hook
+      const p = s.paperId ? buildPrescriptionForWeek(s.weekNum) : null;
+
+      dayLabel.textContent = `Week ${s.weekNum} · ${s.task?.label || ''} (${s.task?.dayName || ''})`;
+
+      const coreTitle = paper?.short_title || meta.name || '논문 큐레이션 준비 중';
+      const coreTrack = paper?.track || meta.track || '';
+      const coreUrl = paper?.arxiv_abs || p?.paper?.url || '';
+      const corePdf = p?.paper?.pdf_url || '';
+      const dayGuidance = dayGuidanceFor(s);
+
+      // Day 1~3은 깊이 읽기 단계 — 가이드 질문/읽을 위치까지 펼쳐 보여줌
+      const wantsDeepRead = (s.dayInWeek === 1 || s.dayInWeek === 2 || s.dayInWeek === 3);
+
+      const hookHtml = p?.study_hook ? `
+        <div class="bg-rose-50 border-l-4 border-rose-400 p-3 rounded">
+          <div class="text-xs uppercase tracking-wider text-rose-700 font-bold mb-1">💡 왜 이 논문을 읽나</div>
+          <div class="space-y-1 text-sm text-stone-800">
+            ${p.study_hook.problem    ? `<div><strong class="text-rose-700">문제 ›</strong> ${escapeHtml(p.study_hook.problem)}</div>`     : ''}
+            ${p.study_hook.core_idea  ? `<div><strong class="text-rose-700">핵심 아이디어 ›</strong> ${escapeHtml(p.study_hook.core_idea)}</div>` : ''}
+            ${p.study_hook.why_read   ? `<div><strong class="text-rose-700">우리가 읽는 이유 ›</strong> ${escapeHtml(p.study_hook.why_read)}</div>` : ''}
+          </div>
+        </div>` : '';
+
+      const sectionsHtml = (wantsDeepRead && p?.reading_sections?.length) ? `
+        <div>
+          <div class="text-xs uppercase tracking-wider text-stone-500 font-bold mb-1">📍 오늘 읽을 영역</div>
+          <ul class="list-disc pl-5 text-sm text-stone-700 space-y-0.5">
+            ${p.reading_sections.map(sec => `<li>${escapeHtml(sec)}</li>`).join('')}
+          </ul>
+        </div>` : '';
+
+      const questionsHtml = (wantsDeepRead && p?.guide_questions?.length) ? `
+        <div>
+          <div class="text-xs uppercase tracking-wider text-stone-500 font-bold mb-1">🎯 읽으면서 답할 질문</div>
+          <ol class="list-decimal pl-5 text-sm text-stone-700 space-y-1.5">
+            ${p.guide_questions.map(q => {
+              const text  = typeof q === 'string' ? q : (q.q || '');
+              const where = typeof q === 'object' ? (q.where || '') : '';
+              return `<li>
+                <div>${escapeHtml(text)}</div>
+                ${where ? `<div class="text-[11px] text-stone-500 font-mono mt-0.5">${escapeHtml(where)}</div>` : ''}
+              </li>`;
+            }).join('')}
+          </ol>
+        </div>` : '';
+
+      const termsHtml = (p?.key_terms?.length) ? `
+        <details class="border border-stone-200 rounded">
+          <summary class="cursor-pointer text-xs uppercase tracking-wider text-stone-500 font-bold p-3 hover:bg-stone-50">🔑 핵심 용어집 (영-한) · ${p.key_terms.length}개</summary>
+          <div class="px-3 pb-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-sm">
+            ${p.key_terms.map(t => `<div class="bg-stone-50 border border-stone-200 rounded px-2 py-1.5">
+              <span class="font-mono font-bold text-stone-900">${escapeHtml(t.en || '')}</span>
+              <span class="text-stone-400"> → </span>
+              <span class="text-stone-700">${escapeHtml(t.ko || '')}</span>
+            </div>`).join('')}
+          </div>
+        </details>` : '';
+
+      const abstractHtml = p?.korean_abstract ? `
+        <details class="border border-stone-200 rounded">
+          <summary class="cursor-pointer text-xs uppercase tracking-wider text-stone-500 font-bold p-3 hover:bg-stone-50">📖 한국어 학습용 초록</summary>
+          <div class="px-3 pb-3 text-sm text-stone-700 leading-relaxed">${escapeHtml(p.korean_abstract)}</div>
+          <div class="px-3 pb-3 text-[10px] text-stone-400">학습 보조용 · 공식 X · 정확한 표현은 영어 원문 참조</div>
+        </details>` : '';
+
+      const supplementBlock = (isDay4 && sup) ? `
+        <div class="p-3 rounded-lg bg-amber-50 border border-amber-300">
+          <div class="text-xs uppercase tracking-wider text-amber-700 font-bold mb-1">📚 오늘의 지정 보강 자료</div>
+          <div class="font-bold text-stone-900">${escapeHtml(sup.title)}</div>
+          <div class="text-xs text-stone-700 mt-1">${escapeHtml(sup.note)}</div>
+        </div>` : '';
+
+      body.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="text-3xl shrink-0">📄</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs uppercase tracking-wider text-stone-500 font-bold">이번 주 핵심 논문</div>
+              <div class="font-black text-lg text-stone-900 leading-snug">${escapeHtml(coreTitle)}</div>
+              ${coreTrack ? `<div class="text-xs text-stone-500 mt-0.5">${escapeHtml(coreTrack)}</div>` : ''}
+              <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                ${coreUrl ? `<a href="${escapeHtml(coreUrl)}" target="_blank" rel="noopener" class="underline text-stone-700 hover:text-stone-900">📄 Abstract</a>` : ''}
+                ${corePdf ? `<a href="${escapeHtml(corePdf)}" target="_blank" rel="noopener" class="underline text-stone-700 hover:text-stone-900">📥 PDF</a>` : ''}
+              </div>
+            </div>
+          </div>
+
+          ${dayGuidance ? `<div class="bg-stone-50 border-l-4 border-stone-700 p-3 rounded">
+            <div class="text-xs uppercase tracking-wider text-stone-500 font-bold mb-1">🎯 오늘 할 일</div>
+            <div class="text-sm text-stone-800">${escapeHtml(dayGuidance)}</div>
+          </div>` : ''}
+
+          ${hookHtml}
+          ${supplementBlock}
+          ${sectionsHtml}
+          ${questionsHtml}
+          ${termsHtml}
+          ${abstractHtml}
+        </div>
+      `;
+    }
+
+    function renderStudyTip() {
+      const tipEl = document.getElementById('study-tip-body');
+      if (!tipEl) return;
+      const key = getDayTypeKey(CURRENT_VIEW_STATE);
+      tipEl.textContent = STUDY_TIPS[key] || STUDY_TIPS.weekend;
+    }
+
+    function renderDailyNote() {
+      const s = CURRENT_VIEW_STATE;
+      const date = CURRENT_VIEW_DATE;
+      const body = document.getElementById('daily-note-body');
+      const statusEl = document.getElementById('daily-note-status');
+      if (!body || !statusEl) return;
+      if (!s || !date) { body.innerHTML = ''; statusEl.textContent = ''; return; }
+
+      const key = getDayTypeKey(s);
+      const fields = NOTE_FIELDS[key];
+      if (!fields) {
+        body.innerHTML = `<div class="text-sm text-stone-500">오늘은 노트 폼이 없습니다.</div>`;
+        statusEl.textContent = '';
+        return;
+      }
+
+      const saved = getNoteForDate(date);
+      const savedFields = saved?.fields || {};
+
+      body.innerHTML = fields.map(f => `
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1">${escapeHtml(f.label)}</label>
+          <textarea
+            data-note-field="${escapeHtml(f.id)}"
+            rows="${f.rows}"
+            placeholder="${escapeHtml(f.placeholder)}"
+            class="w-full text-sm border border-stone-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-y"
+          >${escapeHtml(savedFields[f.id] || '')}</textarea>
+        </div>
+      `).join('');
+
+      if (saved?.updatedAt) {
+        const when = new Date(saved.updatedAt).toLocaleString('ko-KR', { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit' });
+        statusEl.textContent = `최근 저장: ${when}`;
+      } else {
+        statusEl.textContent = '저장 전';
+      }
+    }
+
+    function collectNoteFields() {
+      const out = {};
+      document.querySelectorAll('#daily-note-body [data-note-field]').forEach(el => {
+        out[el.dataset.noteField] = el.value.trim();
+      });
+      return out;
+    }
+
+    function handleNoteSave() {
+      const s = CURRENT_VIEW_STATE;
+      const date = CURRENT_VIEW_DATE;
+      if (!s || !date) { toast('오늘 정보를 불러올 수 없습니다.'); return; }
+      const key = getDayTypeKey(s);
+      const fields = collectNoteFields();
+      saveNoteForDate(date, {
+        date,
+        dayTypeKey: key,
+        weekNum: s.weekNum || null,
+        paperId: s.paperId || null,
+        fields,
+      });
+      toast('💾 노트 저장 완료');
+      renderDailyNote();
+    }
+
+    function handleNoteClear() {
+      const date = CURRENT_VIEW_DATE;
+      if (!date) return;
+      if (!confirm(`${date} 노트를 초기화할까요?`)) return;
+      clearNoteForDate(date);
+      toast('🗑️ 노트 초기화');
+      renderDailyNote();
+    }
+
+    /* ============================================================
+       STUDY GUIDE — Modal preview + A4 print (replaces 30-min prescription)
+       ============================================================ */
+    function buildStudyGuideContext() {
+      const s = CURRENT_VIEW_STATE;
+      const date = CURRENT_VIEW_DATE;
+      const meta = s?.weekMeta || {};
+      const paper = s?.paperId && PAPER_CORPUS ? PAPER_CORPUS.core_papers?.find(p => p.id === s.paperId) : null;
+      const sup = s?.weekNum ? (WEEK_SUPPLEMENT[s.weekNum] || null) : null;
+      const dayKey = getDayTypeKey(s);
+      return {
+        s, date, meta, paper, sup, dayKey,
+        tip: STUDY_TIPS[dayKey] || '',
+        fields: NOTE_FIELDS[dayKey] || [],
+        isDay4: s?.dayInWeek === 4,
+        dayGuidance: dayGuidanceFor(s),
+      };
+    }
+
+    function showStudyGuide() {
+      const ctx = buildStudyGuideContext();
+      const { s, paper, meta, sup, tip, fields, isDay4, dayGuidance } = ctx;
+      if (!s || s.phase !== 'main') {
+        toast('학습 가이드는 본 프로그램 진행 중에만 제공됩니다 (6/1 ~ 9/20).');
+        return;
+      }
+      document.getElementById('study-guide-title').textContent =
+        `Week ${s.weekNum} · ${s.task?.label || ''} (${s.task?.dayName || ''})`;
+
+      const fieldsHtml = fields.length === 0 ? '' : fields.map(f => {
+        const lineCount = Math.max(2, Math.min(f.rows, 5));
+        return `
+          <div class="mb-3">
+            <div class="text-sm font-bold text-stone-800">${escapeHtml(f.label)}</div>
+            ${Array.from({length: lineCount}).map(() => '<div class="border-b border-stone-300 h-6"></div>').join('')}
+          </div>`;
+      }).join('');
+
+      document.getElementById('study-guide-content').innerHTML = `
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded">
+          <div class="text-xs uppercase tracking-wider text-amber-700 font-bold">이번 주 핵심 논문</div>
+          <div class="font-black text-lg mt-0.5">${escapeHtml(paper?.short_title || meta.name || '논문 큐레이션 준비 중')}</div>
+          ${paper?.track ? `<div class="text-xs text-stone-600 mt-0.5">${escapeHtml(paper.track)}</div>` : ''}
+          ${paper?.arxiv_abs ? `<div class="text-xs text-stone-700 mt-1 break-all">${escapeHtml(paper.arxiv_abs)}</div>` : ''}
+        </div>
+        ${dayGuidance ? `
+          <div>
+            <div class="font-bold text-stone-900 mb-1">🎯 오늘 할 일</div>
+            <div class="text-stone-700">${escapeHtml(dayGuidance)}</div>
+          </div>` : ''}
+        ${tip ? `
+          <div class="bg-amber-100 border-l-4 border-amber-500 p-3 rounded">
+            <div class="text-xs uppercase tracking-wider text-amber-700 font-bold mb-1">💡 오늘의 공부 팁</div>
+            <div class="text-stone-800">${escapeHtml(tip)}</div>
+          </div>` : ''}
+        ${isDay4 && sup ? `
+          <div class="border-2 border-amber-300 bg-amber-50 p-3 rounded">
+            <div class="text-xs uppercase tracking-wider text-amber-700 font-bold mb-1">오늘의 지정 보강 자료</div>
+            <div class="font-bold">${escapeHtml(sup.title)}</div>
+            <div class="text-xs text-stone-700 mt-1">${escapeHtml(sup.note)}</div>
+          </div>` : ''}
+        ${fieldsHtml ? `
+          <div>
+            <div class="font-bold text-stone-900 mb-2">📝 종이 메모 가이드 (인쇄 후 손으로 채우기)</div>
+            ${fieldsHtml}
+          </div>` : ''}
+      `;
+      show('study-guide-modal');
+    }
+
+    function closeStudyGuide() { hide('study-guide-modal'); }
+
+    function printStudyGuide() {
+      const ctx = buildStudyGuideContext();
+      const { s, date, paper, meta, sup, tip, fields, isDay4, dayGuidance } = ctx;
+      const printEl = document.getElementById('prescription-print');
+      if (!printEl) { window.print(); return; }
+
+      const fieldsHtml = fields.map(f => {
+        const lineCount = Math.max(2, Math.min(f.rows, 5));
+        return `
+          <div style="margin-bottom: 12pt;">
+            <div style="font-size: 11pt; font-weight: bold;">${escapeHtml(f.label)}</div>
+            ${Array.from({length: lineCount}).map(() => '<div class="note-line"></div>').join('')}
+          </div>`;
+      }).join('');
+
+      printEl.innerHTML = `
+        <h1>🏋️ PaperGym — 오늘의 학습 가이드</h1>
+        <div class="meta">${escapeHtml(date || '')} · Week ${s?.weekNum || ''} · ${escapeHtml(s?.task?.label || '')} (${escapeHtml(s?.task?.dayName || '')})</div>
+
+        <h2>📄 이번 주 핵심 논문</h2>
+        <div style="font-size: 11pt; line-height: 1.5;">
+          <strong>${escapeHtml(paper?.short_title || meta.name || '')}</strong><br/>
+          ${paper?.track ? escapeHtml(paper.track) + '<br/>' : ''}
+          ${paper?.arxiv_abs ? escapeHtml(paper.arxiv_abs) : ''}
+        </div>
+
+        ${dayGuidance ? `<h2>🎯 오늘 할 일</h2><div style="font-size: 11pt;">${escapeHtml(dayGuidance)}</div>` : ''}
+
+        ${tip ? `<h2>💡 오늘의 공부 팁</h2><div style="font-size: 11pt;">${escapeHtml(tip)}</div>` : ''}
+
+        ${isDay4 && sup ? `
+          <h2>📚 오늘의 지정 보강 자료</h2>
+          <div style="font-size: 11pt;">
+            <strong>${escapeHtml(sup.title)}</strong><br/>
+            ${escapeHtml(sup.note)}
+          </div>` : ''}
+
+        ${fieldsHtml ? `<h2>📝 종이 노트 (손으로 채우세요)</h2>${fieldsHtml}` : ''}
+
+        <footer>
+          🏋️ 손글씨로 메모한 뒤, PaperGym으로 돌아와 노트 폼에 옮겨 저장하세요.
+        </footer>
+      `;
+      window.print();
     }
 
     function startCuratedFromCurrentWeek() {
@@ -1239,7 +1744,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
       23: "AI 위험과 한계를 체크리스트로 정리할 수 있습니다.",
       24: "이제 지도가 있습니다. 새로운 AI 업데이트가 어디에 꽂히는지 보입니다.",
       25: "마지막 자세 점검 — 한 편 더 듭니다.",
-      26: "🏆 29주 완주 — AI 뉴스는 더 이상 소음이 아니라 신호입니다.",
+      26: "🏆 16주 완주 — AI 뉴스는 더 이상 소음이 아니라 신호입니다.",
     };
 
     /* ============================================================
@@ -1393,7 +1898,7 @@ S3 금지: 채점 없이 바로 요약, 모호한 칭찬, Mermaid 없이 텍스�
               ${isMe ? '<span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">나</span>' : ''}
               ${s.todayDone ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">✓ 오늘 완료</span>' : ''}
             </div>
-            <div class="text-xs text-stone-600 mt-0.5">🔥 ${s.streak}일 · 📅 ${s.weekDone}/6 · 📈 ${s.overallDone}/203</div>
+            <div class="text-xs text-stone-600 mt-0.5">🔥 ${s.streak}일 · 📅 ${s.weekDone}/6 · 📈 ${s.overallDone}/112</div>
           </div>
           ${!isMe && !s.todayDone ? `<button data-cheer="${escapeHtml(s.user_name)}" class="cheer-btn text-xs bg-amber-100 hover:bg-amber-200 px-2 py-1 rounded font-semibold">👏 응원</button>` : ''}
         </div>`;
@@ -1676,7 +2181,14 @@ ${json}
       document.getElementById('copy-blog').addEventListener('click', copyBlog);
       // v3 — Today / Prescription / Demo Date
       document.getElementById('today-complete-btn').addEventListener('click', handleDayComplete);
-      document.getElementById('today-prescription-btn').addEventListener('click', startCuratedFromCurrentWeek);
+      document.getElementById('today-prescription-btn').addEventListener('click', showStudyGuide);
+      // Daily study dashboard — personal note save/clear
+      document.getElementById('daily-note-save').addEventListener('click', handleNoteSave);
+      document.getElementById('daily-note-clear').addEventListener('click', handleNoteClear);
+      // Study guide modal (replaces 30-min prescription on the dashboard)
+      document.getElementById('study-guide-close').addEventListener('click', closeStudyGuide);
+      document.getElementById('study-guide-done').addEventListener('click', closeStudyGuide);
+      document.getElementById('study-guide-print-btn').addEventListener('click', printStudyGuide);
       setupDemoDateHandlers();
 
       // v4 — Group (멀티유저)
@@ -1688,11 +2200,12 @@ ${json}
         startGroupPolling();
       }
 
-      // Curated data load (async, parallel to init UI)
-      const ok = await loadCuratedData();
-      if (ok) {
-        refreshAll();
-      }
+      // 1차: 큐레이션 fetch를 기다리지 않고 즉시 화면을 그린다 (PAPER_CORPUS 없어도 fallback OK)
+      refreshAll();
+
+      // 2차: 큐레이션 로드 완료되면 corpus 정보를 반영해 다시 그린다 (실패해도 1차 화면은 살아있음)
+      await loadCuratedData();
+      refreshAll();
     }
 
     /* ============================================================
@@ -2257,7 +2770,13 @@ While large language models (LLMs) have demonstrated impressive performance acro
 
     // Init
     setStage('S0');
-    init();
+    init().catch(err => {
+      console.error('[PaperGym] init failed:', err);
+      // 그래도 화면 한 번은 그려본다 (큐레이션 없이 fallback 표시)
+      try { refreshAll(); } catch (e) { console.error('[PaperGym] fallback refreshAll failed:', e); }
+    });
+    // 최종 안전망: init이 비정상 종료하더라도 매크로태스크에서 한 번 더 시도
+    setTimeout(() => { try { refreshAll(); } catch (e) { console.error('[PaperGym] safety refreshAll failed:', e); } }, 100);
   </script>
 </body>
 </html>
