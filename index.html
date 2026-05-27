@@ -216,7 +216,7 @@
         const body = document.getElementById('tab-body');
         if (key === 'ko') body.innerHTML = `<div class="whitespace-pre-wrap">${escapeHtml(today.translationKo)}</div>`;
         else if (key === 'figure') body.innerHTML = `
-          <img src="${today.figure.imagePath}" alt="figure" class="max-w-full mx-auto mb-3 border border-stone-200 rounded" onerror="this.style.display='none'">
+          <img src="${escapeHtml(today.figure.imagePath)}" alt="figure" class="max-w-full mx-auto mb-3 border border-stone-200 rounded" onerror="this.style.display='none'">
           <p class="text-stone-700"><b>${escapeHtml(today.figure.id)}</b> — ${escapeHtml(today.figure.captionKo)}</p>
         `;
         else if (key === 'glossary') body.innerHTML = `
