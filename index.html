@@ -247,6 +247,26 @@
         return;
       }
 
+      // 진도 vs 시간 불일치 — 본인 마지막 진도 확인 (spec §8.4)
+      let behindBanner = '';
+      if (me) {
+        try {
+          const { data: myProgress } = await supa.from('papergym_progress')
+            .select('week, day_index')
+            .eq('user_id', me.userId)
+            .order('week', { ascending: false })
+            .order('day_index', { ascending: false })
+            .limit(1);
+          if (myProgress && myProgress.length) {
+            const last = myProgress[0];
+            if (week - last.week >= 1 && last.day_index < 5) {
+              const nextDay = last.day_index + 1;
+              behindBanner = `<div class="bg-blue-50 border border-blue-200 rounded p-3 mb-4 text-sm text-blue-900">한 주 쉬어가도 괜찮아요. 오늘은 W${last.week} Day ${nextDay}부터요.</div>`;
+            }
+          }
+        } catch {}
+      }
+
       // 5탭 카드 렌더
       const visited = JSON.parse(localStorage.getItem(LS.tabsVisited) || '{}');
       const slotKey = `w${week}d${day}`;
@@ -255,6 +275,7 @@
       const tabKeys = ['ko','figure','glossary','analogy','question'];
 
       view.innerHTML = `
+        ${behindBanner}
         <div class="bg-white rounded-lg border border-stone-200 overflow-hidden">
           <div class="bg-stone-100 px-4 py-3 flex justify-between items-center text-sm text-stone-600">
             <span>📚 W${week} · Day ${day} · ${['월','화','수','목','금'][day-1]}</span>
