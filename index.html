@@ -181,6 +181,17 @@
         checkSaveEnabled();
       });
     });
+    document.getElementById('me-badge').addEventListener('click', () => {
+      if (me) {
+        document.getElementById('modal-name-input').value = me.name;
+        pickedEmoji = me.emoji;
+        document.querySelectorAll('.emoji-pick').forEach(b => b.classList.remove('bg-amber-100','border-amber-500'));
+        const cur = document.querySelector(`.emoji-pick[data-emoji="${me.emoji}"]`);
+        if (cur) cur.classList.add('bg-amber-100','border-amber-500');
+        checkSaveEnabled();
+      }
+      showNameModal();
+    });
     document.getElementById('modal-name-input').addEventListener('input', checkSaveEnabled);
     function checkSaveEnabled() {
       const name = document.getElementById('modal-name-input').value.trim();
@@ -188,7 +199,13 @@
     }
     document.getElementById('modal-save').addEventListener('click', async () => {
       const name = document.getElementById('modal-name-input').value.trim();
-      me = { name, emoji: pickedEmoji, userId: crypto.randomUUID(), joinedAt: new Date().toISOString() };
+      const isNew = !me;
+      me = {
+        name,
+        emoji: pickedEmoji,
+        userId: isNew ? crypto.randomUUID() : me.userId,
+        joinedAt: isNew ? new Date().toISOString() : me.joinedAt
+      };
       localStorage.setItem(LS.me, JSON.stringify(me));
       try {
         await dbUpsertMember();
@@ -488,7 +505,7 @@
           </div>
         ` : ''}
 
-        <h1 class="text-xl font-semibold mb-4">팀 ${mockMembers.length}명 · W${mockMembers.length ? mockMembers[0].week : '?'}</h1>
+        <h1 class="text-xl font-semibold mb-4">팀 ${mockMembers.length}명 · ${(mockMembers.length && mockMembers[0].week) ? 'W' + mockMembers[0].week : '시작 전'}</h1>
         <div class="space-y-2">
           ${mockMembers.map(m => {
             const isMe = me && m.userId === me.userId;
@@ -523,7 +540,7 @@
             btn.textContent = '✓';
             setTimeout(() => renderTeam(), 1500);
           } catch {
-            alert('응원 전송 실패. 잠시 후 다시 시도해주세요.');
+            showToast('⚠️ 응원 전송 실패 — 잠시 후 다시 시도해주세요');
           }
         });
       });
