@@ -81,6 +81,63 @@
       return { week, day: dayOfWeek + 1, status: 'in-progress' };
     }
 
+    // ===== Supabase wrappers =====
+    async function dbUpsertMember() {
+      if (!me) return;
+      await supa.from('papergym_members').upsert({
+        user_id: me.userId, name: me.name, emoji: me.emoji, joined_at: me.joinedAt
+      });
+    }
+    async function dbCompleteDay(week, day) {
+      if (!me) return;
+      await supa.from('papergym_progress').upsert({
+        user_id: me.userId, week, day_index: day, completed_at: new Date().toISOString()
+      });
+    }
+    async function dbSendCheer(toUserId, emoji, week) {
+      if (!me) return;
+      await supa.from('papergym_cheers').insert({
+        from_user: me.userId, to_user: toUserId, emoji, week, sent_at: new Date().toISOString()
+      });
+    }
+    async function dbFetchTeam() {
+      const [{ data: members }, { data: progress }, { data: cheers }] = await Promise.all([
+        supa.from('papergym_members').select('*'),
+        supa.from('papergym_progress').select('user_id, week, day_index'),
+        supa.from('papergym_cheers').select('to_user, emoji')
+      ]);
+      // 사용자별 최신 주차/Day + 받은 응원 집계
+      const byUser = {};
+      (members || []).forEach(m => { byUser[m.user_id] = { ...m, week: 0, day: 0, streak: 0, cheers: {} }; });
+      (progress || []).forEach(p => {
+        const u = byUser[p.user_id]; if (!u) return;
+        if (p.week > u.week || (p.week === u.week && p.day_index > u.day)) {
+          u.week = p.week; u.day = p.day_index;
+        }
+      });
+      (cheers || []).forEach(c => {
+        const u = byUser[c.to_user]; if (!u) return;
+        u.cheers[c.emoji] = (u.cheers[c.emoji] || 0) + 1;
+      });
+      // streak 계산: 연속된 progress 일수 (단순 — 진도 row 개수로 근사)
+      (progress || []).forEach(p => {
+        const u = byUser[p.user_id]; if (!u) return;
+        u.streak++;
+      });
+      return Object.values(byUser);
+    }
+    async function flushPending() {
+      const pending = JSON.parse(localStorage.getItem('papergym:pending') || '[]');
+      if (!pending.length) return;
+      const remaining = [];
+      for (const p of pending) {
+        try {
+          if (p.kind === 'complete') await dbCompleteDay(p.week, p.day);
+        } catch { remaining.push(p); }
+      }
+      localStorage.setItem('papergym:pending', JSON.stringify(remaining));
+    }
+
     // ===== Router =====
     function route() {
       const hash = location.hash || '#today';
@@ -127,7 +184,7 @@
       const name = document.getElementById('modal-name-input').value.trim();
       me = { name, emoji: pickedEmoji, userId: crypto.randomUUID(), joinedAt: new Date().toISOString() };
       localStorage.setItem(LS.me, JSON.stringify(me));
-      // Supabase insert는 Task 6에서 추가
+      await dbUpsertMember();
       document.getElementById('me-badge').textContent = pickedEmoji;
       hideNameModal();
     });
@@ -279,10 +336,19 @@
       localStorage.setItem(LS.tabsVisited, JSON.stringify(visited));
       document.querySelector('[data-tab="ko"]').textContent = '✓ 한국어';
 
-      // 완료 버튼 — Task 6 (Supabase) 에서 실제 sync 추가
+      // 완료 버튼 — Supabase sync + offline queue
       document.getElementById('complete-btn').disabled = !tabKeys.every(k => v[k]);
       document.getElementById('complete-btn').addEventListener('click', async () => {
-        alert('Supabase sync는 Task 6에서 wire-up 합니다');
+        try {
+          await dbCompleteDay(week, day);
+          showToast('✓ 완료! 🔥 응원이 도착할 거예요');
+        } catch (e) {
+          // 오프라인 큐
+          const pending = JSON.parse(localStorage.getItem('papergym:pending') || '[]');
+          pending.push({ kind: 'complete', week, day, at: Date.now() });
+          localStorage.setItem('papergym:pending', JSON.stringify(pending));
+          showToast('⚠️ 오프라인 — 잠시 후 자동 동기화');
+        }
       });
     }
 
@@ -309,6 +375,14 @@
 
     function escapeHtml(s) {
       return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-4 py-2 rounded-lg text-sm z-30';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
     }
 
     // ===== #papers render =====
@@ -355,13 +429,19 @@
     // ===== #team render =====
     async function renderTeam() {
       const view = document.getElementById('view-team');
-      // Task 6에서 진짜 Supabase fetch로 교체. 지금은 mock.
-      const mockMembers = [
-        { userId: 'u1', name: 'Bong', emoji: '🦊', week: 3, day: 3, streak: 12, cheers: { '🔥': 2 } },
-        { userId: 'u2', name: 'HS', emoji: '🐻', week: 3, day: 1, streak: 7, cheers: {} },
-        { userId: 'u3', name: 'Teo', emoji: '🐯', week: 3, day: 2, streak: 9, cheers: { '💪': 1 } },
-        me ? { userId: me.userId, name: me.name, emoji: me.emoji, week: 3, day: 2, streak: 14, cheers: { '🔥': 3, '💪': 1 } } : null
-      ].filter(Boolean);
+      let members = [];
+      try { members = await dbFetchTeam(); } catch {
+        view.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded p-4 text-amber-900">팀 정보 잠시 후 다시 시도</div>`;
+        return;
+      }
+      // 본인이 빠져있으면 추가 (DB에 아직 없거나 끊김 대비)
+      if (me && !members.find(m => m.user_id === me.userId)) {
+        members.push({ user_id: me.userId, name: me.name, emoji: me.emoji, week: 0, day: 0, streak: 0, cheers: {} });
+      }
+      const mockMembers = members.map(m => ({
+        userId: m.user_id, name: m.name, emoji: m.emoji,
+        week: m.week, day: m.day, streak: m.streak, cheers: m.cheers
+      }));
 
       const emojis = ['🔥','💪','👏','❤️'];
       const today = new Date();
@@ -371,11 +451,11 @@
         ${isSunday ? `
           <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
             <p class="font-semibold text-amber-900 mb-1">🗓️ 일요일 — 이번 주 요약</p>
-            <p class="text-sm text-amber-800">이번 주 누가 며칠 완주, 다음 주 논문 프리뷰 (실데이터 wire-up은 Task 6)</p>
+            <p class="text-sm text-amber-800">이번 주 누가 며칠 완주, 다음 주 논문 프리뷰</p>
           </div>
         ` : ''}
 
-        <h1 class="text-xl font-semibold mb-4">팀 4명 · W${mockMembers[0].week}</h1>
+        <h1 class="text-xl font-semibold mb-4">팀 ${mockMembers.length}명 · W${mockMembers.length ? mockMembers[0].week : '?'}</h1>
         <div class="space-y-2">
           ${mockMembers.map(m => {
             const isMe = me && m.userId === me.userId;
@@ -402,8 +482,16 @@
       `;
 
       document.querySelectorAll('.cheer-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          alert(`응원 ${btn.dataset.emoji} → 사용자 ${btn.dataset.to} (Supabase wire-up은 Task 6)`);
+        btn.addEventListener('click', async () => {
+          const week = curriculum ? getCurrentWeekAndDay().week : 1;
+          try {
+            await dbSendCheer(btn.dataset.to, btn.dataset.emoji, week);
+            btn.classList.add('bg-green-100','border-green-500');
+            btn.textContent = '✓';
+            setTimeout(() => renderTeam(), 1500);
+          } catch {
+            alert('응원 전송 실패. 잠시 후 다시 시도해주세요.');
+          }
         });
       });
     }
@@ -423,6 +511,8 @@
           </div>`;
         return;
       }
+      // 오프라인 큐 retry
+      if (me) await flushPending();
       if (!me) {
         showNameModal();
       } else {
