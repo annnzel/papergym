@@ -96,6 +96,7 @@
     }
     async function dbSendCheer(toUserId, emoji, week) {
       if (!me) return;
+      // Spec accepts duplicate cheers (UI prevents most via ✓ feedback). No dedup constraint.
       await supa.from('papergym_cheers').insert({
         from_user: me.userId, to_user: toUserId, emoji, week, sent_at: new Date().toISOString()
       });
@@ -119,7 +120,7 @@
         const u = byUser[c.to_user]; if (!u) return;
         u.cheers[c.emoji] = (u.cheers[c.emoji] || 0) + 1;
       });
-      // streak 계산: 연속된 progress 일수 (단순 — 진도 row 개수로 근사)
+      // Streak = total progress row count (spec shortcut, not consecutive days).
       (progress || []).forEach(p => {
         const u = byUser[p.user_id]; if (!u) return;
         u.streak++;
@@ -131,6 +132,11 @@
       if (!pending.length) return;
       const remaining = [];
       for (const p of pending) {
+        p.retries = (p.retries || 0) + 1;
+        if (p.retries > 3) {
+          console.warn('Dropping pending after 3 retries:', p);
+          continue;
+        }
         try {
           if (p.kind === 'complete') await dbCompleteDay(p.week, p.day);
         } catch { remaining.push(p); }
@@ -184,7 +190,12 @@
       const name = document.getElementById('modal-name-input').value.trim();
       me = { name, emoji: pickedEmoji, userId: crypto.randomUUID(), joinedAt: new Date().toISOString() };
       localStorage.setItem(LS.me, JSON.stringify(me));
-      await dbUpsertMember();
+      try {
+        await dbUpsertMember();
+      } catch (e) {
+        console.error('Failed to save profile to DB:', e);
+        showToast('⚠️ 프로필 저장 실패 — 잠시 후 자동 동기화');
+      }
       document.getElementById('me-badge').textContent = pickedEmoji;
       hideNameModal();
     });
@@ -438,6 +449,7 @@
       if (me && !members.find(m => m.user_id === me.userId)) {
         members.push({ user_id: me.userId, name: me.name, emoji: me.emoji, week: 0, day: 0, streak: 0, cheers: {} });
       }
+      // "mockMembers" is now real DB data, mapped to template shape. Variable name preserved to avoid HTML template churn.
       const mockMembers = members.map(m => ({
         userId: m.user_id, name: m.name, emoji: m.emoji,
         week: m.week, day: m.day, streak: m.streak, cheers: m.cheers
