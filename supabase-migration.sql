@@ -18,3 +18,7 @@ ALTER TABLE papergym_progress
 -- 3. day_index 범위 체크 (1~7)
 ALTER TABLE papergym_progress
   ADD CONSTRAINT papergym_progress_day_range CHECK (day_index BETWEEN 1 AND 7);
+
+-- 4. answer 칼럼 추가 (질문 탭 답변 공유 — spec §11 변경, 본인 완료 후 동료에게 노출)
+ALTER TABLE papergym_progress
+  ADD COLUMN IF NOT EXISTS answer text;
