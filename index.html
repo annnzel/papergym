@@ -303,12 +303,13 @@
       const weekInfo = curriculum.weeks.find(w => w.n === week);
       if (!weekInfo) return;
 
-      if (weekInfo.type === 'review' || day === 6 || day === 7) {
+      // Review 주차 또는 일요일 = paper 없이 안내 카드만
+      if (weekInfo.type === 'review' || day === 7) {
         view.innerHTML = navBar + renderWeekendOrReview(weekInfo, day);
         return;
       }
 
-      // 평일 5일 학습 카드 (day 1~5)
+      // day 1~5 (평일 학습) OR day === 6 (토요일 퀴즈) — paper fetch 공통
       let paper;
       try {
         paper = await fetch(`data/papers/${weekInfo.paperId}.json`).then(r => {
@@ -322,9 +323,33 @@
         return;
       }
 
+      // 이번 주 논문 박스 — 평일 카드/토요일 퀴즈 위에 공통 노출
+      const phaseBorderTop = {
+        amber: 'border-l-amber-400', rose: 'border-l-rose-400',
+        emerald: 'border-l-emerald-400', violet: 'border-l-violet-400'
+      }[weekInfo.phaseColor] || 'border-l-stone-400';
+      const paperBoxTop = `
+        <div class="bg-white border border-stone-200 border-l-4 ${phaseBorderTop} rounded-lg p-4 mb-4">
+          <div class="flex items-center justify-between mb-2 text-xs">
+            <span class="font-semibold text-stone-500">📚 W${week} · 이번 주의 논문</span>
+            <span class="tracking-widest text-stone-400">${[1,2,3,4,5].map(n => n <= Math.min(day,5) ? '●' : '○').join(' ')}</span>
+          </div>
+          <h2 class="font-semibold text-base mb-1">${escapeHtml(paper.koreanTitle)}</h2>
+          <p class="text-xs text-stone-500 mb-2">${escapeHtml(paper.title)}</p>
+          <p class="text-sm text-stone-700">${escapeHtml(paper.hook)}</p>
+        </div>
+      `;
+
+      // 토요일 퀴즈 분기
+      if (day === 6) {
+        view.innerHTML = navBar + paperBoxTop + renderSaturdayQuiz(paper);
+        setupQuizInteractions(paper.saturdayQuiz || []);
+        return;
+      }
+
       const today = paper.days.find(d => d.n === day);
       if (!today) {
-        view.innerHTML = navBar + `<p class="text-stone-500">오늘 슬롯 데이터가 비어있어요</p>`;
+        view.innerHTML = navBar + paperBoxTop + `<p class="text-stone-500">오늘 슬롯 데이터가 비어있어요</p>`;
         return;
       }
 
@@ -355,26 +380,9 @@
       const tabs = ['한국어','그림','용어','비유','질문'];
       const tabKeys = ['ko','figure','glossary','analogy','question'];
 
-      // 이번 주 논문 컨텍스트 박스 — phase border 색상 + W{n} 진행 도트
-      const phaseBorder = {
-        amber: 'border-l-amber-400', rose: 'border-l-rose-400',
-        emerald: 'border-l-emerald-400', violet: 'border-l-violet-400'
-      }[weekInfo.phaseColor] || 'border-l-stone-400';
-      const paperBox = `
-        <div class="bg-white border border-stone-200 border-l-4 ${phaseBorder} rounded-lg p-4 mb-4">
-          <div class="flex items-center justify-between mb-2 text-xs">
-            <span class="font-semibold text-stone-500">📚 W${week} · 이번 주의 논문</span>
-            <span class="tracking-widest text-stone-400">${[1,2,3,4,5].map(n => n <= day ? '●' : '○').join(' ')}</span>
-          </div>
-          <h2 class="font-semibold text-base mb-1">${escapeHtml(paper.koreanTitle)}</h2>
-          <p class="text-xs text-stone-500 mb-2">${escapeHtml(paper.title)}</p>
-          <p class="text-sm text-stone-700">${escapeHtml(paper.hook)}</p>
-        </div>
-      `;
-
       view.innerHTML = `
         ${navBar}
-        ${paperBox}
+        ${paperBoxTop}
         ${behindBanner}
         <div class="bg-white rounded-lg border border-stone-200 overflow-hidden">
           <div class="bg-stone-100 px-4 py-3 flex justify-between items-center text-sm text-stone-600">
@@ -524,18 +532,84 @@
           <p class="text-sm text-stone-600">이번 주는 ${weekInfo.reviewOf.join(' · ')} 통합 정리. 따로 일일 슬롯 없이 자유 복습.</p>
         </div>`;
       }
-      if (day === 6) {
-        return `<div class="bg-stone-100 rounded-lg p-6">
-          <p class="font-semibold mb-2">📝 토요일 — 한 주 미니 퀴즈</p>
-          <p class="text-sm text-stone-600">퀴즈 UI는 다음 sprint에서. 지금은 한 주 정리 노트 시간으로.</p>
-        </div>`;
-      }
       if (day === 7) {
         return `<div class="bg-stone-100 rounded-lg p-6">
           <p class="font-semibold mb-2">👥 일요일 — 팀 응원 + 다음 주 프리뷰</p>
           <p class="text-sm text-stone-600"><a href="#team" class="underline">팀 페이지</a>에서 응원 보내기</p>
         </div>`;
       }
+    }
+
+    // ===== 토요일 미니 퀴즈 =====
+    function renderSaturdayQuiz(paper) {
+      const quiz = paper.saturdayQuiz || [];
+      if (quiz.length === 0) {
+        return `<div class="bg-stone-100 rounded-lg p-6">
+          <p class="font-semibold mb-2">📝 토요일</p>
+          <p class="text-sm text-stone-600">이번 주 퀴즈가 아직 준비 안 됐어요. 한 주 정리 노트 시간으로.</p>
+        </div>`;
+      }
+      return `
+        <div class="bg-white rounded-lg border border-stone-200 p-4">
+          <h2 class="font-semibold text-base mb-1">📝 토요일 미니 퀴즈</h2>
+          <p class="text-xs text-stone-500 mb-4">한 주 핵심 ${quiz.length}문제 · 답 클릭 → 즉시 정답/해설</p>
+          <div class="space-y-4">
+            ${quiz.map((q, qi) => `
+              <div data-q-block="${qi}" class="border border-stone-200 rounded-lg p-3">
+                <p class="font-medium text-sm mb-3">Q${qi+1}. ${escapeHtml(q.q)}</p>
+                <div class="space-y-1">
+                  ${q.options.map((opt, oi) => `
+                    <button data-qi="${qi}" data-oi="${oi}" data-correct="${q.correct}" class="quiz-opt w-full text-left text-sm border border-stone-200 rounded px-3 py-2 hover:bg-stone-50">
+                      ${escapeHtml(opt)}
+                    </button>
+                  `).join('')}
+                </div>
+                <div class="quiz-explain hidden mt-3 text-xs p-2 rounded">${escapeHtml(q.explain)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div id="quiz-score" class="mt-4 text-center text-sm font-semibold text-stone-500">0 / ${quiz.length}</div>
+        </div>
+      `;
+    }
+    function setupQuizInteractions(quiz) {
+      const totalQ = quiz.length;
+      const answered = {};
+      const scoreEl = document.getElementById('quiz-score');
+      document.querySelectorAll('.quiz-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qi = parseInt(btn.dataset.qi);
+          if (answered[qi] !== undefined) return; // 이미 답한 문제는 잠금
+          const oi = parseInt(btn.dataset.oi);
+          const correct = parseInt(btn.dataset.correct);
+          const isRight = oi === correct;
+          answered[qi] = isRight;
+          const qDiv = document.querySelector(`[data-q-block="${qi}"]`);
+          qDiv.querySelectorAll('.quiz-opt').forEach((b, i) => {
+            b.disabled = true;
+            b.classList.remove('hover:bg-stone-50');
+            if (i === correct) {
+              b.classList.add('bg-green-50','border-green-500','text-green-900','font-semibold');
+            } else if (i === oi) {
+              b.classList.add('bg-red-50','border-red-300','text-red-900');
+            } else {
+              b.classList.add('opacity-50');
+            }
+          });
+          const explain = qDiv.querySelector('.quiz-explain');
+          explain.classList.remove('hidden');
+          explain.classList.add(isRight ? 'bg-green-50' : 'bg-amber-50', isRight ? 'text-green-900' : 'text-amber-900');
+          explain.textContent = (isRight ? '✓ 정답! ' : '✗ 정답은 초록 박스. ') + explain.textContent;
+          const total = Object.keys(answered).length;
+          const correctCount = Object.values(answered).filter(x => x).length;
+          if (total === totalQ) {
+            scoreEl.textContent = `📊 ${correctCount} / ${totalQ} 정답${correctCount === totalQ ? ' — 완벽! 🏆' : ''}`;
+            scoreEl.classList.add(correctCount === totalQ ? 'text-green-700' : 'text-stone-800');
+          } else {
+            scoreEl.textContent = `진행 ${total} / ${totalQ}`;
+          }
+        });
+      });
     }
 
     function escapeHtml(s) {
