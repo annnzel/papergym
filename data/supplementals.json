@@ -1,0 +1,130 @@
+[
+  {
+    "id": "self-consistency",
+    "title": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
+    "koreanTitle": "Self-Consistency — 다수결로 추론 강화",
+    "hook": "한 번 생각이 아니라 여러 번 생각 후 선택.",
+    "abstractKo": "이 논문은 chain-of-thought prompting의 성능을 높이는 단순하지만 강력한 방법으로 self-consistency를 제안한다. 기존 chain-of-thought 방식은 하나의 추론 경로를 샘플링한 뒤 그 결과를 답으로 사용한다. 그러나 복잡한 추론 문제에서는 하나의 경로가 잘못될 수 있다.\n\nSelf-consistency는 여러 개의 다양한 추론 경로를 샘플링하고, 그중 가장 일관되게 나타나는 답을 선택한다. 즉 모델에게 여러 방식으로 생각하게 한 뒤 다수결 또는 일관성 기준으로 최종 답을 고르는 방식이다. 저자들은 이 방법이 산술 추론, 상식 추론, 기호 추론 과제에서 chain-of-thought 성능을 크게 향상시킨다는 것을 보인다.",
+    "link": "https://arxiv.org/abs/2203.11171"
+  },
+  {
+    "id": "rlhf-hh",
+    "title": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+    "koreanTitle": "RLHF — 도움 되고 무해한 AI 만들기",
+    "hook": "도움성과 무해성, 두 목표를 동시에 학습.",
+    "abstractKo": "이 논문은 인간 피드백 기반 강화학습(RLHF)을 사용해 도움이 되면서도 해롭지 않은 AI assistant를 훈련하는 방법을 다룬다. 저자들은 assistant가 사용자의 요청에 유용하게 응답해야 하지만, 동시에 유해하거나 부적절한 행동을 피해야 한다는 두 목표가 함께 필요하다고 본다.\n\n연구는 인간이 선호하는 답변 데이터를 수집하고, 이를 바탕으로 reward model을 훈련한 뒤, 강화학습을 통해 assistant 모델의 행동을 조정한다. 이 과정에서 helpfulness와 harmlessness는 때로 긴장 관계에 놓일 수 있으며, 모델이 두 목표를 균형 있게 만족하도록 훈련하는 것이 중요하다.\n\n이 논문은 Claude류 assistant의 초기 alignment 방향을 이해하는 데 중요한 자료다. 특히 '도움성'과 '무해성'이라는 두 축이 assistant 평가와 훈련의 중심이 된다는 점을 보여준다.",
+    "link": "https://arxiv.org/abs/2204.05862"
+  },
+  {
+    "id": "dpo",
+    "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "koreanTitle": "DPO — reward model 없이 선호 학습",
+    "hook": "RLHF 복잡함을 절반으로 줄인 대안.",
+    "abstractKo": "Direct Preference Optimization(DPO)은 인간 선호 데이터를 이용해 언어 모델을 정렬하는 더 단순한 방법을 제안한다. 기존 RLHF는 reward model을 학습하고, 그 reward model을 바탕으로 강화학습(PPO 등)을 수행하는 복잡한 절차가 필요하다. DPO는 이 과정을 단순화해, 선호된 답변과 선호되지 않은 답변의 쌍을 직접 사용해 모델을 최적화한다.\n\n핵심 아이디어는 별도의 reward model과 강화학습 루프 없이도, 선호 데이터가 암시하는 목표를 supervised learning과 유사한 형태로 직접 반영할 수 있다는 것이다. 저자들은 DPO가 구현이 더 단순하고 안정적이면서도 RLHF와 경쟁력 있는 성능을 낼 수 있음을 보인다.",
+    "link": "https://arxiv.org/abs/2305.18290"
+  },
+  {
+    "id": "mrkl",
+    "title": "MRKL Systems: A modular, neuro-symbolic architecture that combines large language models, external knowledge sources and discrete reasoning",
+    "koreanTitle": "MRKL — LLM을 라우터로 쓰는 모듈 AI",
+    "hook": "LLM 혼자 다 할 필요 없다, 전문가 호출.",
+    "abstractKo": "MRKL(Modular Reasoning, Knowledge and Language) Systems는 대규모 언어 모델을 여러 전문 모듈과 결합하는 구조를 제안한다. 모든 문제를 하나의 언어 모델이 직접 해결하려고 하기보다, 언어 모델이 라우터 역할을 하며 필요한 경우 계산기, 검색 시스템, 데이터베이스, 심볼릭 추론기 같은 외부 전문가 모듈을 호출하도록 한다.\n\n이 접근은 언어 모델의 유연성과 외부 도구의 정확성을 결합하려는 시도다. 특히 계산, 최신 정보 검색, 구조화된 지식 조회처럼 언어 모델 단독으로는 취약할 수 있는 영역에서 모듈식 시스템이 더 안전하고 정확할 수 있다.",
+    "link": "https://arxiv.org/abs/2205.00445"
+  },
+  {
+    "id": "gorilla",
+    "title": "Gorilla: Large Language Model Connected with Massive APIs",
+    "koreanTitle": "Gorilla — API 수천 개를 정확히 호출",
+    "hook": "API hallucination을 줄이는 도구 호출 모델.",
+    "abstractKo": "Gorilla는 대규모 언어 모델이 수많은 API와 연결되어 정확한 API 호출을 생성할 수 있도록 하는 연구다. 현대 AI agent는 외부 도구와 API를 호출해야 하는 경우가 많지만, 잘못된 API 이름, 잘못된 인자, outdated documentation 등으로 오류가 발생할 수 있다.\n\n이 논문은 모델이 API 문서와 사용 예시를 바탕으로 적절한 API 호출을 생성하도록 학습시키고 평가한다. Gorilla는 특히 API hallucination, 즉 존재하지 않거나 잘못된 API 호출을 줄이는 데 초점을 둔다. 이는 agent가 실제 소프트웨어 환경에서 도구를 안정적으로 사용하기 위한 중요한 문제다.",
+    "link": "https://arxiv.org/abs/2305.15334"
+  },
+  {
+    "id": "voyager",
+    "title": "Voyager: An Open-Ended Embodied Agent with Large Language Models",
+    "koreanTitle": "Voyager — 마인크래프트서 스스로 성장",
+    "hook": "목표 설정·코드 실행·skill 저장으로 무한 성장.",
+    "abstractKo": "Voyager는 Minecraft 환경에서 대규모 언어 모델을 사용해 지속적으로 탐험하고 기술을 축적하는 open-ended embodied agent를 제안한다. 에이전트는 단일 과제를 푸는 데 그치지 않고, 스스로 목표를 설정하고, 환경을 탐험하고, 새로운 기술을 코드 형태로 저장하며, 이후 더 복잡한 행동에 재사용한다.\n\nVoyager의 핵심 구성요소는 자동 커리큘럼, skill library, iterative prompting mechanism이다. 에이전트는 새로운 목표를 만들고, 해당 목표를 달성하기 위해 코드를 생성·실행하며, 성공한 기술을 라이브러리에 저장한다. 이를 통해 점점 더 넓은 환경을 탐험하고 더 복잡한 작업을 수행할 수 있다.",
+    "link": "https://arxiv.org/abs/2305.16291"
+  },
+  {
+    "id": "swe-bench",
+    "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+    "koreanTitle": "SWE-bench — 실제 GitHub 이슈 해결 평가",
+    "hook": "코딩 agent 실전 능력의 기준점.",
+    "abstractKo": "SWE-bench는 언어 모델이 실제 GitHub issue를 해결할 수 있는지 평가하기 위한 벤치마크다. 기존 코딩 평가가 짧은 함수나 알고리즘 문제에 집중했다면, SWE-bench는 실제 오픈소스 저장소의 issue와 pull request를 기반으로 한다. 모델은 문제 설명을 읽고, 관련 코드를 이해하고, 수정 패치를 만들어 테스트를 통과해야 한다.\n\n이 벤치마크는 coding agent 평가에서 중요한 전환점이다. 단순히 코드를 생성하는 능력이 아니라, 큰 코드베이스 탐색, 버그 이해, 파일 수정, 테스트 통과까지 포함한 실제 소프트웨어 엔지니어링 능력을 평가한다.",
+    "link": "https://arxiv.org/abs/2310.06770"
+  },
+  {
+    "id": "retro",
+    "title": "Improving language models by retrieving from trillions of tokens",
+    "koreanTitle": "RETRO — 수조 토큰 DB 검색으로 보강",
+    "hook": "파라미터 말고 외부 DB에서 지식을 꺼낸다.",
+    "abstractKo": "RETRO는 대규모 언어 모델의 성능을 향상시키기 위해 훈련 및 추론 과정에서 대규모 외부 텍스트 데이터베이스를 검색하는 방법을 제안한다. 모델 파라미터 안에 모든 지식을 저장하는 대신, 관련 문서를 검색해 모델이 이를 참고하도록 만든다.\n\n이 접근은 retrieval-augmented language model의 한 형태로, 모델 크기를 무한정 키우지 않고도 외부 지식 저장소를 활용해 성능을 높일 수 있다는 가능성을 보여준다. 특히 trillions of tokens 규모의 데이터베이스에서 관련 정보를 가져와 언어 모델이 더 정확하고 풍부한 생성을 하도록 돕는다.",
+    "link": "https://arxiv.org/abs/2112.04426"
+  },
+  {
+    "id": "generative-agents",
+    "title": "Generative Agents: Interactive Simulacra of Human Behavior",
+    "koreanTitle": "Generative Agents — 기억·계획으로 인간 흉내",
+    "hook": "memory + reflection + planning = 살아있는 NPC.",
+    "abstractKo": "이 논문은 대규모 언어 모델을 사용해 인간과 유사한 행동을 보이는 generative agents를 만드는 방법을 제안한다. 에이전트들은 가상 환경 안에서 일상생활을 하고, 서로 상호작용하며, 기억을 바탕으로 계획을 세우고 행동한다.\n\n핵심은 memory stream, reflection, planning 구조다. 에이전트는 경험을 자연어 memory로 저장하고, 중요한 기억을 반성적으로 요약하며, 이를 바탕으로 미래 행동 계획을 만든다. 이 구조를 통해 단순한 반응형 챗봇이 아니라, 시간에 따라 일관된 행동과 사회적 상호작용을 보이는 에이전트를 만들 수 있다.",
+    "link": "https://arxiv.org/abs/2304.03442"
+  },
+  {
+    "id": "clip",
+    "title": "Learning Transferable Visual Models From Natural Language Supervision",
+    "koreanTitle": "CLIP — 이미지와 텍스트를 같은 공간에",
+    "hook": "자연어로 시각 분류 — 멀티모달의 시작.",
+    "abstractKo": "CLIP은 자연어 supervision을 사용해 전이 가능한 시각 모델을 학습하는 방법을 제안한다. 기존 시각 모델은 보통 고정된 label set으로 학습되어 새로운 분류 과제에 적응하려면 별도의 데이터셋과 fine-tuning이 필요했다. CLIP은 인터넷에서 수집한 이미지-텍스트 쌍을 사용해 이미지와 자연어 설명을 같은 의미 공간에 정렬한다.\n\n이렇게 학습된 모델은 자연어 prompt를 통해 다양한 시각 분류 과제를 zero-shot으로 수행할 수 있다. 즉 '이 이미지는 고양이 사진인가?' 같은 label을 자연어로 주면, 별도 fine-tuning 없이도 이미지와 텍스트의 유사도를 비교해 답할 수 있다. CLIP은 이후 multimodal AI, 이미지 검색, text-to-image generation의 중요한 기반이 되었다.",
+    "link": "https://arxiv.org/abs/2103.00020"
+  },
+  {
+    "id": "ddpm",
+    "title": "Denoising Diffusion Probabilistic Models",
+    "koreanTitle": "DDPM — 노이즈 제거로 이미지 생성",
+    "hook": "Stable Diffusion·DALL·E의 핵심 원리.",
+    "abstractKo": "Denoising Diffusion Probabilistic Models(DDPM)는 이미지 생성 모델의 중요한 계열인 diffusion model을 제안한다. 이 접근은 데이터에 점진적으로 noise를 추가하는 forward process와, noise에서 원래 데이터를 복원하는 reverse denoising process를 학습하는 방식이다.\n\n모델은 완전한 noise에서 시작해 여러 단계에 걸쳐 조금씩 noise를 제거하면서 고품질 이미지를 생성한다. 이 방식은 안정적인 훈련과 높은 샘플 품질을 보여주며, 이후 Stable Diffusion, DALL·E 계열, 다양한 이미지/영상 생성 모델의 핵심 기반이 되었다.",
+    "link": "https://arxiv.org/abs/2006.11239"
+  },
+  {
+    "id": "flamingo",
+    "title": "Flamingo: a Visual Language Model for Few-Shot Learning",
+    "koreanTitle": "Flamingo — few-shot 멀티모달 모델",
+    "hook": "GPT-4V·Gemini Vision 흐름의 선구자.",
+    "abstractKo": "Flamingo는 이미지와 텍스트를 함께 처리할 수 있는 visual language model로, few-shot learning 환경에서 다양한 멀티모달 과제를 수행하도록 설계되었다. 기존 vision-language 모델은 특정 과제에 맞춰 fine-tuning되는 경우가 많았지만, Flamingo는 몇 개의 예시만으로 새로운 이미지-텍스트 과제에 적응할 수 있다.\n\nFlamingo는 사전학습된 vision model과 language model을 연결하고, 이미지/비디오 입력과 텍스트 입력을 함께 처리해 질문응답, captioning, 분류 등 다양한 과제를 수행한다. 이는 multimodal assistant가 텍스트뿐 아니라 이미지와 영상 맥락을 이해하는 방향으로 발전하는 데 중요한 연구다.",
+    "link": "https://arxiv.org/abs/2204.14198"
+  },
+  {
+    "id": "helm",
+    "title": "Holistic Evaluation of Language Models",
+    "koreanTitle": "HELM — 다차원 모델 종합 평가",
+    "hook": "단일 점수로 모델 판단하는 함정을 피한다.",
+    "abstractKo": "HELM은 언어 모델을 더 포괄적으로 평가하기 위한 프레임워크다. 기존 평가는 특정 과제나 단일 성능 지표에 집중하는 경우가 많았지만, 언어 모델은 정확도뿐 아니라 calibration, robustness, fairness, bias, toxicity, efficiency 등 다양한 측면에서 평가되어야 한다.\n\nHELM은 다양한 시나리오와 지표를 조합해 모델을 체계적으로 평가한다. 이를 통해 어떤 모델이 어떤 과제에서는 강하지만 다른 측면에서는 약할 수 있음을 보여준다. 이 접근은 모델 성능을 단순 leaderboard 점수 하나로 판단하는 위험을 줄이는 데 중요하다.",
+    "link": "https://arxiv.org/abs/2211.09110"
+  },
+  {
+    "id": "mmlu",
+    "title": "Measuring Massive Multitask Language Understanding",
+    "koreanTitle": "MMLU — 57개 분야 지식 종합 벤치마크",
+    "hook": "모델 발표마다 나오는 MMLU 점수 해석법.",
+    "abstractKo": "MMLU는 다양한 분야와 난이도의 문제를 통해 언어 모델의 폭넓은 지식과 문제 해결 능력을 평가하는 벤치마크다. 과제는 STEM, 인문학, 사회과학, 전문 지식 등 여러 영역을 포함하며, 모델이 단순한 언어 패턴을 넘어 폭넓은 지식과 추론 능력을 갖고 있는지 측정하려 한다.\n\nMMLC는 이후 대규모 언어 모델 성능 발표에서 널리 사용되는 대표 지표가 되었다. 그러나 MMLU 점수가 높다고 해서 모든 실제 업무에서 좋은 성능을 보장하는 것은 아니며, benchmark가 측정하는 능력과 실제 사용 맥락을 구분해야 한다.",
+    "link": "https://arxiv.org/abs/2009.03300"
+  },
+  {
+    "id": "humaneval",
+    "title": "Evaluating Large Language Models Trained on Code",
+    "koreanTitle": "HumanEval — 코드 생성 능력 평가 기준",
+    "hook": "Codex 첫 평가 — HumanEval vs SWE-bench 차이.",
+    "abstractKo": "이 논문은 코드로 훈련된 대규모 언어 모델의 성능을 평가한다. 특히 OpenAI Codex와 같은 모델이 자연어 지시를 받아 Python 함수를 생성할 수 있는지 평가하며, HumanEval이라는 벤치마크를 제안한다. HumanEval은 함수 설명과 테스트 케이스를 바탕으로 모델이 올바른 코드를 생성하는지 측정한다.\n\n이 연구는 자연어에서 코드로 이어지는 모델 능력을 체계적으로 평가한 초기 대표 사례다. 이후 코딩 모델과 coding agent의 성능을 논의할 때 HumanEval은 중요한 기준점이 되었다. 다만 HumanEval은 상대적으로 작은 함수 단위 문제이므로, 실제 코드베이스 수정 능력을 평가하는 SWE-bench와는 다르다.",
+    "link": "https://arxiv.org/abs/2107.03374"
+  },
+  {
+    "id": "llama",
+    "title": "LLaMA: Open and Efficient Foundation Language Models",
+    "koreanTitle": "LLaMA — 오픈 파운데이션 모델 생태계",
+    "hook": "작아도 강하다 — open model 혁명의 시작.",
+    "abstractKo": "LLaMA는 Meta AI가 공개한 효율적인 foundation language model 계열이다. 이 논문은 다양한 크기의 모델을 대규모 공개 데이터로 훈련하고, 상대적으로 작은 모델도 충분한 데이터와 적절한 훈련을 통해 큰 모델과 경쟁할 수 있음을 보여준다.\n\nLLaMA는 open model 생태계에서 중요한 전환점이 되었다. 이후 많은 연구자와 개발자가 LLaMA 계열 모델을 fine-tuning하고, instruction-tuning하고, 다양한 응용 모델을 만들었다. 이 논문은 frontier closed model만이 아니라 open foundation model 생태계가 어떻게 확장되는지 이해하는 데 중요하다.",
+    "link": "https://arxiv.org/abs/2302.13971"
+  }
+]

@@ -95,6 +95,8 @@
     window.addEventListener('hashchange', () => {
       route();
       if (location.hash === '#today') renderToday();
+      if (location.hash === '#papers') renderPapers();
+      if (location.hash === '#team') renderTeam();
     });
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.addEventListener('click', () => location.hash = b.dataset.route);
@@ -309,6 +311,103 @@
       return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
+    // ===== #papers render =====
+    async function renderPapers() {
+      const view = document.getElementById('view-papers');
+      let supplementals = [];
+      try { supplementals = await fetch('data/supplementals.json').then(r => r.json()); } catch {}
+
+      const phaseColors = {
+        amber: 'bg-amber-50 border-amber-200 text-amber-900',
+        rose: 'bg-rose-50 border-rose-200 text-rose-900',
+        emerald: 'bg-emerald-50 border-emerald-200 text-emerald-900',
+        violet: 'bg-violet-50 border-violet-200 text-violet-900'
+      };
+
+      view.innerHTML = `
+        <h1 class="text-xl font-semibold mb-1">16주 학습 지도</h1>
+        <p class="text-sm text-stone-500 mb-6">13편 본 논문 + 3주 Review + 16편 보충 (옵션)</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8">
+          ${curriculum.weeks.map(w => `
+            <div class="border rounded-lg p-3 ${phaseColors[w.phaseColor]} text-xs">
+              <div class="font-semibold">W${w.n}${w.isFinal ? ' 🏆' : ''}</div>
+              <div class="opacity-60">${escapeHtml(w.phaseName)}</div>
+              <div class="mt-1 font-medium">${w.type === 'review' ? '🔁 Review' : (escapeHtml(w.paperId) || '—')}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <h2 class="text-lg font-semibold mb-1">옵션 reading list — 보충 16편</h2>
+        <p class="text-sm text-stone-500 mb-3">강제 학습 아님. 관심 가면 한국어 abstract만 봐도 OK.</p>
+        <div class="space-y-2">
+          ${supplementals.map(p => `
+            <div class="border border-stone-200 rounded-lg p-3 bg-white">
+              <div class="font-semibold text-sm">${escapeHtml(p.koreanTitle)}</div>
+              <div class="text-xs text-stone-500 mb-1">${escapeHtml(p.title)}</div>
+              <div class="text-sm text-stone-700">${escapeHtml(p.hook)}</div>
+              ${p.link ? `<a href="${escapeHtml(p.link)}" target="_blank" class="text-xs text-blue-600 underline">원문 →</a>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // ===== #team render =====
+    async function renderTeam() {
+      const view = document.getElementById('view-team');
+      // Task 6에서 진짜 Supabase fetch로 교체. 지금은 mock.
+      const mockMembers = [
+        { userId: 'u1', name: 'Bong', emoji: '🦊', week: 3, day: 3, streak: 12, cheers: { '🔥': 2 } },
+        { userId: 'u2', name: 'HS', emoji: '🐻', week: 3, day: 1, streak: 7, cheers: {} },
+        { userId: 'u3', name: 'Teo', emoji: '🐯', week: 3, day: 2, streak: 9, cheers: { '💪': 1 } },
+        me ? { userId: me.userId, name: me.name, emoji: me.emoji, week: 3, day: 2, streak: 14, cheers: { '🔥': 3, '💪': 1 } } : null
+      ].filter(Boolean);
+
+      const emojis = ['🔥','💪','👏','❤️'];
+      const today = new Date();
+      const isSunday = today.getDay() === 0;
+
+      view.innerHTML = `
+        ${isSunday ? `
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+            <p class="font-semibold text-amber-900 mb-1">🗓️ 일요일 — 이번 주 요약</p>
+            <p class="text-sm text-amber-800">이번 주 누가 며칠 완주, 다음 주 논문 프리뷰 (실데이터 wire-up은 Task 6)</p>
+          </div>
+        ` : ''}
+
+        <h1 class="text-xl font-semibold mb-4">팀 4명 · W${mockMembers[0].week}</h1>
+        <div class="space-y-2">
+          ${mockMembers.map(m => {
+            const isMe = me && m.userId === me.userId;
+            return `
+              <div class="flex items-center gap-3 p-3 border border-stone-200 rounded-lg bg-white text-sm">
+                <div class="text-2xl">${escapeHtml(m.emoji)}</div>
+                <div class="font-semibold min-w-[55px]">${escapeHtml(m.name)}</div>
+                <div class="flex-1">
+                  <div class="bg-stone-200 h-1.5 rounded overflow-hidden">
+                    <div class="bg-green-600 h-full" style="width:${(m.day / 5) * 100}%"></div>
+                  </div>
+                  <div class="text-xs text-stone-500 mt-1">W${m.week} D${m.day} / 5</div>
+                </div>
+                <div class="text-xs text-red-600 min-w-[35px] text-right">🔥${m.streak}</div>
+                ${isMe ? `
+                  <div class="text-xs text-stone-400">받은 ${Object.entries(m.cheers).map(([e,n]) => `${e}${n}`).join(' ') || '0'}</div>
+                ` : emojis.map(e => `
+                  <button data-to="${escapeHtml(m.userId)}" data-emoji="${e}" class="cheer-btn text-base px-2 py-1 border border-transparent rounded hover:bg-amber-50 hover:border-amber-400">${e}</button>
+                `).join('')}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      document.querySelectorAll('.cheer-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          alert(`응원 ${btn.dataset.emoji} → 사용자 ${btn.dataset.to} (Supabase wire-up은 Task 6)`);
+        });
+      });
+    }
+
     // ===== Boot =====
     async function boot() {
       try {
@@ -331,9 +430,9 @@
       }
       if (!location.hash) location.hash = '#today';
       route();
-      renderToday();
-      document.getElementById('view-papers').innerHTML = '<p class="text-stone-500">논문 16주 그리드 (Task 5에서 구현)</p>';
-      document.getElementById('view-team').innerHTML = '<p class="text-stone-500">팀 응원 (Task 5에서 구현)</p>';
+      if (location.hash === '#papers') renderPapers();
+      else if (location.hash === '#team') renderTeam();
+      else renderToday();
     }
     boot();
   </script>
