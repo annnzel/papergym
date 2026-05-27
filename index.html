@@ -117,7 +117,19 @@
 
     // ===== Boot =====
     async function boot() {
-      curriculum = await fetch('data/curriculum.json').then(r => r.json());
+      try {
+        const res = await fetch('data/curriculum.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        curriculum = await res.json();
+      } catch (err) {
+        console.error('Curriculum load failed:', err);
+        document.querySelector('main').innerHTML = `
+          <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-900 font-semibold mb-1">데이터를 불러오지 못했어요</p>
+            <p class="text-sm text-red-700">잠시 후 새로고침해 주세요. (data/curriculum.json)</p>
+          </div>`;
+        return;
+      }
       if (!me) {
         showNameModal();
       } else {
