@@ -3,21 +3,149 @@
   "startDate": "2026-06-01",
   "endDate": "2026-09-20",
   "weeks": [
-    { "n": 1, "phase": 1, "phaseName": "Form Building", "phaseColor": "amber", "paperId": "cot", "type": "main" },
-    { "n": 2, "phase": 1, "phaseName": "Form Building", "phaseColor": "amber", "paperId": "react", "type": "main" },
-    { "n": 3, "phase": 1, "phaseName": "Form Building", "phaseColor": "amber", "paperId": "toolformer", "type": "main" },
-    { "n": 4, "phase": 1, "phaseName": "Form Building", "phaseColor": "amber", "paperId": null, "type": "review", "reviewOf": ["cot","react","toolformer"] },
-    { "n": 5, "phase": 2, "phaseName": "Assistant Training", "phaseColor": "rose", "paperId": "instructgpt", "type": "main" },
-    { "n": 6, "phase": 2, "phaseName": "Assistant Training", "phaseColor": "rose", "paperId": "cai", "type": "main" },
-    { "n": 7, "phase": 2, "phaseName": "Assistant Training", "phaseColor": "rose", "paperId": "reflexion", "type": "main" },
-    { "n": 8, "phase": 2, "phaseName": "Assistant Training", "phaseColor": "rose", "paperId": null, "type": "review", "reviewOf": ["instructgpt","cai","reflexion"] },
-    { "n": 9, "phase": 3, "phaseName": "LLM Foundation", "phaseColor": "emerald", "paperId": "attention", "type": "main" },
-    { "n": 10, "phase": 3, "phaseName": "LLM Foundation", "phaseColor": "emerald", "paperId": "gpt3", "type": "main" },
-    { "n": 11, "phase": 3, "phaseName": "LLM Foundation", "phaseColor": "emerald", "paperId": "scaling-laws", "type": "main" },
-    { "n": 12, "phase": 3, "phaseName": "LLM Foundation", "phaseColor": "emerald", "paperId": "chinchilla", "type": "main" },
-    { "n": 13, "phase": 4, "phaseName": "Memory & Synthesis", "phaseColor": "violet", "paperId": "rag", "type": "main" },
-    { "n": 14, "phase": 4, "phaseName": "Memory & Synthesis", "phaseColor": "violet", "paperId": "memgpt", "type": "main" },
-    { "n": 15, "phase": 4, "phaseName": "Memory & Synthesis", "phaseColor": "violet", "paperId": "tot", "type": "main" },
-    { "n": 16, "phase": 4, "phaseName": "Memory & Synthesis", "phaseColor": "violet", "paperId": null, "type": "review", "reviewOf": ["rag","memgpt","tot"], "isFinal": true }
+    {
+      "n": 1,
+      "phase": 1,
+      "phaseName": "Form Building",
+      "phaseColor": "amber",
+      "paperId": "cot",
+      "type": "main"
+    },
+    {
+      "n": 2,
+      "phase": 1,
+      "phaseName": "Form Building",
+      "phaseColor": "amber",
+      "paperId": "react",
+      "type": "main"
+    },
+    {
+      "n": 3,
+      "phase": 1,
+      "phaseName": "Form Building",
+      "phaseColor": "amber",
+      "paperId": "toolformer",
+      "type": "main"
+    },
+    {
+      "n": 4,
+      "phase": 1,
+      "phaseName": "Form Building",
+      "phaseColor": "amber",
+      "paperId": "review-phase1",
+      "type": "review",
+      "reviewOf": [
+        "cot",
+        "react",
+        "toolformer"
+      ]
+    },
+    {
+      "n": 5,
+      "phase": 2,
+      "phaseName": "Assistant Training",
+      "phaseColor": "rose",
+      "paperId": "instructgpt",
+      "type": "main"
+    },
+    {
+      "n": 6,
+      "phase": 2,
+      "phaseName": "Assistant Training",
+      "phaseColor": "rose",
+      "paperId": "cai",
+      "type": "main"
+    },
+    {
+      "n": 7,
+      "phase": 2,
+      "phaseName": "Assistant Training",
+      "phaseColor": "rose",
+      "paperId": "reflexion",
+      "type": "main"
+    },
+    {
+      "n": 8,
+      "phase": 2,
+      "phaseName": "Assistant Training",
+      "phaseColor": "rose",
+      "paperId": null,
+      "type": "review",
+      "reviewOf": [
+        "instructgpt",
+        "cai",
+        "reflexion"
+      ]
+    },
+    {
+      "n": 9,
+      "phase": 3,
+      "phaseName": "LLM Foundation",
+      "phaseColor": "emerald",
+      "paperId": "attention",
+      "type": "main"
+    },
+    {
+      "n": 10,
+      "phase": 3,
+      "phaseName": "LLM Foundation",
+      "phaseColor": "emerald",
+      "paperId": "gpt3",
+      "type": "main"
+    },
+    {
+      "n": 11,
+      "phase": 3,
+      "phaseName": "LLM Foundation",
+      "phaseColor": "emerald",
+      "paperId": "scaling-laws",
+      "type": "main"
+    },
+    {
+      "n": 12,
+      "phase": 3,
+      "phaseName": "LLM Foundation",
+      "phaseColor": "emerald",
+      "paperId": "chinchilla",
+      "type": "main"
+    },
+    {
+      "n": 13,
+      "phase": 4,
+      "phaseName": "Memory & Synthesis",
+      "phaseColor": "violet",
+      "paperId": "rag",
+      "type": "main"
+    },
+    {
+      "n": 14,
+      "phase": 4,
+      "phaseName": "Memory & Synthesis",
+      "phaseColor": "violet",
+      "paperId": "memgpt",
+      "type": "main"
+    },
+    {
+      "n": 15,
+      "phase": 4,
+      "phaseName": "Memory & Synthesis",
+      "phaseColor": "violet",
+      "paperId": "tot",
+      "type": "main"
+    },
+    {
+      "n": 16,
+      "phase": 4,
+      "phaseName": "Memory & Synthesis",
+      "phaseColor": "violet",
+      "paperId": null,
+      "type": "review",
+      "reviewOf": [
+        "rag",
+        "memgpt",
+        "tot"
+      ],
+      "isFinal": true
+    }
   ]
 }

@@ -422,7 +422,8 @@
       if (!weekInfo) return;
 
       // Review 주차 또는 일요일 = paper 없이 안내 카드만
-      if (weekInfo.type === 'review' || day === 7) {
+      // Review 주차여도 paperId 있으면 정규 로드 (review-phase1.json 등)
+      if ((weekInfo.type === 'review' && !weekInfo.paperId) || day === 7) {
         view.innerHTML = navBar + renderWeekendOrReview(weekInfo, day);
         return;
       }

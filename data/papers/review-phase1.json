@@ -1,0 +1,294 @@
+{
+  "id": "review-phase1",
+  "title": "Phase 1 Review — Form Building (CoT · ReAct · Toolformer)",
+  "venue": "Internal Review",
+  "arxivId": "",
+  "phase": 1,
+  "koreanTitle": "Phase 1 통합 정리 — 추론·도구의 큰 그림",
+  "hook": "CoT가 생각을, ReAct가 행동을, Toolformer가 학습을 깨웠다 — Phase 1의 세 도약을 한 자리에서.",
+  "abstractKo": "W1-W3에서 본 CoT(생각 끌어내기) · ReAct(행동 결합) · Toolformer(자가 학습) 세 편은 'LLM 안에 잠재된 능력을 어떻게 끌어낼 것인가'에 대한 세 가지 답이었다. 이번 주는 새 논문 X — 대신 (1) 세 편을 한 자리에서 비교 (2) 본인 일에 적용한 사례 reflection (3) Phase 2 (정렬·assistant training) motivation 정리. 토요일 통합 quiz로 Phase 1 핵심 다지기, 일요일 W5 InstructGPT preview.",
+  "days": [
+    {
+      "n": 1,
+      "range": "Phase 1 한 줄 정리 — 3편의 도약",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "Phase 1 (Form Building) 3편을 한 자리에서 봅니다.\n\n**3편의 핵심 한 줄**\n\n- **W1 CoT (생각)**: 프롬프트 한 줄 — 'few-shot 예시에 풀이를 박아라' — 로 LLM의 **추론 능력**을 깨움. GSM8K 18% → 57%로 단숨에 SOTA. 단 ~100B 임계점 emergent.\n- **W2 ReAct (행동)**: 프롬프트 한 줄 — 'thought-action-observation 루프' — 로 LLM의 **도구 사용 능력**을 깨움. Wikipedia API로 hallucination 0%. ALFWorld·WebShop에서 큰 모델 능가.\n- **W3 Toolformer (학습)**: prompt 대신 **fine-tune**으로 도구 사용 학습. 학습 데이터는 self-supervised로 모델 스스로 생성. 6.7B가 175B를 LAMA·Math에서 이김.\n\n**세 편의 공통 질문**\n\n셋 모두 같은 질문에 다른 답을 줍니다 — **'LLM 안에 잠재된 능력을 어떻게 끌어낼 것인가?'**\n\n- CoT: 프롬프트로 추론을 끌어냄 (외부 X)\n- ReAct: 프롬프트로 행동을 끌어냄 (외부 도구 호출 시작)\n- Toolformer: 학습으로 도구 사용 자체를 모델 안에 내재화\n\n**진화 패턴 — 밖에서 안으로**\n\n- CoT (외부 prompt, 모델 내부 X)\n- → ReAct (외부 prompt + 외부 도구 호출)\n- → Toolformer (모델 안으로 도구 호출 능력 내재화)\n\n이 진화의 끝이 오늘날 **ChatGPT / Claude Code / Cursor** 등 모든 production AI agent. **'사용자가 추가 prompt 안 줘도 모델이 알아서 도구 호출'** — Toolformer의 production화.\n\n**이번 주 할 일**\n\n새 논문은 안 봅니다. 대신:\n\n- D2~D4: 세 편 각각 재방문 + **본인 일에 적용한 사례 reflection**\n- D5: 세 편 결합 + Phase 2 motivation\n- 토: Phase 1 통합 quiz 5문제\n- 일: Phase 2 (InstructGPT) preview",
+      "figure": {
+        "id": "Phase 1 세 도약 (CoT W1 figure 재사용)",
+        "captionKo": "W1 CoT의 Figure 1을 다시 봅니다 — Phase 1 전체의 출발점. '답만 vs 풀이 함께'의 차이가 모델 같은데 결과 달라지는 핵심. ReAct·Toolformer 모두 이 '프롬프트 안 작은 변화 → 큰 능력 전환' 패턴의 응용·진화입니다.",
+        "imagePath": "data/papers/cot/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "Form Building (Phase 1)",
+          "ko": "기본기 단계 (Phase 1)",
+          "memo": "LLM의 잠재 능력을 끌어내는 3가지 방법 학습 — 추론·도구·자가학습"
+        },
+        {
+          "en": "emergent ability",
+          "ko": "출현 능력",
+          "memo": "CoT는 ~100B, Toolformer tool use는 ~775M에서 emergent. 임계점 이상에서만 작동"
+        },
+        {
+          "en": "in-context learning",
+          "ko": "맥락 내 학습",
+          "memo": "prompt 안 예시 1-6개로 학습 효과. CoT/ReAct가 사용, Toolformer는 학습 단계에서 사용"
+        },
+        {
+          "en": "self-supervised",
+          "ko": "자기 지도 학습",
+          "memo": "사람 라벨 없이 모델 스스로 학습 신호 생성. Toolformer의 핵심 차별점"
+        },
+        {
+          "en": "paradoxical weakness",
+          "ko": "역설적 약점",
+          "memo": "큰 LLM이 작은 모델·계산기·검색이 잘하는 일에서 약함. Toolformer가 도구로 해결"
+        }
+      ],
+      "analogy": {
+        "title": "운동의 3가지 진화",
+        "body": "**같은 사람이 같은 몸으로** 3가지 방식으로 강해질 수 있어요. (1) **자세 교정만** — CoT 'few-shot 예시 박기'. 외부 도구 없이 몸 자체 efficiency 향상. (2) **도구 사용** — ReAct '계산기·검색 호출하기'. 못하는 일을 외부로 보냄. (3) **근육 자체 학습** — Toolformer '도구 사용을 몸에 내재화'. 자세 교정도, 도구도 다 자기 안에. **Phase 1의 3주가 정확히 이 진화**입니다."
+      },
+      "question": "Phase 1의 3편 중 **본인 일에 가장 임팩트가 컸을 것**은 어느 편인가요? 왜 그렇게 생각하는지 한 문장으로."
+    },
+    {
+      "n": 2,
+      "range": "W1 CoT 재방문 — 본인 일에 어떻게 적용됐나",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W1 CoT를 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**CoT 한 줄 정리**\n\nfew-shot prompt 안에 **풀이 과정 예시**를 박아 LLM이 답 전에 풀이를 함께 출력하게 만드는 것. GSM8K 18% → 57%로 단숨에 SOTA. 단 ~100B 임계점에서 emergent.\n\n**핵심 발견 4가지** (다시 보면)\n\n1. **분해 가능성**: 다단계 문제를 중간 단계로 쪼개 더 많은 토큰 = 더 많은 계산 자원 할당\n2. **해석 가능성**: 풀이 과정이 모델 행동의 '창문'. 어디서 틀렸는지 디버깅 가능\n3. **범용성**: 산술뿐 아니라 상식 추론·기호 조작 모두\n4. **즉시성**: fine-tune 0, 프롬프트만으로\n\n**오늘날 어디서 보이나**\n\n- **ChatGPT의 '단계별로 생각해'** 프롬프트 — CoT 직접 응용\n- **Claude의 thinking 모드** (sonnet thinking, opus thinking) — CoT 패턴의 모델 내부화\n- **'설명해 줘' 같은 prompt** — CoT의 일상 응용\n- **GPT-4o의 chain-of-thought 출력** — 답 전에 풀이 자동 생성\n\n**본인 일 reflection**\n\n오늘 질문은 본인이 **이번 한 달 동안 ChatGPT나 Claude를 쓰면서 가장 CoT 효과를 본 순간**을 떠올려보는 것. 예를 들어:\n\n- '왜 이게 안 되는지 단계별로 설명해 줘' 프롬프트로 디버깅 정확도 ↑\n- '이 데이터에서 인사이트를 찾을 때 어떻게 접근할지 먼저 설명해' → 답 품질 ↑\n- '내 글을 비판한다면 어떤 reasoning steps로?' → 더 본질적 피드백\n\n**솔직한 한계 (다시)** — CoT는 모델이 **'단계별 모방'**을 잘하지만, 그 풀이가 **'진짜 사고 과정'을 반영한다**는 보장은 없음. 모델은 답을 미리 결정하고 거꾸로 풀이를 만들 수도 있음. 이게 후속 연구(Toolformer·alignment)의 큰 motivation.",
+      "figure": {
+        "id": "CoT Figure 1 (재방문)",
+        "captionKo": "**같은 모델·같은 문제** — 표준 프롬프팅(답만) vs CoT(풀이 함께). 한 줄 차이가 답을 27 → 11(정답)로 바꿈. Phase 1의 출발 — '프롬프트의 작은 변화가 모델의 잠재 능력을 깨운다'.",
+        "imagePath": "data/papers/cot/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "chain-of-thought (CoT)",
+          "ko": "사고 사슬",
+          "memo": "답 전에 풀이 과정을 자연어로 출력하는 패턴. few-shot prompt로 유도"
+        },
+        {
+          "en": "few-shot prompting",
+          "ko": "퓨샷 프롬프팅",
+          "memo": "1-8개 예시만 prompt에 박아 새 task 수행. fine-tune 불필요"
+        },
+        {
+          "en": "decomposition",
+          "ko": "분해 가능성",
+          "memo": "다단계 문제를 중간 단계로 쪼개는 능력. CoT의 4가지 매력 중 1번"
+        },
+        {
+          "en": "emergent at 100B",
+          "ko": "100B 출현",
+          "memo": "CoT 효과는 ~100B 파라미터 이상에서만 나타남. 작은 모델은 오히려 손해"
+        },
+        {
+          "en": "self-consistency (CoT-SC)",
+          "ko": "자기 일관성",
+          "memo": "CoT 풀이 여러 번 샘플링 후 다수결. CoT 단독보다 +4점, ReAct와 결합시 +5점 더"
+        }
+      ],
+      "analogy": {
+        "title": "수학 시험의 '풀이 과정 쓰기' (재방문)",
+        "body": "선생님이 '답만 적지 말고 풀이를 써라'고 하는 그 이유. **(1)** 본인 사고가 정리되고 **(2)** 채점자가 어디서 틀렸는지 보이며 **(3)** 부분 점수가 가능. LLM도 같은 메커니즘 — 풀이 토큰들이 답 토큰의 컨텍스트가 되어, **모델 안에서 자연스럽게 'reasoning을 거친 답'**이 만들어집니다."
+      },
+      "question": "지난 한 달 동안 본인이 ChatGPT/Claude를 쓰면서 **CoT 효과를 가장 크게 본 순간**은 언제였나요? 한 문장으로."
+    },
+    {
+      "n": 3,
+      "range": "W2 ReAct 재방문 — 본인 일에 어떻게 적용됐나",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W2 ReAct를 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**ReAct 한 줄 정리**\n\n**Thought → Action → Observation** 루프로 LLM이 외부 도구(Wikipedia API 등)와 상호작용하면서 추론하게 만드는 프롬프트 패턴. action space를 **Â = A ∪ L** (행동 + 언어)로 확장. fine-tune 0, 1-6개 예시만으로.\n\n**핵심 발견 (다시 보면)**\n\n- **Hallucination 0% vs CoT 56%**: 외부 Wikipedia에 묶여서 모델이 못 꾸며냄\n- **ALFWorld**: ReAct 71% vs BUTLER 37% (BUTLER는 10⁵ trajectory로 학습, ReAct는 1-2 예시) — **+34% 차이**\n- **결합이 단독을 압도**: ReAct→CoT-SC 35.1 / CoT-SC→ReAct 64.6 — 단독보다 +5점 이상\n- **단점**: ReAct 단독은 CoT 단독보다 약간 낮음 (구조적 rigidity)\n\n**오늘날 어디서 보이나**\n\n- **Claude Code** (지금 이 채팅): Read → 생각 → Edit → Bash → 결과 보고 → 또 생각. **정확히 ReAct 패턴**\n- **ChatGPT Browsing / Code Interpreter**: 웹 검색 + 코드 실행 모두 ReAct 응용\n- **Bing Chat / Perplexity**: 검색 결과 보고 다시 검색 (간단한 ReAct loop)\n- **LangChain / AutoGPT / CrewAI**: ReAct loop가 모든 agent framework의 기본 빌딩 블록\n- **Cursor의 'composer'**: 파일 읽기 → 편집 → 결과 보고 → 또 편집\n\n**본인 일 reflection**\n\n본인이 평소 쓰는 AI 도구 중 **'단순 답변' vs 'ReAct 루프'**가 가장 차이나는 순간을 떠올려보세요:\n\n- ChatGPT 무료 = 단순 답변 / ChatGPT + Browsing = ReAct (정보 정확도 차이 큼)\n- Claude 무료 web = 단순 답변 / Claude Code = ReAct (코드 디버깅 차이 큼)\n- 'AI에게 한 번에 묻기' vs '여러 step 진행 시키기' — 둘이 정말 다른 카테고리\n\n**솔직한 한계 (다시)** — ReAct는 외부 도구 호출은 잘하지만, **반복 thought loop에 빠지는 reasoning error 47%** (CoT 16%) — 같은 생각을 반복하다 빠져나오지 못함. 그래서 CoT-SC와 결합한 hybrid가 실제 production 패턴.",
+      "figure": {
+        "id": "ReAct Figure 1 (4 methods 재방문)",
+        "captionKo": "Apple Remote 질문 — 4가지 prompting 비교. **CoT(1b)**는 자신 있게 'iPod Touch' 틀림 (hallucination). **ReAct(1d)**만 정답 'keyboard function keys' — Wikipedia를 4 round 호출하며 자기 기억을 의심하는 능력. 이 패턴이 Claude Code·ChatGPT Browsing의 골격.",
+        "imagePath": "data/papers/react/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "Thought-Action-Observation loop",
+          "ko": "T-A-O 루프",
+          "memo": "ReAct의 기본 단위. 생각 → 행동 → 관찰 → 다음 생각의 순환"
+        },
+        {
+          "en": "action space Â = A ∪ L",
+          "ko": "확장된 행동 공간",
+          "memo": "원래 환경 행동 A + 언어 공간 L. L에서 만든 행동이 thought (환경 안 바꿈)"
+        },
+        {
+          "en": "hallucination 0%",
+          "ko": "환각 0%",
+          "memo": "ReAct는 외부 Wikipedia에 묶여 있어 사실 꾸며내지 못함. CoT는 56%"
+        },
+        {
+          "en": "structural rigidity",
+          "ko": "구조적 경직성",
+          "memo": "thought-action-obs 형식 강제 → 자유로운 reasoning 어려움. ReAct의 약점"
+        },
+        {
+          "en": "ReAct-CoT hybrid",
+          "ko": "ReAct-CoT 결합",
+          "memo": "현대 production agent의 실제 패턴. ReAct가 실패하면 CoT-SC fallback"
+        }
+      ],
+      "analogy": {
+        "title": "도서관 사서 vs 동네 친구 (재방문)",
+        "body": "'**동네 친구**' (CoT) — 자기 기억으로 답. 빠르지만 모르면 짐작. '**도서관 사서**' (ReAct) — 검색 → 책 펴기 → 다시 생각. 느리지만 정확. Claude Code의 동작이 정확히 도서관 사서 모델. **2022년 ReAct 논문이 정리한 패턴**을 거의 모든 현대 AI agent가 따릅니다."
+      },
+      "question": "본인이 쓰는 AI 도구 중 **'단순 답변형' vs 'ReAct 루프형'** 가장 큰 효과 차이를 본 경험은? 한 문장으로."
+    },
+    {
+      "n": 4,
+      "range": "W3 Toolformer 재방문 — 본인 일에 어떻게 적용됐나",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W3 Toolformer를 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**Toolformer 한 줄 정리**\n\n**모델이 스스로 학습 데이터를 만들어 (self-supervised)** 도구 사용을 fine-tune 학습. 4-step 파이프라인: Sample → Execute → Filter (L_i^- - L_i^+ ≥ τ_f) → Finetune. 5개 도구(QA · Calculator · WikiSearch · NLLB · Calendar)로 실험.\n\n**핵심 발견 (다시 보면)**\n\n- **6.7B > 175B**: GPT-J 6.7B Toolformer가 GPT-3 175B를 LAMA·Math에서 이김. **25배 작은 모델**\n- **학습 비용 0**: API 학습 후에도 perplexity 증가 없음. LM 능력 보존\n- **Tool use ~775M에서 emergent**: CoT(~100B)보다 훨씬 작은 임계점\n- **paradoxical weakness 해결**: 단순 산술·사실 조회 같이 큰 모델이 약한 일을 작은 도구가 해결\n\n**오늘날 어디서 보이나**\n\n- **OpenAI Function Calling (2023.06~)**: 사용자가 JSON schema로 함수 정의 → 모델 자동 호출. **Toolformer 직접 production화**\n- **Claude tool_use API**: 같은 패턴, Anthropic 버전. Claude Code의 Read/Edit/Bash가 이걸로 작동\n- **ChatGPT GPT-4o**: 사용자 모르게 Calculator·Browser·Image Gen 자동 호출\n- **Cursor의 코드 도구**: 파일·터미널 자동 호출\n- **HuggingGPT / AutoGen**: 다른 모델들을 도구처럼 호출 (multi-model)\n\n**본인 일 reflection**\n\n본인이 쓰는 AI 도구 중 **'배경에서 자동 호출되는 도구'**가 가장 효과를 발휘한 순간:\n\n- Claude/ChatGPT가 자동으로 계산기 쓸 때 (수학 답 정확도 ↑)\n- 자동으로 웹 검색 (사실 정확도 ↑, 출처 제공)\n- Claude Code의 파일·bash 자동 호출 (코드 task 속도 폭증)\n- Cursor의 codebase context 자동 fetch (코드 일관성 ↑)\n\n**솔직한 한계 (다시)** — Toolformer는 **tool chain 불가** (한 호출 output을 다음 호출 input으로 못 씀) + **interactive reformulation 불가** (검색 결과 보고 query 재구성 못함). 이게 **ReAct loop와 결합하는 이유** — 현대 agent는 Toolformer(학습으로 도구 호출) + ReAct(loop 안에서 재호출) **두 패턴 결합**으로 작동.",
+      "figure": {
+        "id": "Toolformer Figure 1 (재방문)",
+        "captionKo": "Toolformer의 5개 tool 자동 호출 예시. **사용자가 prompt에 'API 호출해'라고 안 했는데도** 모델이 자체 결정으로 QA·Calculator·MT·WikiSearch를 텍스트 안에 자연 삽입. 이 패턴이 오늘날 **OpenAI Function Calling·Claude tool_use**의 production 응용.",
+        "imagePath": "data/papers/toolformer/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "self-supervised tool learning",
+          "ko": "자가 학습 도구 사용",
+          "memo": "사람 라벨 없이 모델 스스로 'API 호출이 후속 토큰 예측에 도움됐는가'를 평가해 학습 데이터로 keep"
+        },
+        {
+          "en": "L_i^- - L_i^+ ≥ τ_f",
+          "ko": "필터 기준",
+          "memo": "no call vs (call+response) loss 차이. τ_f 임계값 넘은 호출만 학습 데이터 포함"
+        },
+        {
+          "en": "tool chain",
+          "ko": "도구 연쇄",
+          "memo": "한 호출 output을 다음 호출 input으로. Toolformer 불가 (한계 1번). LangChain·AutoGPT가 외부 loop로 해결"
+        },
+        {
+          "en": "function calling",
+          "ko": "함수 호출",
+          "memo": "OpenAI/Anthropic의 Toolformer 후속 production. JSON schema 정의 → 모델 자동 호출"
+        },
+        {
+          "en": "Toolformer + ReAct hybrid",
+          "ko": "Toolformer-ReAct 결합",
+          "memo": "현대 agent의 실제 패턴. Toolformer = 어떤 도구 호출(학습), ReAct = 호출 결과 보고 다음 호출(loop)"
+        }
+      ],
+      "analogy": {
+        "title": "외과 의사의 보조 도구 (재방문)",
+        "body": "외과 의사가 보조 도구(메스·집게·내시경)를 **적절한 순간에 쓸 줄 알면** 효율 폭증. Toolformer는 LLM에게 '이 순간 메스를 쓰면 더 잘 풀린다'를 **수술 데이터에서 스스로 학습**하게 만든 셈. 사람이 일일이 라벨링하지 않고요. 오늘날 **Claude Code의 Read/Edit/Bash** 자동 호출 = 이 패턴의 production."
+      },
+      "question": "본인이 쓰는 AI 중 **'배경에서 자동 호출되는 도구'**가 가장 인상적이었던 순간은? 한 문장으로."
+    },
+    {
+      "n": 5,
+      "range": "Phase 1 결합 + Phase 2 motivation",
+      "estimatedMinutes": 30,
+      "pages": 0,
+      "translationKo": "Phase 1의 세 편을 결합한 큰 그림 + Phase 2 (정렬 · Assistant Training) motivation.\n\n**한 주 핵심 한 줄**\n\nPhase 1은 **'LLM 안에 잠재된 능력을 끌어내는 3가지 방법'**의 학습이었습니다. CoT(외부 prompt) → ReAct(외부 prompt + 도구) → Toolformer(학습으로 내재화). 이 셋의 결합이 오늘날 모든 production AI agent의 골격.\n\n**셋의 진화 패턴 — 한 표로**\n\n- **위치**: CoT(외부 prompt) → ReAct(외부 prompt + 외부 도구) → Toolformer(내부 학습)\n- **데이터**: CoT(8 예시 손작성) → ReAct(1-6 예시) → Toolformer(self-supervised, 사람 라벨 0)\n- **모델 크기**: CoT emergent ~100B / Toolformer emergent ~775M → **작은 모델에서도 작동**\n- **단점**: CoT(hallucination) → ReAct(structural rigidity) → Toolformer(tool chain 불가)\n- **production**: ChatGPT prompt / Browsing / Function Calling — 셋이 다 살아있음\n\n**현대 agent의 실제 패턴**\n\nClaude Code · ChatGPT · LangChain 등 production agent는 **셋을 다 결합**:\n\n- **CoT**: thinking 모드, 답 전에 풀이 생성\n- **ReAct**: 도구 호출 loop (Read → 생각 → Edit → 생각)\n- **Toolformer**: 사용자가 prompt 안 줘도 도구 자동 호출 (fine-tune으로 학습된 능력)\n\n**Phase 1이 풀지 못한 큰 문제**\n\nPhase 1의 3편은 모두 **'더 잘 푸는 것'**에 집중했습니다. 추론 능력↑, 도구 사용↑, paradoxical weakness 해결↑. 하지만:\n\n- **사람 의도와 정렬되었나?** — 답이 정확해도 **공격적·편향·해로운 답**일 수 있음\n- **'도움이 되는 답'은 무엇인가?** — 정답 ≠ helpful answer\n- **누구의 관점에서 helpful?** — 사용자? 회사? 사회?\n\n이게 **Phase 2 — Assistant Training**의 motivation. ChatGPT/Claude가 단순 LLM이 아니라 '친절하고 안전한 assistant'로 느껴지는 그 톤이 어떻게 만들어졌는지.\n\n**Phase 2 미리보기 — InstructGPT (W5)**\n\nOpenAI 2022년 논문. **RLHF (Reinforcement Learning from Human Feedback)** 도입.\n\n1. 사람이 'helpful' 답을 demonstration\n2. 사람이 여러 답을 ranking → reward model 학습\n3. PPO로 LLM을 reward 최대화 방향 fine-tune\n\n결과: GPT-3 175B보다 **1.3B InstructGPT가 더 helpful**하다고 사람 평가. ChatGPT의 직접적 원조 논문.\n\n다음 주(W5)는 **Phase 2 시작 — InstructGPT**. 추론·도구 능력은 키웠으니, 이제 **'사람이 원하는 답'**을 정의하고 학습하는 단계입니다.",
+      "figure": {
+        "id": "Toolformer Figure 4 (재방문) — scaling으로 본 진화",
+        "captionKo": "Toolformer의 scaling chart. **'큰 모델 + prompt' (GPT-3 점선) vs '작은 모델 + 학습' (Toolformer 빨강)** 비교. Phase 1의 진화 방향이 보임 — **모델 크기를 키우는 것보다 학습 방법을 진화시키는 것**이 더 효율적. Phase 2 InstructGPT는 이 진화의 다음 단계 — '학습의 방향'에 사람의 의도를 박는다.",
+        "imagePath": "data/papers/toolformer/fig5.png"
+      },
+      "glossary": [
+        {
+          "en": "Phase 2 — Assistant Training",
+          "ko": "Phase 2 정렬 단계",
+          "memo": "LLM을 사람 의도와 정렬. InstructGPT(W5) → CAI(W6) → Reflexion(W7) → Review(W8)"
+        },
+        {
+          "en": "alignment",
+          "ko": "정렬",
+          "memo": "LLM의 답이 사람의 의도·가치와 일치하게 만드는 과제. 정답 ≠ helpful answer"
+        },
+        {
+          "en": "RLHF",
+          "ko": "RLHF",
+          "memo": "Reinforcement Learning from Human Feedback. 사람이 답을 ranking → reward model → PPO fine-tune"
+        },
+        {
+          "en": "helpful · harmless · honest",
+          "ko": "도움 · 무해 · 정직",
+          "memo": "Anthropic이 정의한 alignment 3 axis. Phase 2의 평가 기준"
+        },
+        {
+          "en": "reward model",
+          "ko": "보상 모델",
+          "memo": "사람이 ranking한 답 페어로 학습한 '얼마나 helpful한가' 점수 모델"
+        }
+      ],
+      "analogy": {
+        "title": "운동 → 매너 — 자세 다음 단계",
+        "body": "Phase 1이 **'어떻게 강해질지'** (CoT 자세 / ReAct 도구 / Toolformer 내재화) 였다면, Phase 2는 **'강해진 다음 어떻게 행동할지'** — 매너·안전·도움. 헬스장에서 보디빌더가 됐는데, 사람들과 함께 운동할 때 매너 없으면 짐 크루에서 배제돼요. **'잘 푼다' ≠ '잘 도와준다'**의 구분이 Phase 2의 핵심 질문."
+      },
+      "question": "Phase 1(추론·도구 능력 키우기)이 푼 문제 vs Phase 2(정렬·assistant)가 풀려는 문제 — **두 가지의 차이**를 본인 말로 한 문장 정리하면?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "Phase 1 3편(CoT · ReAct · Toolformer)의 공통 질문은?",
+      "options": [
+        "모델을 어떻게 더 크게 만들 것인가",
+        "LLM 안에 잠재된 능력을 어떻게 끌어낼 것인가",
+        "LLM을 어떻게 사람 의도와 정렬할 것인가",
+        "어떤 데이터로 LLM을 학습시킬 것인가"
+      ],
+      "correct": 1,
+      "explain": "3편 모두 같은 질문에 다른 답. CoT(외부 prompt), ReAct(외부 prompt + 도구), Toolformer(학습으로 내재화). (2)는 **Phase 2의 질문** (정렬·alignment), (0)은 Phase 3 (기초모델 scaling)의 관심사."
+    },
+    {
+      "q": "CoT의 emergent 임계점은 ~100B인 반면, Toolformer tool use는 ~775M에서 emergent. 이 차이가 시사하는 바는?",
+      "options": [
+        "Toolformer가 잘못된 측정",
+        "Tool use는 reasoning보다 작은 모델에서도 학습 가능 — 학습 방법(self-supervised fine-tune)이 prompt-only보다 효율적",
+        "CoT는 큰 모델만 작동",
+        "두 임계점은 사실 같음"
+      ],
+      "correct": 1,
+      "explain": "CoT는 in-context learning이라 큰 모델 필요(~100B), Toolformer는 **fine-tune으로 도구 사용 학습이 더 작은 모델(~775M)부터 가능**. '큰 모델 + prompt' < '작은 모델 + 학습' 패턴. 이게 Phase 1의 가장 중요한 진화 메시지."
+    },
+    {
+      "q": "ReAct의 'hallucination 0% vs CoT 56%' 차이가 의미하는 것은?",
+      "options": [
+        "ReAct가 더 똑똑한 모델",
+        "ReAct는 외부 Wikipedia에 묶여 있어 임의로 사실 못 꾸며냄",
+        "CoT는 사실 56% 실패율",
+        "두 모델이 다른 학습 데이터 사용"
+      ],
+      "correct": 1,
+      "explain": "ReAct는 **외부 지식 grounding**으로 hallucination 차단. CoT는 자기 내부 지식만 쓰니까 모를 때 그럴듯하게 꾸며냄. 단 ReAct는 reasoning error가 47% (CoT 16%) — 같은 thought 반복하다 빠져나오지 못함. 그래서 **결합(ReAct→CoT-SC)이 단독을 압도**."
+    },
+    {
+      "q": "현대 production AI agent (Claude Code · ChatGPT · LangChain)에서 Phase 1 3편 중 가장 핵심적으로 사용되는 패턴은?",
+      "options": [
+        "CoT만",
+        "ReAct만",
+        "Toolformer만",
+        "셋 모두 결합 (CoT for thinking, ReAct for loop, Toolformer for auto tool selection)"
+      ],
+      "correct": 3,
+      "explain": "현대 agent는 **셋의 결합**. CoT(thinking 모드 = 답 전 풀이 생성), ReAct(도구 호출 loop), Toolformer(prompt 없이 도구 자동 호출). 이게 Phase 1 학습의 가장 큰 take-away — **셋이 서로 대체가 아니라 보완**."
+    },
+    {
+      "q": "Phase 1이 풀지 못한 큰 문제로, Phase 2가 다룰 주제는?",
+      "options": [
+        "더 큰 모델 만들기",
+        "더 빠른 inference",
+        "사람 의도와의 정렬 (alignment) — 정답 ≠ helpful answer",
+        "더 많은 도구 추가"
+      ],
+      "correct": 2,
+      "explain": "Phase 1은 '**더 잘 푸는 것**'에 집중 — 추론·도구·paradoxical weakness 해결. 하지만 '답이 정확해도 helpful한가 / 사람 의도와 정렬되었나'는 다른 문제. 이게 **Phase 2 — Assistant Training**의 motivation. W5 InstructGPT가 RLHF로 첫 답을 줍니다."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "instructgpt",
+    "nextTitle": "InstructGPT — RLHF로 LLM 정렬 (Phase 2 시작)",
+    "teaser": "다음 주(W5)부터 **Phase 2 — Assistant Training** 시작. 첫 논문은 OpenAI의 **InstructGPT** — RLHF (Reinforcement Learning from Human Feedback)로 LLM을 'helpful · harmless · honest'하게 정렬. 핵심 결과 미리: **1.3B InstructGPT가 GPT-3 175B보다 더 helpful**하다고 사람 평가. ChatGPT의 직접적 원조 논문. Phase 1이 '더 잘 푸는 것'이었다면, Phase 2는 '잘 푸는 + 사람이 원하는 답'을 만드는 단계입니다."
+  }
+}
