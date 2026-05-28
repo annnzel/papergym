@@ -1,0 +1,319 @@
+{
+  "id": "react",
+  "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+  "venue": "ICLR 2023",
+  "arxivId": "2210.03629",
+  "phase": 1,
+  "koreanTitle": "ReAct — 생각과 행동을 함께 시키는 프롬프트 패러다임",
+  "hook": "CoT는 생각만 시켰다. ReAct는 생각하고, 검색하고, 또 생각하게 만든다 — 현대 AI agent의 시발점.",
+  "abstractKo": "LLM이 reasoning(CoT)과 acting(action plan generation)을 각각 잘하는 건 알려져 있었지만, 이 둘은 별개 연구 주제였다. ReAct는 둘을 interleaved 방식으로 결합한다. 모델이 '생각(thought)'과 '행동(action)'을 번갈아 출력하면, 생각은 행동의 계획을 세우고 추적하며 예외를 처리하고, 행동은 외부 환경(예: Wikipedia API)에서 정보를 가져와 다음 추론에 쓴다. HotpotQA·Fever에서 CoT의 hallucination을 사실상 0%로 줄였고, ALFWorld(가정환경)·WebShop(쇼핑)에서 imitation/RL 베이스라인을 각각 +34%·+10% 능가했다. 핵심은 fine-tune 없이 1-6개 in-context example만으로 달성했다는 점.",
+  "days": [
+    {
+      "n": 1,
+      "range": "§1 Introduction — 왜 CoT 다음에 ReAct가 필요한가",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘 분량은 'ReAct가 무엇이고 왜 필요한가'입니다. §1 Introduction 전체.\n\n**ReAct = Reason + Act**\n\nReAct는 LLM이 **생각(reasoning)**과 **행동(action)**을 번갈아 하도록 만드는 프롬프트 패러다임입니다. CoT(W1)는 모델에게 '답 쓰기 전에 풀이를 써라'만 시켰다면, ReAct는 거기에 '필요하면 외부 도구를 호출해서 정보를 가져와라'를 더합니다.\n\n**왜 필요한가 — 사람의 인지에서 출발**\n\n저자들은 사람의 일상에서 출발합니다. 부엌에서 요리할 때 우리는 자르고 → '이제 끓는 물이 필요하네' 생각하고 → 물을 끓이고 → '어 소금이 없네, 후추로 대체할까' 적응하고 → '반죽은 어떻게 만들지? 검색해야겠다' 외부 정보를 찾습니다. **행동과 추론이 끊김없이 엮여 있어요.** 사람은 이 결합 덕분에 새로운 과제를 빠르게 배우고, 불확실한 상황에서도 합리적으로 결정합니다.\n\n**CoT의 한계 — static black box**\n\nCoT는 강력하지만 한 가지 큰 약점이 있습니다. 모델이 **자기 내부 지식만 사용해** 풀이를 만든다는 것. Figure 1의 (1b)를 보세요. 'Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?' — CoT 모델은 'Apple Remote는 iPhone/iPad/iPod Touch와 상호작용하도록 설계됐어'라고 자신감 있게 답합니다. **틀렸어요.** Apple Remote는 원래 Front Row(미디어 센터)를 위해 만들어졌습니다. 모델이 사실을 모르거나 잘못 기억하면 그대로 **hallucination(헛것 보기)**이 나옵니다.\n\n**ReAct의 핵심 — 외부 세계에 들어가기**\n\nReAct(Figure 1의 1d)는 똑같은 모델이지만 다르게 합니다. '검색해야지' → Search[Apple Remote] → 'Front Row media center용이구나' → '이제 Front Row 검색' → Search[Front Row] → 'software 버전이 있네' → 정답 'keyboard function keys' 도달. **모델이 자기 기억을 의심하고, Wikipedia API를 호출해 진짜 정보를 확인하면서 추론합니다.**\n\n**핵심 결과 미리보기**\n\n- HotpotQA(다단계 QA) + Fever(사실 검증): Wikipedia API 호출로 **hallucination을 사실상 0%**로 줄임\n- ALFWorld(가정환경): ReAct가 BUTLER(10⁵ trajectory로 학습한 RL 모델)보다 **+34%** 성공률, 단 **1-2개 예시만으로**\n- WebShop(웹 쇼핑): IL+RL 베이스라인 대비 **+10%**\n\nReAct가 흥미로운 건, 학습이 아니라 **프롬프트 안에 1-6개 예시만 넣어서** 이 모든 걸 달성한다는 점입니다. CoT가 '프롬프트 트릭 한 줄로 추론 능력 끌어내기'였다면, ReAct는 '프롬프트 트릭 한 줄로 도구 사용 능력 끌어내기'입니다.",
+      "figure": {
+        "id": "Figure 1",
+        "captionKo": "ReAct 논문의 핵심 그림 — 4가지 prompting 방법을 같은 두 문제에 적용한 비교. **(1a) Standard**는 답만 시도(틀림), **(1b) CoT**는 머리속 추론(틀림 — hallucination), **(1c) Act-only**는 검색만(틀림), **(1d) ReAct만 정답** — 검색하고 → 생각하고 → 다시 검색하는 4 round로 'keyboard function keys'에 도달.",
+        "imagePath": "data/papers/react/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "ReAct",
+          "ko": "리액트 (Reasoning + Acting)",
+          "memo": "생각과 행동을 번갈아 출력하는 프롬프트 패러다임. 이 논문이 정의한 용어."
+        },
+        {
+          "en": "hallucination",
+          "ko": "환각",
+          "memo": "모델이 사실이 아닌 것을 자신 있게 답으로 만들어내는 현상. CoT의 큰 약점."
+        },
+        {
+          "en": "reasoning trace",
+          "ko": "추론 흔적",
+          "memo": "답에 도달하기까지 모델이 거친 생각의 시퀀스. CoT가 이걸 출력하게 시킴."
+        },
+        {
+          "en": "action",
+          "ko": "행동",
+          "memo": "환경에 영향을 주는 외부 호출 (예: Search, Take, Buy)."
+        },
+        {
+          "en": "interleave",
+          "ko": "번갈아 엮음",
+          "memo": "생각 한 줄 → 행동 한 줄 → 관찰 한 줄을 교차로 배치하는 형식."
+        },
+        {
+          "en": "external API",
+          "ko": "외부 도구 호출",
+          "memo": "Wikipedia 검색 같은 외부 정보 접근. ReAct가 이걸 reasoning과 결합."
+        }
+      ],
+      "analogy": {
+        "title": "머리속 시뮬레이션 vs 책 펴놓기",
+        "body": "어려운 수학 시험에서 A 학생은 머리속으로만 추론합니다 (CoT). B 학생은 '이게 맞나? 공식을 책에서 확인하자'라며 책을 펴고, 본 다음 다시 생각합니다 (ReAct). 답이 단순하면 A가 빠르지만, 복잡하거나 자신이 없으면 B가 정확합니다. ReAct의 핵심은 **'내가 모를 수도 있다'를 인정하고 외부를 확인하는 메커니즘**입니다."
+      },
+      "question": "Figure 1의 Apple Remote 질문 — **모델은 똑같은 PaLM-540B**인데 CoT는 'iPod Touch'라고 틀리고 ReAct는 'keyboard function keys'라고 맞춥니다. 모델은 같은데 왜 답이 달라질까요? 한 문장으로."
+    },
+    {
+      "n": 2,
+      "range": "§2 ReAct: Synergizing Reasoning + Acting — 작동 방식",
+      "estimatedMinutes": 40,
+      "pages": 2,
+      "translationKo": "오늘은 ReAct가 정확히 무엇을 하는지 — 작동 방식 자체를 보겠습니다. §2 ReAct: Synergizing Reasoning + Acting.\n\n**RL agent의 세계로 시작**\n\n저자들은 강화학습(RL) agent의 표준 setup에서 출발합니다. 시간 t에 agent는 환경에서 관찰 o_t를 받고, 정책 π에 따라 행동 a_t를 선택합니다. 문제는 LLM이 '관찰 → 행동' 매핑을 학습하기 어렵다는 것. Figure 1의 (1c) Act-only 모델은 4번째 행동에서 'iPod'이라고 잘못 답합니다 — QA task에서 길게 추론이 필요한데 못 함. (2a)에서는 sinkbasin 1에 pepper shaker가 없는데도 같은 행동을 반복합니다.\n\n**핵심 아이디어 — Action space를 언어로 확장**\n\nReAct의 트릭은 단순합니다. **action space를 Â = A ∪ L로 확장합니다.** A는 원래 환경에서 가능한 행동(Search, Take, Go to), L은 **언어 공간** — 즉 자유로운 문장입니다. 언어 공간의 행동(â ∈ L)을 **thought(생각)**이라 부르고, 이 행동은 환경을 바꾸지 않습니다. 그저 context만 업데이트해요. 그리고 다음 행동의 근거가 됩니다.\n\n**Thought이 하는 일 5가지**\n\n저자들은 thought이 다양한 역할을 할 수 있다고 정리합니다:\n- **목표 분해**: '먼저 pepper shaker를 찾아야 하고, 그다음 drawer 1에 넣어야 한다'\n- **상식 주입**: 'pepper shaker는 cabinet이나 countertop에 있을 확률이 높다'\n- **observation에서 추출**: 'Apple Remote는 Front Row 미디어 센터용이구나'\n- **진행 상황 추적**: '이제 pepper shaker는 찾았고, drawer 1로 가야 한다'\n- **예외 처리**: 'Front Row가 안 보이네. Front Row (software)로 다시 검색해야겠다'\n\n흥미로운 건 thought을 **언제, 얼마나 자주 할지를 모델이 스스로 결정한다**는 점. QA(Figure 1)에서는 거의 모든 단계에 thought이 붙고, ALFWorld에서는 11개 행동 중 thought이 단 **2번**만 나옵니다 (오늘 그림 참조).\n\n**4가지 특징 (저자 주장)**\n\nA) **직관적이고 설계 쉬움** — 사람이 자기 생각을 그대로 적으면 됨. 특정 포맷 강제 없음\nB) **범용성** — QA·검증·게임·웹 쇼핑 다 됨\nC) **성능과 견고함** — 1-6개 예시만으로 일반화, prompt 선택에 robust\nD) **인간 친화적 + 제어 가능** — 사람이 추론 과정을 보고 직접 수정 가능\n\n**기반 모델 — PaLM-540B**\n\n실험은 모두 Google의 **PaLM-540B**로 진행. fine-tuning 없이 in-context examples 1-6개만 사용. 일부 GPT-3 결과도 부록에 있음.",
+      "figure": {
+        "id": "Figure 1 (1d) — ReAct trajectory",
+        "captionKo": "Apple Remote 질문의 ReAct trajectory. **Thought N → Act N (Search) → Obs N**의 루프가 4회 반복. Thought 1에서 '검색해야지' 결정 → Act 1에서 실제 검색 → Obs 1에서 'Front Row media center' 단서 발견 → Thought 2에서 다음 검색 계획 → 반복. **이 한 패턴이 현대 모든 AI agent의 기본 골격**입니다 (Claude Code, LangChain, AutoGPT 등).",
+        "imagePath": "data/papers/react/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "action space",
+          "ko": "행동 공간",
+          "memo": "agent가 선택할 수 있는 행동들의 집합. ReAct는 이걸 언어로 확장 (Â = A ∪ L)."
+        },
+        {
+          "en": "thought",
+          "ko": "생각",
+          "memo": "환경을 바꾸지 않고 context만 업데이트하는 언어 행동. ReAct의 핵심 정의."
+        },
+        {
+          "en": "context",
+          "ko": "맥락",
+          "memo": "agent가 현재까지 쌓은 (observation, action, thought)의 시퀀스 c_t."
+        },
+        {
+          "en": "policy",
+          "ko": "정책",
+          "memo": "context를 보고 다음 행동을 정하는 함수 π(a|c). 여기선 LLM 자체가 정책."
+        },
+        {
+          "en": "in-context learning",
+          "ko": "맥락 내 학습",
+          "memo": "fine-tune 없이 prompt에 예시 1-6개 박아 작업을 배우게 하는 방식."
+        },
+        {
+          "en": "PaLM-540B",
+          "ko": "PaLM 540B 파라미터",
+          "memo": "Google이 만든 LLM. 이 논문의 주력 베이스 모델. fine-tune 없이 prompting만."
+        }
+      ],
+      "analogy": {
+        "title": "운전 — GPS + 머리속 길찾기",
+        "body": "운전할 때 머리속으로만 길을 그리면(머리속 생각만) 익숙한 길은 빠르지만 새 동네에선 헤맵니다. GPS만 따라가면(행동만) 좁은 골목이나 사고에 대응 못 합니다. ReAct는 GPS를 보면서도 '이쪽 막힐 것 같은데, 옆 길로 빠질까?' 생각하는 운전자입니다. 핵심은 **둘이 한 흐름**이라는 것 — 분리된 두 시스템이 아니라 같은 머리에서 번갈아 일어납니다."
+      },
+      "question": "Thought이 단순한 'reasoning'이 아니라 **'환경을 바꾸지 않는 action'**으로 정의된 게 핵심입니다. 왜 굳이 'action'으로 정의했을까요?"
+    },
+    {
+      "n": 3,
+      "range": "§3 Knowledge Tasks — HotpotQA + Fever",
+      "estimatedMinutes": 40,
+      "pages": 2,
+      "translationKo": "오늘 분량은 ReAct를 지식 task에 적용한 결과입니다. §3 Knowledge-Intensive Reasoning Tasks.\n\n**두 가지 벤치마크**\n\n- **HotpotQA** (Yang et al. 2018): 다단계(multi-hop) QA. 두 개 이상의 Wikipedia 문서에서 정보를 종합해야 답할 수 있는 어려운 질문\n- **Fever** (Thorne et al. 2018): 사실 검증. 문장이 SUPPORTS / REFUTES / NOT ENOUGH INFO인지 판단\n\n두 task 모두 **답을 위한 문서가 직접 주어지지 않습니다.** 모델은 내부 지식만 쓰거나, 아니면 외부에서 가져와야 해요.\n\n**Action Space — 단 3개**\n\n저자들은 Wikipedia 웹 API를 단순화해서 3가지 action만 허용합니다:\n- **search[entity]**: entity의 위키 페이지에서 첫 5문장 반환. 없으면 비슷한 상위 5개 entity 추천\n- **lookup[string]**: 현재 페이지에서 string이 포함된 다음 문장 반환 (브라우저 Ctrl+F와 같음)\n- **finish[answer]**: 답 제출\n\n**7가지 prompting 방법 비교 (Table 1)**\n\nPaLM-540B에 7가지 방식 적용. 핵심 숫자 (HotpotQA EM / Fever Acc):\n- Standard 28.7 / 57.1\n- CoT 29.4 / 56.3\n- CoT-SC (self-consistency 21회 다수결) 33.4 / 60.4\n- Act (행동만, thought 없음) 25.7 / 58.9\n- **ReAct 27.4 / 60.9**\n- CoT-SC → ReAct (CoT 자신 없으면 ReAct로) 34.2 / **64.6**\n- **ReAct → CoT-SC (ReAct 실패하면 CoT로) 35.1 / 62.0**\n\n**발견 1: 단독 ReAct는 CoT보다 약간 낮음** (HotpotQA 27.4 vs 29.4). 왜? **구조적 제약** 때문 — ReAct는 매 행동마다 외부 검색을 시도해야 하는데, 검색이 빗나가면 추론이 망가집니다. CoT는 자유롭게 생각할 수 있어요.\n\n**발견 2: 결합이 단일을 압도** — ReAct→CoT-SC 35.1, CoT-SC→ReAct 64.6. **내부 지식과 외부 지식을 모두 활용**하는 게 핵심.\n\n**발견 3: Hallucination 비교 (Table 2)** — CoT의 오답 중 **56%가 hallucination**(없는 사실을 자신 있게 만듦), 반면 ReAct의 오답 중 hallucination은 **0%**. 외부 Wikipedia에 묶여 있어 못 꾸며냄. 단 ReAct는 reasoning error가 47%(CoT 16%) — **같은 thought 반복하다 빠져나오지 못하는** 구조적 약점.",
+      "figure": {
+        "id": "Table 1 + Figure 2",
+        "captionKo": "왼쪽 **Table 1** — PaLM-540B로 7가지 방법 비교. 단독으로는 CoT-SC 33.4가 가장 강하지만, **결합 (ReAct→CoT-SC 35.1, CoT-SC→ReAct 64.6 Fever) 이 모든 단독을 넘음**. 오른쪽 **Figure 2** — CoT-SC sample 수에 따른 변화. ReAct→CoT-SC와 CoT-SC→ReAct는 3-5 samples만으로도 CoT-SC 21 samples 성능에 도달 — **결합이 효율적**.",
+        "imagePath": "data/papers/react/fig3.png"
+      },
+      "glossary": [
+        {
+          "en": "HotpotQA",
+          "ko": "멀티홉 QA 벤치마크",
+          "memo": "두 개 이상 Wikipedia 문서를 결합해야 답하는 질문 모음. multi-hop reasoning 평가."
+        },
+        {
+          "en": "Fever",
+          "ko": "사실 검증 벤치마크",
+          "memo": "주장이 SUPPORTS/REFUTES/NOT ENOUGH INFO인지 분류. 외부 지식 필요."
+        },
+        {
+          "en": "EM (Exact Match)",
+          "ko": "정확 일치 점수",
+          "memo": "예측 답이 정답과 글자까지 일치하는 비율. QA 평가의 가장 엄격한 지표."
+        },
+        {
+          "en": "CoT-SC",
+          "ko": "CoT self-consistency",
+          "memo": "CoT 풀이 21번 샘플링 후 다수결로 답 선택. 단일 CoT보다 +4점."
+        },
+        {
+          "en": "baseline",
+          "ko": "기준선",
+          "memo": "비교용 단순 방법. Standard, CoT, Act 등이 ReAct 평가의 baseline."
+        },
+        {
+          "en": "grounded",
+          "ko": "근거 있는",
+          "memo": "외부 사실에 묶여 임의로 만들지 않는 답. ReAct가 hallucination 0%인 이유."
+        }
+      ],
+      "analogy": {
+        "title": "시험 답안 — 머리속 vs 펴놓은 책",
+        "body": "어려운 시험에서 A는 머리속 지식만으로 답을 씁니다 — 빠르지만 모르면 추측. B는 매번 책을 펴서 확인합니다 — 정확하지만 시간이 듭니다. 최고 점수는 누구? 보통은 C — **'쉬운 건 머리속(CoT)으로 빠르게, 어렵거나 자신 없는 건 책(ReAct)으로 확인'**하는 학생. Table 1의 ReAct→CoT-SC와 CoT-SC→ReAct가 정확히 이 C 전략입니다."
+      },
+      "question": "ReAct 단독이 CoT보다 약간 떨어지는데, **결합 (CoT-SC↔ReAct) 이 단독보다 +5점 이상 좋습니다**. 이게 본인이 AI를 쓸 때 주는 교훈은 뭘까요?"
+    },
+    {
+      "n": 4,
+      "range": "§4 Decision Tasks — ALFWorld + WebShop",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 ReAct를 더 어려운 task — 의사결정 환경에 적용합니다. §4 Decision Making Tasks.\n\n**ALFWorld — 텍스트 기반 가정환경 게임**\n\nALFWorld는 텍스트로만 묘사되는 가상 가정환경입니다. agent가 받는 명령 예: 'Put some pepper shaker on a drawer' (drawer에 후추통을 올려라). 6가지 task type, 50+ 위치, 50+ 단계가 필요할 수 있는 복잡한 환경.\n\n**핵심 도전 — 상식 활용**\n\nALFWorld의 어려움은 '물건이 어디 있을지 추측'입니다. **pepper shaker는 cabinet이나 countertop에 있을 가능성이 높지** 침대 밑엔 없겠죠. LLM은 사전학습된 상식 덕분에 이런 추측을 잘할 수 있습니다.\n\n**결과 (Table 3) — 압도적**\n\n- Act (행동만, best of 6) **45%**\n- **ReAct (best of 6) 71%**\n- BUTLER (10⁵ trajectory로 imitation learning, best of 8) **37%**\n\n**ReAct가 BUTLER를 +34% 차이로 이깁니다.** BUTLER는 10만 개의 전문가 trajectory로 학습한 모델, ReAct는 단 **3개 trajectory**만 prompt에 박았어요. 사전학습된 LLM의 상식이 그만큼 강하다는 증거.\n\n**WebShop — 실제 쇼핑 사이트 시뮬레이션**\n\nWebShop은 **1.18M 실제 Amazon 제품**과 **12k 사람 명령**으로 만든 환경. agent는 'I'm looking for a nightstand with drawers. It should have a nickel finish, and priced lower than $140' 같은 자연어 명령을 받고 검색·필터링·옵션 선택·구매를 합니다.\n\n**결과 (Table 4)** — Act 30.1%, **ReAct 40.0%**, IL+RL(10,587 instruction 학습) 28.7%, Human Expert 59.6%. ReAct가 IL+RL을 +11% 차이로 이기지만 사람 전문가에는 못 미침. **단 한 개의 in-context example만으로** 이 정도라는 점이 핵심.\n\n**Inner Monologue와의 차이**\n\n이전 연구 Inner Monologue(IM, Huang et al. 2022)도 비슷한 closed-loop 시도. 차이: IM의 '내적 독백'은 환경 상태에 대한 **외부 관찰의 반복**만. ReAct의 thought은 더 자유 — 목표 분해, 상식 주입, 예외 처리까지. ablation에서 ReAct(71%) > ReAct-IM(53%).\n\n**관전 포인트 — Pepper Shaker 예시 (오늘 그림)**\n\n오늘 그림은 ReAct가 pepper shaker 찾는 11단계 trajectory. **Think이 단 2번**만 나옵니다 (Act 1, Act 8). Act 1: '먼저 pepper shaker를 찾자, cabinet 1-6 / countertop 1-3에 있을 가능성 높다' (목표 분해 + 상식 주입). Act 8: '찾았으니 drawer 1로 가자' (subgoal 전환). 나머지 9 step은 단순 행동. **모델이 스스로 '지금이 thought 필요한 순간'을 판단**합니다.",
+      "figure": {
+        "id": "Figure 1 (2b) — ReAct ALFWorld",
+        "captionKo": "ReAct가 ALFWorld에서 pepper shaker를 drawer 1에 넣는 11단계 trajectory. **Think이 단 2회만**(Act 1, Act 8) 나옴 — Act 1: 'pepper shaker는 cabinet 1-6 또는 countertop 1-3에 있을 가능성이 높다' (상식 주입), Act 8: 'pepper shaker 찾았으니 drawer 1로 가자' (subgoal 전환). 나머지 9 step은 단순 행동. **모델이 스스로 'thought 필요한 순간'을 판단**.",
+        "imagePath": "data/papers/react/fig4.png"
+      },
+      "glossary": [
+        {
+          "en": "ALFWorld",
+          "ko": "텍스트 가정환경 시뮬레이션",
+          "memo": "embodied AI 벤치마크. 6가지 task type, 50+ 위치. pepper shaker 찾기 등."
+        },
+        {
+          "en": "WebShop",
+          "ko": "웹 쇼핑 시뮬레이션",
+          "memo": "실제 Amazon 1.18M 제품 + 12k 자연어 명령. 검색·필터·구매 task."
+        },
+        {
+          "en": "trajectory",
+          "ko": "궤적",
+          "memo": "(action, observation) 시퀀스. agent가 task를 푸는 과정의 기록."
+        },
+        {
+          "en": "embodied agent",
+          "ko": "환경 내 agent",
+          "memo": "실제 또는 가상 환경에서 행동하는 agent. LLM이 sequential action을 만듦."
+        },
+        {
+          "en": "sparse reward",
+          "ko": "희소 보상",
+          "memo": "최종 성공만 점수, 중간 단계 피드백 없음. 학습이 어려운 환경."
+        },
+        {
+          "en": "BUTLER",
+          "ko": "imitation learning baseline",
+          "memo": "10⁵ 전문가 trajectory로 학습한 RL 모델. ReAct가 1-2 example로 +34% 이김."
+        }
+      ],
+      "analogy": {
+        "title": "슈퍼마켓 쇼핑 — 무계획 vs subgoal",
+        "body": "큰 슈퍼마켓에서 '저녁 재료 사 와'라는 명령. A는 무작정 카트 끌고 다니다가 빠뜨립니다 (Act-only). B는 '1) 채소 코너, 2) 정육, 3) 양념' 순서로 머리속 plan을 짜고, 가다가 '어, 양념은 D 코너에 있다고 들었지' 떠올립니다 (ReAct). B가 효율적인 이유는 **목표를 subgoal로 쪼개고 상식을 활용**하기 때문. ALFWorld가 정확히 이 구조입니다."
+      },
+      "question": "BUTLER는 10만 trajectory로 학습한 강한 모델인데, ReAct는 단 3개 예시로 **+34% 차이**로 이깁니다. 사전학습된 LLM의 **어떤 능력**이 이걸 가능하게 했을까요?"
+    },
+    {
+      "n": 5,
+      "range": "정리 + 한계 + 계보 연결",
+      "estimatedMinutes": 30,
+      "pages": 1,
+      "translationKo": "한 주의 마지막 — ReAct를 **오늘날 AI 도구와 어떻게 연결되는지**까지 정리합니다.\n\n**한 주 핵심 한 줄**\n\nReAct는 LLM에게 '생각만 하지 말고, 필요하면 외부 도구를 호출해서 정보를 가져와라'라고 시키는 가장 단순한 프롬프트 패턴입니다. fine-tune 없이, 1-6개 예시만으로 **hallucination을 줄이고 도구 사용을 가능하게** 합니다.\n\n**왜 W2에 읽나** — 이 한 편이 **현대 AI agent의 기본 골격**입니다. ChatGPT의 'function calling', Claude Code의 'tool use', LangChain·AutoGPT 같은 모든 agent 프레임워크 — 전부 ReAct 패턴 (Thought → Action → Observation → Thought → ...) 을 응용합니다. CoT가 '추론 능력'을 깨웠다면, ReAct는 **'도구 사용 능력'을 깨운 시발점**이에요.\n\n**솔직한 한계** (저자들이 §6 Conclusion·§4 끝에서 명시)\n\n1. **큰 action space에선 demonstration 한계** — WebShop처럼 옵션이 무수히 많으면 1-6개 예시로는 부족. 더 많은 예시가 필요하지만 prompt 길이 제한에 걸림.\n2. **prompt < fine-tune (큰 task에서)** — Figure 3을 보면 finetune된 PaLM-62B + ReAct가 prompt-only PaLM-540B 모든 방법보다 잘 함. **'큰 모델 + prompt' < '작은 모델 + 학습'** 이 가능.\n3. **structural rigidity** — 매 step마다 thought-action-observation 형식을 따라야 해서, CoT처럼 자유로운 reasoning은 어려움. reasoning error 47% (CoT 16%).\n4. **search quality 종속** — Wikipedia에서 못 찾으면 (23% 케이스) 추론이 함께 망가짐.\n\n**계보 연결 — ReAct 이후 무엇이 왔는가**\n\n- **Toolformer (W3)**: ReAct는 in-context로 도구 사용을 '가르치지만', Toolformer는 모델 자체가 **언제 어떤 API를 호출할지를 self-supervised로 학습**합니다. ReAct 한계 1번을 정면 돌파.\n- **Voyager (보충)**: Minecraft에서 ReAct + skill library + 자동 curriculum. agent가 새 skill을 코드로 저장해 재사용.\n- **SWE-bench (보충)**: GitHub 실제 issue로 코드 디버깅. 모든 SWE-bench agent가 ReAct 패턴 (파일 읽기 → 생각 → 수정 → 테스트 → 또 생각).\n- **Generative Agents (보충)**: 25개 LLM agent + Smallville. 각 agent가 ReAct로 일상 결정.\n\n**오늘날 도구 연결**\n\n- **Claude Code**: 지금 이 대화창의 Claude가 파일 읽기(Read) → 생각 → 편집(Edit) → bash 실행(Bash) → 결과 보고 → 또 생각 — 이게 **정확히 ReAct 패턴**. Action space = {Read, Edit, Bash, Grep, ...}, Language space에 자유 thought.\n- **ChatGPT Browsing / Code Interpreter**: 웹 검색 + 코드 실행 모두 ReAct 응용\n- **모든 'agent' 라이브러리** (LangChain, AutoGPT, Autogen, CrewAI): ReAct loop가 기본 빌딩 블록\n\n다음 주(W3)는 Toolformer — ReAct의 자연스러운 다음 단계로 갑니다.",
+      "figure": {
+        "id": "Figure 3 — Scaling",
+        "captionKo": "HotpotQA 점수, **prompt-only(왼쪽) vs finetune(오른쪽)**, 4가지 방법(Standard·CoT·Act·ReAct) × 모델 크기(8B/62B/540B). 왼쪽 — prompt-only에서는 ReAct(빨강)가 8B/62B에서 거의 0, 540B에서만 작동. 오른쪽 — **finetune된 62B ReAct가 prompt-only 540B 모든 방법보다 잘 함**. 메시지: '큰 모델 + prompt' < '작은 모델 + 학습'. 다음 주 Toolformer가 자동 학습으로 한 단계 더 나아감.",
+        "imagePath": "data/papers/react/fig5.png"
+      },
+      "glossary": [
+        {
+          "en": "agent framework",
+          "ko": "agent 프레임워크",
+          "memo": "LangChain, AutoGPT, LlamaIndex 등 ReAct 패턴 응용 라이브러리."
+        },
+        {
+          "en": "tool use",
+          "ko": "도구 사용",
+          "memo": "LLM이 외부 함수/API를 호출하는 능력. ReAct가 prompting으로, Toolformer가 학습으로 구현."
+        },
+        {
+          "en": "self-supervised learning",
+          "ko": "자기 지도 학습",
+          "memo": "사람 라벨 없이 모델 스스로 학습 신호 생성. Toolformer가 이 방식으로 도구 사용 학습."
+        },
+        {
+          "en": "closed-loop",
+          "ko": "닫힌 루프",
+          "memo": "행동 → 관찰 → 다음 행동의 피드백 순환. ReAct/IM/SayCan 등이 closed-loop."
+        },
+        {
+          "en": "SWE-bench",
+          "ko": "실제 GitHub issue 디버깅 벤치마크",
+          "memo": "ReAct 패턴이 코드 task에도 응용. 모든 SWE-bench agent가 ReAct loop."
+        },
+        {
+          "en": "function calling",
+          "ko": "함수 호출",
+          "memo": "ChatGPT의 ReAct 응용 product. 모델이 정의된 함수를 자동 호출."
+        }
+      ],
+      "analogy": {
+        "title": "도서관 사서 vs 동네 친구",
+        "body": "어떤 질문에 답하려 할 때 — **'동네 친구'(CoT)**는 자기 머리속 기억으로 답합니다. 빠르지만 모르면 짐작. **'도서관 사서'(ReAct)**는 검색하고 → 책 펴고 → 다시 생각합니다. 느리지만 정확. Claude Code의 동작이 정확히 도서관 사서 모델 — 파일 읽기(Read) → 생각 → 수정(Edit) → 결과 보고 → 또 생각. **ReAct 논문이 2022년에 정리한 이 패턴을 거의 모든 현대 AI agent가 따릅니다.**"
+      },
+      "question": "내가 자주 쓰는 AI 도구(ChatGPT, Claude Code, Copilot 등) 중에서 **가장 ReAct 패턴을 많이 쓰는 게 뭔가요?** 그 도구의 'Action space'(가능한 행동)는 어떤 것들이 있나요?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "ReAct의 핵심 트릭은 무엇인가?",
+      "options": [
+        "LLM을 reasoning task로 fine-tune하는 것",
+        "action space를 언어 공간(L)으로 확장해서 'thought'을 새 행동으로 정의",
+        "여러 LLM의 답을 다수결로 결합",
+        "Wikipedia를 LLM 안에 통째로 embedding하는 것"
+      ],
+      "correct": 1,
+      "explain": "ReAct는 **Â = A ∪ L**로 정의됩니다. A는 환경 행동(Search/Take), L은 자유 언어. L에서 만든 행동(thought)은 환경을 바꾸지 않고 context만 업데이트해서, 모델이 자기 추론을 출력하면서도 외부 행동과 같은 flow에서 다룰 수 있게 합니다. fine-tune이나 ensemble이 아닌 **action space 정의의 확장**이 핵심."
+    },
+    {
+      "q": "HotpotQA에서 ReAct 단독이 CoT 단독보다 약간 낮습니다(27.4 vs 29.4). 가장 큰 이유는?",
+      "options": [
+        "ReAct는 fine-tune 안 했고 CoT는 했다",
+        "ReAct는 매 step마다 외부 검색을 시도하는 구조적 제약 — 검색이 빗나가면 추론이 망가짐",
+        "ReAct가 사용한 PaLM은 CoT가 사용한 PaLM보다 작다",
+        "Wikipedia API가 너무 느려서 시간 제한에 걸렸다"
+      ],
+      "correct": 1,
+      "explain": "저자들이 §3.3에서 분석한 **ReAct vs CoT 핵심 trade-off**. ReAct는 structural rigidity가 있어 reasoning error가 47%(CoT 16%). 단 hallucination은 0%(CoT 56%). 그래서 **결합** (ReAct→CoT-SC 35.1, CoT-SC→ReAct 64.6)이 단독보다 훨씬 좋습니다."
+    },
+    {
+      "q": "ALFWorld에서 ReAct(1-2 example)가 BUTLER(10⁵ trajectory 학습)를 +34% 이깁니다. 가장 큰 이유는?",
+      "options": [
+        "ALFWorld가 너무 쉬워서 모두 다 잘함",
+        "사전학습된 LLM의 상식 ('pepper shaker는 cabinet에 있을 확률') 활용",
+        "BUTLER가 학습 중 over-fitting",
+        "ReAct가 더 큰 모델을 썼다"
+      ],
+      "correct": 1,
+      "explain": "ALFWorld의 핵심 도전은 **'물건이 어디 있을지 추측'**. LLM은 사전학습된 상식을 ReAct의 thought에 자유롭게 주입할 수 있어, 환경 specific하게 학습된 BUTLER보다 일반화가 잘 됩니다. 이게 **'big model + general prompting > small model + task-specific training'** 의 한 증거."
+    },
+    {
+      "q": "ReAct trajectory에서 'thought'의 역할은 다음 중 가장 정확하게는?",
+      "options": [
+        "환경에 대한 새 정보를 가져온다",
+        "환경을 바꾸지 않고 context만 업데이트해 다음 행동의 근거를 만든다",
+        "action 실행 결과를 사람에게 보고하는 로그",
+        "모델의 신뢰도를 측정하는 메타데이터"
+      ],
+      "correct": 1,
+      "explain": "§2 정의 — thought는 **'action with no observation effect'**. 즉 환경을 바꾸지 않고 context만 업데이트합니다. 이게 모델이 자기 추론을 출력하면서도 외부 action과 같은 흐름으로 다룰 수 있게 하는 핵심 정의. 환경에 영향을 주는 건 일반 action(Search 등), 사람 보고용 로그가 아닌 **모델 자신의 다음 행동을 위한 근거**입니다."
+    },
+    {
+      "q": "Figure 3은 prompt vs finetune ReAct를 비교합니다. 핵심 메시지는?",
+      "options": [
+        "prompt-only가 항상 finetune보다 낫다",
+        "finetune된 62B가 prompt-only 540B를 이긴다 — '작은 모델 + 학습 > 큰 모델 + prompt'",
+        "ReAct는 8B에서만 작동한다",
+        "finetune은 너무 비싸서 실용적이지 않다"
+      ],
+      "correct": 1,
+      "explain": "Figure 3을 보면 **finetune된 PaLM-62B + ReAct가 prompt-only PaLM-540B 모든 방법보다 잘 함**. 저자들이 §3.3에서 명시 — '더 많은 ReAct trajectory를 사람이 annotate해서 finetune'이 다음 단계로 더 가치 있다고 언급. **Toolformer가 이 finetune 과정을 self-supervised로 자동화한 다음 논문** — 그래서 W3에 옵니다."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "toolformer",
+    "nextTitle": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+    "teaser": "ReAct는 사람이 prompt에 예시를 박아 '이 도구를 이렇게 써'라고 가르쳤습니다. 다음 주 Toolformer는 **모델 스스로 '언제 어떤 API를 호출할지'를 self-supervised로 학습**합니다. ReAct의 한계 — '큰 action space에선 demonstration이 부족' — 을 정면 돌파한 다음 단계예요. 계산기·검색·번역·달력·QA 5개 API를 모델이 자기 학습 과정에서 자동으로 박아 넣습니다. ReAct가 'prompting으로 가능하다'를 보였다면, Toolformer는 '학습으로 더 잘 된다'를 증명합니다."
+  }
+}
