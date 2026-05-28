@@ -38,10 +38,12 @@
   <!-- First-time modal -->
   <div id="modal-name" class="hidden fixed inset-0 bg-black/40 z-20 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl p-6 max-w-sm w-full">
-      <h2 class="text-lg font-semibold mb-1">👋 처음 오셨네요</h2>
-      <p class="text-sm text-stone-600 mb-4">팀 4명이 응원할 수 있게 이름과 이모지를 골라주세요.</p>
+      <h2 id="modal-title" class="text-lg font-semibold mb-1">👋 처음 오셨네요</h2>
+      <p id="modal-subtitle" class="text-sm text-stone-600 mb-4">팀 4명이 응원할 수 있게 이름과 이모지를 골라주세요.</p>
+      <div id="modal-existing-members"></div>
       <label class="block text-xs text-stone-500 mb-1">이름</label>
-      <input id="modal-name-input" type="text" class="w-full border border-stone-300 rounded px-3 py-2 mb-3" maxlength="10" placeholder="예: Ann">
+      <input id="modal-name-input" type="text" class="w-full border border-stone-300 rounded px-3 py-2 mb-1" maxlength="10" placeholder="예: Ann">
+      <div id="modal-name-error" class="text-xs text-red-600 mb-2 hidden"></div>
       <label class="block text-xs text-stone-500 mb-1">이모지</label>
       <div id="modal-emoji-row" class="flex gap-2 mb-4">
         <button data-emoji="🦊" class="emoji-pick text-2xl border border-stone-300 rounded px-3 py-2">🦊</button>
@@ -151,23 +153,43 @@
         supa.from('papergym_progress').select('user_id, week, day_index'),
         supa.from('papergym_cheers').select('to_user, emoji')
       ]);
-      // 사용자별 최신 주차/Day + 받은 응원 집계
       const byUser = {};
-      (members || []).forEach(m => { byUser[m.user_id] = { ...m, week: 0, day: 0, streak: 0, cheers: {} }; });
-      (progress || []).forEach(p => {
-        const u = byUser[p.user_id]; if (!u) return;
-        if (p.week > u.week || (p.week === u.week && p.day_index > u.day)) {
-          u.week = p.week; u.day = p.day_index;
-        }
+      (members || []).forEach(m => {
+        byUser[m.user_id] = {
+          ...m, week: 0, day: 0,
+          completedDays: 0, consecutiveStreak: 0,
+          progressDays: [], cheers: {}
+        };
       });
+      // user별 progress 그룹
+      const userProgress = {};
+      (progress || []).forEach(p => {
+        (userProgress[p.user_id] = userProgress[p.user_id] || []).push({ week: p.week, day: p.day_index });
+      });
+      for (const [uid, rows] of Object.entries(userProgress)) {
+        const u = byUser[uid]; if (!u) continue;
+        u.progressDays = rows;
+        // 최신 (week, day_index)
+        const latest = rows.reduce((a, b) => (b.week > a.week || (b.week === a.week && b.day > a.day)) ? b : a, rows[0]);
+        u.week = latest.week;
+        u.day = latest.day;
+        // completedDays: 평일(M-F) progress 행 수
+        const weekdays = rows.filter(r => r.day >= 1 && r.day <= 5);
+        u.completedDays = weekdays.length;
+        // consecutiveStreak: 최신 평일부터 거꾸로 연속 카운트 (주 경계 W{n}D5→W{n+1}D1 인정)
+        weekdays.sort((a, b) => b.week - a.week || b.day - a.day);
+        let streak = weekdays.length ? 1 : 0;
+        for (let i = 1; i < weekdays.length; i++) {
+          const cur = weekdays[i-1], prev = weekdays[i];
+          const consec = (cur.week === prev.week && cur.day === prev.day + 1) ||
+                         (cur.week === prev.week + 1 && cur.day === 1 && prev.day === 5);
+          if (consec) streak++; else break;
+        }
+        u.consecutiveStreak = streak;
+      }
       (cheers || []).forEach(c => {
         const u = byUser[c.to_user]; if (!u) return;
         u.cheers[c.emoji] = (u.cheers[c.emoji] || 0) + 1;
-      });
-      // Streak = total progress row count (spec shortcut, not consecutive days).
-      (progress || []).forEach(p => {
-        const u = byUser[p.user_id]; if (!u) return;
-        u.streak++;
       });
       return Object.values(byUser);
     }
@@ -211,7 +233,66 @@
 
     // ===== First-time modal =====
     let pickedEmoji = null;
-    function showNameModal() {
+    async function showNameModal() {
+      const existingDiv = document.getElementById('modal-existing-members');
+      const titleEl = document.getElementById('modal-title');
+      const subtitleEl = document.getElementById('modal-subtitle');
+      // 에러 메시지 reset
+      const errDiv = document.getElementById('modal-name-error');
+      errDiv.classList.add('hidden'); errDiv.textContent = '';
+
+      if (me) {
+        // 편집 모드 — 기존 멤버 섹션 숨김
+        titleEl.textContent = '✏️ 프로필 수정';
+        subtitleEl.textContent = '이름과 이모지를 바꿀 수 있어요. 진도는 그대로 유지됩니다.';
+        existingDiv.innerHTML = '';
+      } else {
+        // 신규 모드 — DB에서 기존 멤버 fetch해서 "본인 찾기" 리스트 노출
+        titleEl.textContent = '👋 처음 오셨네요';
+        subtitleEl.textContent = '팀에 합류해서 16주 코스를 함께 완주해봐요.';
+        existingDiv.innerHTML = '<div class="text-xs text-stone-400 mb-2">불러오는 중...</div>';
+        try {
+          const { data: ms } = await supa.from('papergym_members')
+            .select('user_id, name, emoji, joined_at')
+            .order('joined_at', { ascending: true });
+          if (ms && ms.length) {
+            existingDiv.innerHTML = `
+              <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3">
+                <div class="text-xs text-stone-600 font-medium mb-2">✓ 이미 등록한 적 있다면 본인 클릭:</div>
+                <div class="flex flex-wrap gap-1.5">
+                  ${ms.map(m => `
+                    <button data-uid="${escapeHtml(m.user_id)}" data-name="${escapeHtml(m.name)}" data-emoji="${escapeHtml(m.emoji)}" data-joined="${escapeHtml(m.joined_at || '')}" class="existing-member-btn flex items-center gap-1.5 bg-white border border-stone-300 rounded-lg px-2 py-1 hover:bg-amber-50 hover:border-amber-400 transition-colors">
+                      <span class="text-lg">${escapeHtml(m.emoji)}</span>
+                      <span class="text-sm font-medium">${escapeHtml(m.name)}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+              <div class="text-center text-xs text-stone-400 mb-3">─ 처음이면 아래에 입력 ─</div>
+            `;
+            // 본인 복구 click
+            document.querySelectorAll('.existing-member-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                me = {
+                  name: btn.dataset.name,
+                  emoji: btn.dataset.emoji,
+                  userId: btn.dataset.uid,
+                  joinedAt: btn.dataset.joined || new Date().toISOString()
+                };
+                localStorage.setItem(LS.me, JSON.stringify(me));
+                document.getElementById('me-badge').textContent = me.emoji;
+                hideNameModal();
+                showToast(`👋 다시 만나서 반가워요, ${me.name}!`);
+                if (location.hash === '#team') renderTeam();
+              });
+            });
+          } else {
+            existingDiv.innerHTML = '';
+          }
+        } catch {
+          existingDiv.innerHTML = '';
+        }
+      }
       document.getElementById('modal-name').classList.remove('hidden');
     }
     function hideNameModal() {
@@ -243,7 +324,34 @@
     }
     document.getElementById('modal-save').addEventListener('click', async () => {
       const name = document.getElementById('modal-name-input').value.trim();
+      const errDiv = document.getElementById('modal-name-error');
+      errDiv.classList.add('hidden'); errDiv.textContent = '';
       const isNew = !me;
+
+      // 신규 등록 시 이름 중복 체크 (case-insensitive)
+      if (isNew) {
+        try {
+          const { data: existing } = await supa.from('papergym_members').select('name');
+          const dup = (existing || []).some(m => (m.name || '').trim().toLowerCase() === name.toLowerCase());
+          if (dup) {
+            errDiv.textContent = '⚠️ 이 이름은 이미 사용 중. 다른 이름으로 등록하거나, 위에서 본인을 찾아주세요.';
+            errDiv.classList.remove('hidden');
+            return;
+          }
+        } catch { /* 체크 실패하면 그냥 진행 (네트워크 끊김 대비) */ }
+      } else if (name.toLowerCase() !== (me.name || '').toLowerCase()) {
+        // 편집 모드에서 이름 바꾸는 경우도 다른 사람과 중복 체크
+        try {
+          const { data: existing } = await supa.from('papergym_members').select('user_id, name');
+          const dup = (existing || []).some(m => m.user_id !== me.userId && (m.name || '').trim().toLowerCase() === name.toLowerCase());
+          if (dup) {
+            errDiv.textContent = '⚠️ 이 이름은 다른 멤버가 사용 중이에요. 다른 이름을 골라주세요.';
+            errDiv.classList.remove('hidden');
+            return;
+          }
+        } catch {}
+      }
+
       me = {
         name,
         emoji: pickedEmoji,
@@ -259,6 +367,7 @@
       }
       document.getElementById('me-badge').textContent = pickedEmoji;
       hideNameModal();
+      if (location.hash === '#team') renderTeam();
     });
 
     // ===== #today render =====
@@ -1085,51 +1194,147 @@
         view.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded p-4 text-amber-900">팀 정보 잠시 후 다시 시도</div>`;
         return;
       }
-      // 본인이 빠져있으면 추가 (DB에 아직 없거나 끊김 대비)
+      // 본인이 DB에 아직 없거나 응답에 빠졌으면 임시 추가
       if (me && !members.find(m => m.user_id === me.userId)) {
-        members.push({ user_id: me.userId, name: me.name, emoji: me.emoji, week: 0, day: 0, streak: 0, cheers: {} });
+        members.push({
+          user_id: me.userId, name: me.name, emoji: me.emoji,
+          week: 0, day: 0, completedDays: 0, consecutiveStreak: 0,
+          progressDays: [], cheers: {}
+        });
       }
-      // "mockMembers" is now real DB data, mapped to template shape. Variable name preserved to avoid HTML template churn.
-      const mockMembers = members.map(m => ({
-        userId: m.user_id, name: m.name, emoji: m.emoji,
-        week: m.week, day: m.day, streak: m.streak, cheers: m.cheers
-      }));
 
       const emojis = ['🔥','💪','👏','❤️'];
-      const today = new Date();
-      const isSunday = today.getDay() === 0;
+      const todayJs = new Date();
+      const isSunday = todayJs.getDay() === 0;
+      const { week: curWeek, day: curDay, status } = getCurrentWeekAndDay();
+      const TOTAL_WEEKDAYS = TOTAL_WEEKS * 5;
+
+      // Phase 색상 (주차별)
+      const phaseColorByWeek = (n) => {
+        if (!curriculum) return 'stone';
+        const w = curriculum.weeks.find(w => w.n === n);
+        return w ? w.phaseColor : 'stone';
+      };
+      const phaseFillClass = {
+        amber: 'bg-amber-400', rose: 'bg-rose-400',
+        emerald: 'bg-emerald-400', violet: 'bg-violet-400', stone: 'bg-stone-300'
+      };
+
+      // 팀 집계
+      const teamTotalDone = members.reduce((sum, m) => sum + m.completedDays, 0);
+      const teamCapacity = TOTAL_WEEKDAYS * Math.max(members.length, 1);
+      const teamProgressPct = Math.round((teamTotalDone / teamCapacity) * 100);
+
+      // 정렬: 본인 먼저, 그다음 진도 많은 순
+      const sortedMembers = [...members].sort((a, b) => {
+        if (me) {
+          if (a.user_id === me.userId) return -1;
+          if (b.user_id === me.userId) return 1;
+        }
+        return (b.completedDays || 0) - (a.completedDays || 0);
+      });
+
+      const memberCard = (m) => {
+        const isMe = me && m.user_id === me.userId;
+        const pct = Math.round((m.completedDays / TOTAL_WEEKDAYS) * 100);
+        // 16주 phase dot — 본인이 완주한 주는 phase 색으로 꽉, 진행중인 주는 day/5 만큼
+        const weekDots = Array.from({length: TOTAL_WEEKS}, (_, i) => {
+          const wn = i + 1;
+          const filled = wn < m.week ? 1 : (wn === m.week ? Math.min(m.day, 5) / 5 : 0);
+          const pc = phaseColorByWeek(wn);
+          const isCurWeek = wn === curWeek;
+          return `<div class="flex-1 h-4 rounded-sm overflow-hidden bg-stone-200 relative ${isCurWeek ? 'ring-1 ring-stone-900 ring-offset-1' : ''}" title="W${wn}">
+            <div class="${phaseFillClass[pc]} absolute bottom-0 left-0 right-0" style="height:${filled*100}%"></div>
+          </div>`;
+        }).join('');
+        // 이번 주 5일 dots — 본인 progressDays에 (curWeek, d) 있으면 색
+        const dayDots = Array.from({length: 5}, (_, i) => {
+          const dn = i + 1;
+          const done = (m.progressDays || []).some(p => p.week === curWeek && p.day === dn);
+          return `<span class="${done ? 'text-green-500' : 'text-stone-300'} text-lg">●</span>`;
+        }).join('');
+        // 본인 — 오늘 슬롯 done 여부 + CTA / streak 경고
+        let cta = '', warning = '';
+        if (isMe && status === 'in-progress') {
+          const todayWeekday = curDay >= 1 && curDay <= 5;
+          const todayDone = (m.progressDays || []).some(p => p.week === curWeek && p.day === curDay);
+          if (todayWeekday && todayDone) {
+            cta = `<div class="text-xs text-green-700 font-semibold bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center mt-3">✓ 오늘 분량(W${curWeek} Day ${curDay}) 완료</div>`;
+          } else if (todayWeekday) {
+            cta = `<a href="#today" class="block text-xs font-semibold bg-stone-900 text-white rounded-lg px-3 py-2 text-center hover:bg-stone-700 transition-colors mt-3">▶ 오늘의 세트 시작 (W${curWeek} Day ${curDay})</a>`;
+            if (m.consecutiveStreak >= 2) {
+              warning = `<div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2 flex items-center gap-1.5">⚠️ <span>오늘 안 하면 🔥${m.consecutiveStreak}일 연속이 끊겨요</span></div>`;
+            }
+          } else if (curDay === 6) {
+            cta = `<a href="#today" class="block text-xs font-semibold bg-amber-500 text-white rounded-lg px-3 py-2 text-center hover:bg-amber-600 transition-colors mt-3">📝 토요일 — 이번 주 퀴즈</a>`;
+          } else if (curDay === 7) {
+            cta = `<div class="text-xs text-stone-600 bg-stone-100 rounded-lg px-3 py-2 text-center mt-3">🗓️ 일요일 — 다음 주 프리뷰 + 팀 응원</div>`;
+          }
+        }
+        // 받은 응원
+        const cheersStr = Object.entries(m.cheers || {}).map(([e,n]) => `${e}${n}`).join(' ');
+        // 응원 보내기 버튼 (남)
+        const cheerBtns = !isMe ? `<div class="flex gap-1.5 mt-3 justify-end">${emojis.map(e => `
+          <button data-to="${escapeHtml(m.user_id)}" data-emoji="${e}" class="cheer-btn text-base px-2.5 py-1 border border-stone-200 rounded-lg hover:bg-amber-50 hover:border-amber-400 hover:shadow-sm transition-all">${e}</button>
+        `).join('')}</div>` : '';
+
+        return `
+          <div class="border ${isMe ? 'border-stone-900 border-2 shadow-md' : 'border-stone-200'} rounded-xl p-4 bg-white">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-3xl">${escapeHtml(m.emoji)}</span>
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-base flex items-center gap-2 flex-wrap">
+                  ${escapeHtml(m.name)}
+                  ${isMe ? '<span class="text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded font-bold">나</span>' : ''}
+                </div>
+                <div class="text-xs text-stone-500 mt-0.5">최근 W${m.week} Day ${m.day} · 🔥 ${m.consecutiveStreak}일 연속</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-bold text-stone-900">${pct}%</div>
+                <div class="text-[10px] text-stone-400">${m.completedDays}/${TOTAL_WEEKDAYS}일</div>
+              </div>
+            </div>
+
+            <!-- 16주 phase dot row -->
+            <div class="mb-3">
+              <div class="text-[10px] text-stone-400 mb-1 flex justify-between"><span>W1</span><span>W16</span></div>
+              <div class="flex gap-0.5 items-end">${weekDots}</div>
+            </div>
+
+            <!-- 이번 주 5일 dots -->
+            <div class="text-xs text-stone-500 flex items-center gap-2 mb-1">
+              <span>이번 주 (W${curWeek}):</span>
+              <span class="tracking-widest">${dayDots}</span>
+            </div>
+
+            ${cheersStr ? `<div class="text-xs text-stone-500 mt-2">받은 응원: ${cheersStr}</div>` : ''}
+            ${cheerBtns}
+            ${cta}
+            ${warning}
+          </div>
+        `;
+      };
 
       view.innerHTML = `
         ${isSunday ? `
           <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-            <p class="font-semibold text-amber-900 mb-1">🗓️ 일요일 — 이번 주 요약</p>
-            <p class="text-sm text-amber-800">이번 주 누가 며칠 완주, 다음 주 논문 프리뷰</p>
+            <p class="font-semibold text-amber-900 mb-1">🗓️ 일요일 — 이번 주 요약 + 다음 주 프리뷰</p>
+            <p class="text-sm text-amber-800">이번 주 누가 며칠 완주했는지 한 눈에 보고, 동료에게 응원 보내기 좋은 시간</p>
           </div>
         ` : ''}
 
-        <h1 class="text-xl font-semibold mb-4">팀 ${mockMembers.length}명 · ${(mockMembers.length && mockMembers[0].week) ? 'W' + mockMembers[0].week : '시작 전'}</h1>
-        <div class="space-y-2">
-          ${mockMembers.map(m => {
-            const isMe = me && m.userId === me.userId;
-            return `
-              <div class="flex items-center gap-3 p-3 border border-stone-200 rounded-lg bg-white text-sm">
-                <div class="text-2xl">${escapeHtml(m.emoji)}</div>
-                <div class="font-semibold min-w-[55px]">${escapeHtml(m.name)}</div>
-                <div class="flex-1">
-                  <div class="bg-stone-200 h-1.5 rounded overflow-hidden">
-                    <div class="bg-green-600 h-full" style="width:${(m.day / 5) * 100}%"></div>
-                  </div>
-                  <div class="text-xs text-stone-500 mt-1">W${m.week} D${m.day} / 5</div>
-                </div>
-                <div class="text-xs text-red-600 min-w-[35px] text-right">🔥${m.streak}</div>
-                ${isMe ? `
-                  <div class="text-xs text-stone-400">받은 ${Object.entries(m.cheers).map(([e,n]) => `${e}${n}`).join(' ') || '0'}</div>
-                ` : emojis.map(e => `
-                  <button data-to="${escapeHtml(m.userId)}" data-emoji="${e}" class="cheer-btn text-base px-2 py-1 border border-transparent rounded hover:bg-amber-50 hover:border-amber-400">${e}</button>
-                `).join('')}
-              </div>
-            `;
-          }).join('')}
+        <!-- 팀 요약 헤더 (검정 gradient) -->
+        <div class="bg-gradient-to-br from-stone-900 to-stone-700 text-white rounded-xl p-5 mb-4">
+          <div class="text-xs text-stone-400 mb-1">💪 함께하는 팀 ${members.length}명 · 16주 코스</div>
+          <div class="text-2xl font-bold mb-3">${status === 'before-start' ? '시작 전 (6월 1일 시작)' : status === 'after-end' ? '🏆 16주 완주!' : `현재 W${curWeek} Day ${curDay}`}</div>
+          <div class="bg-stone-700/50 rounded-full h-2 overflow-hidden mb-2">
+            <div class="bg-emerald-400 h-full transition-all" style="width:${teamProgressPct}%"></div>
+          </div>
+          <div class="text-xs text-stone-300">팀 전체 ${teamProgressPct}% · ${teamTotalDone}일 / ${teamCapacity}일 완료</div>
+        </div>
+
+        <div class="space-y-3">
+          ${sortedMembers.map(memberCard).join('')}
         </div>
       `;
 
