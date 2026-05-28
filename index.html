@@ -485,7 +485,18 @@
             const last = myProgress[0];
             if (week - last.week >= 1 && last.day_index < 5) {
               const nextDay = last.day_index + 1;
-              behindBanner = `<div class="bg-blue-50 border border-blue-200 rounded p-3 mb-4 text-sm text-blue-900">한 주 쉬어가도 괜찮아요. 오늘은 W${last.week} Day ${nextDay}부터요.</div>`;
+              // 본인 다음 슬롯의 실제 날짜 계산
+              const startDate = new Date(START_DATE + 'T12:00:00');
+              startDate.setDate(startDate.getDate() + (last.week - 1) * 7 + (nextDay - 1));
+              const y = startDate.getFullYear();
+              const m = String(startDate.getMonth() + 1).padStart(2, '0');
+              const d = String(startDate.getDate()).padStart(2, '0');
+              const nextSlotDate = `${y}-${m}-${d}`;
+              behindBanner = `
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm">
+                  <div class="text-blue-900 mb-2">🌿 팀은 <b>W${week}</b> 진행 중. 본인은 <b>W${last.week} Day ${last.day_index}</b>까지 완료 — 부담 갖지 말고 본인 페이스로 이어가도 OK.</div>
+                  <a href="?date=${nextSlotDate}#today" class="inline-block text-xs font-semibold bg-blue-600 text-white rounded-lg px-3 py-2 hover:bg-blue-700 transition-colors">▶ W${last.week} Day ${nextDay} 이어서 보기</a>
+                </div>`;
             }
           }
         } catch {}
