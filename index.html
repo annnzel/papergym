@@ -7,6 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/cytoscape@3.28.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif; }
   </style>
@@ -378,8 +380,10 @@
       const visited = JSON.parse(localStorage.getItem(LS.tabsVisited) || '{}');
       const slotKey = `w${week}d${day}`;
       const v = visited[slotKey] || {};
-      const tabs = ['한국어','그림','용어','비유','질문'];
+      const tabs = ['학습노트','그림','용어','비유','질문'];
       const tabKeys = ['ko','figure','glossary','analogy','question'];
+      const tabIcons = ['📖','🖼️','🔤','🌉','💭'];
+      let currentTab = 'ko';
 
       view.innerHTML = `
         ${navBar}
@@ -387,19 +391,17 @@
         ${behindBanner}
         <div class="bg-white rounded-lg border border-stone-200 overflow-hidden">
           <div class="bg-stone-100 px-4 py-3 flex justify-between items-center text-sm text-stone-600">
-            <span>📖 Day ${day} · ${['월','화','수','목','금'][day-1]}요일</span>
+            <span>📅 Day ${day} · ${['월','화','수','목','금'][day-1]}요일</span>
+            <span class="text-xs">5개 탭 모두 둘러보면 완료 ✓</span>
           </div>
           <div class="p-4">
-            <h2 class="font-semibold text-base">${escapeHtml(today.range)}</h2>
-            <p class="text-xs text-stone-500 mb-4">약 ${today.estimatedMinutes}분 · ${today.pages}페이지</p>
-
-            <div class="flex border-b border-stone-200 -mx-4 px-4">
-              ${tabs.map((label, i) => `
-                <button data-tab="${tabKeys[i]}" class="tab-btn px-3 py-2 text-sm border-b-2 ${i === 0 ? 'border-stone-900 font-semibold' : 'border-transparent text-stone-500'}">
-                  ${v[tabKeys[i]] ? '✓ ' : ''}${label}
-                </button>
-              `).join('')}
+            <div class="mb-4 bg-stone-50 rounded-lg p-3 border-l-4 ${phaseBorderTop}">
+              <div class="text-xs text-stone-500 mb-0.5 flex items-center gap-1"><span>📍</span><span>오늘 읽는 부분</span></div>
+              <h2 class="font-semibold text-base leading-snug">${escapeHtml(today.range)}</h2>
+              <p class="text-xs text-stone-500 mt-1">약 ${today.estimatedMinutes}분 · ${today.pages}페이지</p>
             </div>
+
+            <div id="tab-strip" class="grid grid-cols-5 gap-1.5 sm:gap-2 mb-4 pt-2"></div>
 
             <div id="tab-body" class="py-4 text-sm leading-relaxed min-h-[120px]"></div>
 
@@ -410,73 +412,121 @@
         </div>
       `;
 
+      // 탭 카드 한 칸 HTML — active(검정 raised) / visited(회색 ✓) / new(흰색 amber 테두리 + new 배지)
+      function tabBtnHtml(label, key, icon) {
+        const isActive = currentTab === key;
+        const isVisited = !!v[key];
+        const base = 'tab-btn relative px-1 py-2.5 rounded-xl text-center transition-all duration-150 cursor-pointer';
+        let state, badge = '';
+        if (isActive) {
+          state = 'bg-stone-900 text-white shadow-lg scale-[1.04] ring-2 ring-stone-300 ring-offset-1';
+        } else if (isVisited) {
+          state = 'bg-stone-100 text-stone-600 border border-stone-200 hover:bg-stone-200 hover:shadow-md hover:-translate-y-0.5';
+          badge = '<span class="absolute top-1 right-1.5 text-[10px] text-green-600 font-bold">✓</span>';
+        } else {
+          state = 'bg-white text-stone-900 border-2 border-amber-300 shadow-sm hover:bg-amber-50 hover:shadow-md hover:-translate-y-0.5 hover:border-amber-400';
+          badge = '<span class="absolute -top-1.5 -right-1.5 bg-amber-400 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold leading-none shadow">new</span>';
+        }
+        return `<button data-tab="${key}" class="${base} ${state}">
+          <div class="text-base sm:text-lg leading-none mb-1">${icon}</div>
+          <div class="text-[10px] sm:text-xs font-semibold leading-tight">${label}</div>
+          ${badge}
+        </button>`;
+      }
+      function renderTabStrip() {
+        document.getElementById('tab-strip').innerHTML = tabs.map((label, i) => tabBtnHtml(label, tabKeys[i], tabIcons[i])).join('');
+      }
+
       // 탭 콘텐츠 렌더 함수
       function renderTabBody(key) {
         const body = document.getElementById('tab-body');
-        if (key === 'ko') body.innerHTML = `<div class="whitespace-pre-wrap">${escapeHtml(today.translationKo)}</div>`;
+        if (key === 'ko') body.innerHTML = renderProse(today.translationKo, weekInfo.phaseColor);
         else if (key === 'figure') body.innerHTML = `
-          <img src="${escapeHtml(today.figure.imagePath)}" alt="figure" class="max-w-full mx-auto mb-3 border border-stone-200 rounded" onerror="this.style.display='none'">
-          <p class="text-stone-700"><b>${escapeHtml(today.figure.id)}</b> — ${escapeHtml(today.figure.captionKo)}</p>
+          <div class="bg-stone-50 rounded-lg p-4 border border-stone-200">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-base">🖼️</span>
+              <span class="font-semibold text-sm">${escapeHtml(today.figure.id)}</span>
+            </div>
+            <img src="${escapeHtml(today.figure.imagePath)}" alt="figure" class="max-w-full mx-auto mb-3 rounded shadow-sm bg-white" onerror="this.style.display='none'">
+            <div class="bg-white rounded-lg p-3 border-l-4 ${phaseBorderTop} text-sm text-stone-700 leading-relaxed">
+              ${mdInline(today.figure.captionKo)}
+            </div>
+          </div>
         `;
         else if (key === 'glossary') body.innerHTML = `
-          <ul class="space-y-2">
-            ${today.glossary.map(g => `<li><b>${escapeHtml(g.en)}</b> · ${escapeHtml(g.ko)}<br><span class="text-xs text-stone-500">${escapeHtml(g.memo)}</span></li>`).join('')}
-          </ul>
+          <p class="text-xs text-stone-500 mb-3">📚 오늘 만난 ${today.glossary.length}개 용어 — 한 번씩 훑어두면 본문 다시 봤을 때 더 잘 들어와요</p>
+          <div class="space-y-2">
+            ${today.glossary.map(g => `
+              <div class="bg-white border border-stone-200 rounded-lg p-3 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <div class="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
+                  <span class="font-bold text-base text-stone-900 font-mono">${escapeHtml(g.en)}</span>
+                  <span class="text-sm text-stone-700 font-medium">${escapeHtml(g.ko)}</span>
+                </div>
+                <p class="text-xs text-stone-500 leading-relaxed">${mdInline(g.memo)}</p>
+              </div>
+            `).join('')}
+          </div>
         `;
         else if (key === 'analogy') body.innerHTML = `
-          <p class="font-semibold mb-2">${escapeHtml(today.analogy.title)}</p>
-          <p>${escapeHtml(today.analogy.body)}</p>
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
+            <div class="text-xs text-amber-700 mb-1 flex items-center gap-1"><span>🌉</span><span>오늘의 비유</span></div>
+            <p class="font-semibold text-base text-amber-900 leading-snug">${escapeHtml(today.analogy.title)}</p>
+          </div>
+          <div class="text-sm leading-relaxed">${renderProse(today.analogy.body, weekInfo.phaseColor)}</div>
         `;
         else if (key === 'question') body.innerHTML = `
-          <p class="font-semibold mb-2">오늘의 질문</p>
-          <p class="mb-3">${escapeHtml(today.question)}</p>
-          <textarea id="answer-input" class="w-full border border-stone-300 rounded p-3 text-sm" rows="4" placeholder="한 문장으로 답해보세요"></textarea>
-          <p class="text-xs text-stone-400 mt-1">"오늘 완료" 누르면 동료 4명에게 공개돼요.</p>
-          <div id="peer-answers" class="mt-4"></div>
+          <div class="bg-stone-900 text-white rounded-lg p-4 mb-4">
+            <div class="text-xs text-stone-400 mb-1 flex items-center gap-1"><span>💭</span><span>오늘의 질문</span></div>
+            <p class="text-base font-semibold leading-relaxed">${mdInline(today.question)}</p>
+          </div>
+
+          <div class="mb-1.5 flex items-center justify-between">
+            <span class="text-xs text-stone-600 font-medium">내 답변</span>
+            <span id="answer-count" class="text-xs text-stone-400">0자</span>
+          </div>
+          <textarea id="answer-input" class="w-full border border-stone-300 rounded-lg p-3 text-sm focus:border-stone-900 focus:ring-1 focus:ring-stone-900 outline-none transition-colors" rows="4" placeholder="한 문장이면 충분해요. 길게 안 써도 OK."></textarea>
+          <p class="text-xs text-stone-400 mt-1.5 flex items-center gap-1"><span>👥</span><span>"오늘 완료" 누르면 동료 4명에게 공개돼요</span></p>
+
+          <div id="peer-answers" class="mt-5"></div>
         `;
-        // Answer 복원 + 저장 (localStorage = 입력 중 새로고침 복원용)
+        // Answer 복원 + 저장 + 글자 수 카운터 (localStorage = 입력 중 새로고침 복원용)
         if (key === 'question') {
           const notes = JSON.parse(localStorage.getItem(LS.notes) || '{}');
           const noteKey = `w${week}d${day}`;
           const input = document.getElementById('answer-input');
+          const countEl = document.getElementById('answer-count');
           input.value = notes[noteKey] || '';
+          const updateCount = () => { countEl.textContent = `${input.value.length}자`; };
+          updateCount();
           input.addEventListener('input', () => {
             notes[noteKey] = input.value;
             localStorage.setItem(LS.notes, JSON.stringify(notes));
+            updateCount();
           });
           renderPeerAnswers(week, day);
         }
       }
 
-      // 탭 클릭
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.remove('border-stone-900','font-semibold');
-            b.classList.add('border-transparent','text-stone-500');
-          });
-          btn.classList.add('border-stone-900','font-semibold');
-          btn.classList.remove('border-transparent','text-stone-500');
-          const key = btn.dataset.tab;
-          renderTabBody(key);
-          // 방문 기록
-          v[key] = true;
-          visited[slotKey] = v;
-          localStorage.setItem(LS.tabsVisited, JSON.stringify(visited));
-          // ✓ 마크 업데이트
-          btn.textContent = '✓ ' + tabs[tabKeys.indexOf(key)];
-          // 모든 탭 방문 시 완료 버튼 활성
-          const allVisited = tabKeys.every(k => v[k]);
-          document.getElementById('complete-btn').disabled = !allVisited;
-        });
+      // 탭 클릭 (이벤트 위임 — re-render 후에도 동작)
+      document.getElementById('tab-strip').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        const key = btn.dataset.tab;
+        currentTab = key;
+        v[key] = true;
+        visited[slotKey] = v;
+        localStorage.setItem(LS.tabsVisited, JSON.stringify(visited));
+        renderTabStrip();
+        renderTabBody(key);
+        document.getElementById('complete-btn').disabled = !tabKeys.every(k => v[k]);
       });
 
       // 첫 탭 자동 활성
-      renderTabBody('ko');
       v['ko'] = true;
       visited[slotKey] = v;
       localStorage.setItem(LS.tabsVisited, JSON.stringify(visited));
-      document.querySelector('[data-tab="ko"]').textContent = '✓ 한국어';
+      renderTabStrip();
+      renderTabBody('ko');
 
       // 완료 버튼 — Supabase sync + offline queue
       document.getElementById('complete-btn').disabled = !tabKeys.every(k => v[k]);
@@ -565,7 +615,7 @@
                     </button>
                   `).join('')}
                 </div>
-                <div class="quiz-explain hidden mt-3 text-xs p-2 rounded">${escapeHtml(q.explain)}</div>
+                <div class="quiz-explain hidden mt-3 text-xs p-2 rounded">${mdBold(q.explain)}</div>
               </div>
             `).join('')}
           </div>
@@ -600,7 +650,7 @@
           const explain = qDiv.querySelector('.quiz-explain');
           explain.classList.remove('hidden');
           explain.classList.add(isRight ? 'bg-green-50' : 'bg-amber-50', isRight ? 'text-green-900' : 'text-amber-900');
-          explain.textContent = (isRight ? '✓ 정답! ' : '✗ 정답은 초록 박스. ') + explain.textContent;
+          explain.innerHTML = (isRight ? '✓ 정답! ' : '✗ 정답은 초록 박스. ') + mdBold(quiz[qi].explain);
           const total = Object.keys(answered).length;
           const correctCount = Object.values(answered).filter(x => x).length;
           if (total === totalQ) {
@@ -615,6 +665,69 @@
 
     function escapeHtml(s) {
       return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // **bold** → <b>bold</b>. HTML escape first so user content stays safe.
+    function mdBold(s) {
+      return escapeHtml(s).replace(/\*\*([^*\n]+?)\*\*/g, '<b>$1</b>');
+    }
+
+    // 인라인: **term** → 노란 하이라이트 (학습노트 본문용)
+    function mdInline(s) {
+      return escapeHtml(s).replace(/\*\*([^*\n]+?)\*\*/g, '<mark class="bg-yellow-200 px-1 rounded font-semibold text-stone-900">$1</mark>');
+    }
+
+    // 학습노트 본문 풀 렌더러 — 단독행 헤딩=phase 박스, "발견 N/한 주 핵심" 등=💡 callout, 불릿=색 dot, 인라인 bold=하이라이트
+    function renderProse(text, phaseColor) {
+      const tint = {
+        amber: { bg: 'bg-amber-50', border: 'border-amber-400', text: 'text-amber-900', dot: 'text-amber-500' },
+        rose:  { bg: 'bg-rose-50',  border: 'border-rose-400',  text: 'text-rose-900',  dot: 'text-rose-500' },
+        emerald: { bg: 'bg-emerald-50', border: 'border-emerald-400', text: 'text-emerald-900', dot: 'text-emerald-500' },
+        violet: { bg: 'bg-violet-50', border: 'border-violet-400', text: 'text-violet-900', dot: 'text-violet-500' }
+      }[phaseColor] || { bg: 'bg-stone-50', border: 'border-stone-400', text: 'text-stone-900', dot: 'text-stone-500' };
+
+      // "발견 N", "한 주 핵심", "왜 W{n}에 읽나" 등 callout 키워드
+      const calloutRe = /^(발견 \d+|핵심 메시지|한 주 핵심|한 줄 핵심|왜 W\d+에 읽나|솔직한 한계|계보 연결|오늘날 도구 연결|TL;DR|중요한 주의 사항)/;
+
+      return text.split('\n\n').map(rawPara => {
+        const para = rawPara.trim();
+        if (!para) return '';
+
+        // 1) 단독행 헤딩 (paragraph가 정확히 **...** 하나) → phase 박스
+        const headOnly = para.match(/^\*\*([^*\n]+)\*\*$/);
+        if (headOnly) {
+          return `
+            <div class="${tint.bg} ${tint.border} border-l-4 rounded-r-lg px-4 py-2.5 my-4 flex items-center gap-2">
+              <span class="text-base">📖</span>
+              <span class="${tint.text} font-bold text-[15px]">${escapeHtml(headOnly[1])}</span>
+            </div>
+          `;
+        }
+
+        // 2) callout: 첫 토큰이 **발견 1: ...** 형태이고 키워드 매칭
+        const calloutHead = para.match(/^\*\*([^*\n]+?)\*\*([\s\S]*)$/);
+        if (calloutHead && calloutRe.test(calloutHead[1])) {
+          const header = calloutHead[1];
+          const body = calloutHead[2].replace(/^[:.\s]+/, '');
+          return `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 my-3">
+              <div class="font-bold text-amber-900 text-sm flex items-center gap-1.5 mb-1.5">💡 ${escapeHtml(header)}</div>
+              <div class="text-stone-800 text-sm leading-relaxed">${mdInline(body)}</div>
+            </div>
+          `;
+        }
+
+        // 3) 불릿 리스트 (모든 행이 "- "로 시작)
+        const lines = para.split('\n');
+        if (lines.every(l => /^- /.test(l.trim()))) {
+          return `<ul class="my-2 space-y-1.5">${lines.map(line => `
+            <li class="flex gap-2"><span class="${tint.dot} flex-shrink-0 font-bold">●</span><span class="flex-1">${mdInline(line.replace(/^- /, ''))}</span></li>
+          `).join('')}</ul>`;
+        }
+
+        // 4) 일반 문단 — 줄바꿈은 <br>로 보존
+        return `<p class="my-2.5 leading-relaxed">${mdInline(para).replace(/\n/g, '<br>')}</p>`;
+      }).join('');
     }
 
     function showToast(msg) {
@@ -715,15 +828,29 @@
         </div>
 
         <h2 class="text-lg font-semibold mb-1">🕸️ 29편 계보 지도</h2>
-        <p class="text-sm text-stone-500 mb-3">Core 13 (큰 원, 실선) + 보충 16 (작은 점선) · 노드 클릭 → 영향 관계 강조 · 드래그/줌 가능</p>
-        <div class="flex gap-3 mb-2 text-xs text-stone-500 flex-wrap">
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fbbf24"></span>Phase 1</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fb7185"></span>Phase 2</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#34d399"></span>Phase 3</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#a78bfa"></span>Phase 4</span>
+        <p class="text-sm text-stone-500 mb-2">위에서 아래로 시간 흐름 (옛 논문 → 후속). 화살표가 '누가 누구의 기반이 됐는지'를 보여줍니다.</p>
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3 text-sm text-amber-900">
+          💡 <b>어디서 시작?</b> 맨 위 <b>Attention (2017)</b>이 모든 현대 LLM의 뿌리. 화살표를 따라 내려가면 GPT-3 → CoT → ReAct로 가지가 뻗어요. <b>아무 노드나 클릭</b>하면 한국어 설명이 오른쪽에 나타납니다.
         </div>
-        <div id="lineage-graph" class="bg-white border border-stone-200 rounded-lg" style="height: 560px;"></div>
-        <p class="text-xs text-stone-400 mt-2 mb-10 text-center">실선 화살표 = 직접 후속 (evolves) · 점선 화살표 = 응용/확장 (ext) · 빈 곳 클릭하면 강조 해제</p>
+        <div class="flex gap-3 mb-2 text-xs text-stone-600 flex-wrap items-center">
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fbbf24"></span>P1 추론·도구</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fb7185"></span>P2 정렬</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#34d399"></span>P3 기초모델</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#a78bfa"></span>P4 기억·종합</span>
+          <span class="text-stone-400">|</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-3 border-2 border-stone-700 bg-white rounded"></span>실선=직접후속</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-3 border-2 border-stone-700 border-dashed bg-white rounded"></span>점선=응용·확장</span>
+        </div>
+        <div class="grid md:grid-cols-3 gap-3 mb-10">
+          <div id="lineage-graph" class="md:col-span-2 bg-white border border-stone-200 rounded-lg" style="height: 560px;"></div>
+          <div id="lineage-detail" class="bg-stone-50 border border-stone-200 rounded-lg p-4 text-sm overflow-y-auto" style="max-height: 560px; min-height: 280px;">
+            <div class="text-stone-500 text-center py-12">
+              <div class="text-3xl mb-2">👈</div>
+              <div>왼쪽 그래프에서<br>아무 노드나 클릭하세요</div>
+              <div class="text-xs mt-2 text-stone-400">한국어 설명 + 영향 관계가 여기 표시됩니다</div>
+            </div>
+          </div>
+        </div>
 
         <h2 class="text-lg font-semibold mb-1">Core 13편 — 본 논문</h2>
         <p class="text-sm text-stone-500 mb-4">제목 클릭하면 한국어 초록 + 원문 링크가 펼쳐집니다.</p>
@@ -786,18 +913,47 @@
           `).join('')}
         </div>
       `;
-      renderLineageGraph();
+      renderLineageGraph({ corePapers, supplementals, paperKoreanTitle });
     }
 
-    // ===== 29편 계보 graph (cytoscape force layout) =====
-    async function renderLineageGraph() {
+    // ===== 29편 계보 graph (dagre 위→아래 계층) + 상세 패널 =====
+    async function renderLineageGraph(ctx = {}) {
       const container = document.getElementById('lineage-graph');
+      const detail = document.getElementById('lineage-detail');
       if (!container || typeof cytoscape === 'undefined') return;
       let lineage;
       try { lineage = await fetch('data/lineage.json').then(r => r.json()); }
       catch { container.innerHTML = '<p class="text-stone-500 p-4">계보 데이터 로드 실패</p>'; return; }
 
       const phaseColor = { 1: '#fbbf24', 2: '#fb7185', 3: '#34d399', 4: '#a78bfa' };
+      const phaseName = { 1: '추론·도구', 2: '정렬', 3: '기초모델', 4: '기억·종합' };
+
+      // 노드 enrichment 맵: id → { korean, hook, link, weekN, year, phase, type }
+      const corePapers = ctx.corePapers || [];
+      const supplementals = ctx.supplementals || [];
+      const paperKoreanTitle = ctx.paperKoreanTitle || {};
+      const coreById = Object.fromEntries(corePapers.map(p => [p.id, p]));
+      const suppById = Object.fromEntries(supplementals.map(p => [p.id, p]));
+      const nodeMeta = Object.fromEntries(lineage.nodes.map(n => {
+        const core = coreById[n.id];
+        const supp = suppById[n.id];
+        return [n.id, {
+          id: n.id,
+          korean: core ? (paperKoreanTitle[n.id] || n.id) : (supp ? supp.koreanTitle : n.title),
+          hook: core ? (core.study_hook && core.study_hook.core_idea) : (supp ? supp.hook : ''),
+          link: core ? core.arxivLink : (supp ? supp.link : ''),
+          weekN: core ? core.week.n : null,
+          year: n.year, phase: n.phase, type: n.type
+        }];
+      }));
+
+      // 인접 맵
+      const outgoing = {}, incoming = {};
+      lineage.edges.forEach(e => {
+        (outgoing[e.from] = outgoing[e.from] || []).push({ id: e.to, kind: e.kind });
+        (incoming[e.to] = incoming[e.to] || []).push({ id: e.from, kind: e.kind });
+      });
+
       const elements = [
         ...lineage.nodes.map(n => ({
           data: {
@@ -811,12 +967,13 @@
         }))
       ];
 
+      const hasDagre = typeof dagre !== 'undefined';
+      const layoutConfig = hasDagre
+        ? { name: 'dagre', rankDir: 'TB', nodeSep: 28, edgeSep: 8, rankSep: 55, padding: 20, animate: false }
+        : { name: 'breadthfirst', directed: true, roots: '#attention, #rag', padding: 20, spacingFactor: 0.95, avoidOverlap: true, animate: false };
+
       const cy = cytoscape({
-        container, elements,
-        layout: {
-          name: 'cose', animate: false, nodeRepulsion: 9000,
-          idealEdgeLength: 110, edgeElasticity: 80, gravity: 0.4, padding: 30
-        },
+        container, elements, layout: layoutConfig,
         style: [
           { selector: 'node', style: {
             'label': 'data(label)', 'text-valign': 'center', 'text-halign': 'center',
@@ -849,14 +1006,74 @@
         ]
       });
 
+      function renderDetail(id) {
+        if (!detail) return;
+        const m = nodeMeta[id];
+        if (!m) { detail.innerHTML = ''; return; }
+        const color = phaseColor[m.phase];
+        const typeLabel = m.type === 'core' ? `W${m.weekN} · Core` : '보충';
+        const inList = (incoming[id] || []).map(e => {
+          const pm = nodeMeta[e.id];
+          if (!pm) return '';
+          const tag = pm.type === 'core' ? `W${pm.weekN}` : '보충';
+          return `<li class="flex gap-1.5 items-start"><span class="inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:${phaseColor[pm.phase]}"></span><span><b>${escapeHtml(pm.korean)}</b> <span class="text-stone-400">· ${tag} · ${pm.year}</span></span></li>`;
+        }).join('');
+        const outList = (outgoing[id] || []).map(e => {
+          const pm = nodeMeta[e.id];
+          if (!pm) return '';
+          const tag = pm.type === 'core' ? `W${pm.weekN}` : '보충';
+          return `<li class="flex gap-1.5 items-start"><span class="inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:${phaseColor[pm.phase]}"></span><span><b>${escapeHtml(pm.korean)}</b> <span class="text-stone-400">· ${tag} · ${pm.year}</span></span></li>`;
+        }).join('');
+
+        detail.innerHTML = `
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background:${color}"></span>
+            <span class="text-xs text-stone-500">${typeLabel} · Phase ${m.phase} ${phaseName[m.phase]} · ${m.year}</span>
+          </div>
+          <h3 class="font-bold text-base leading-tight mb-2">${escapeHtml(m.korean)}</h3>
+          ${m.hook ? `<div class="bg-white border border-stone-200 rounded p-2 text-xs text-stone-700 mb-3"><span class="text-stone-500">💡 핵심</span><br>${escapeHtml(m.hook)}</div>` : ''}
+
+          ${inList ? `
+            <div class="mb-3">
+              <div class="text-xs text-stone-500 mb-1">⬆ 기반이 된 선행 (${(incoming[id] || []).length})</div>
+              <ul class="space-y-1 text-xs text-stone-700">${inList}</ul>
+            </div>
+          ` : `<div class="mb-3 text-xs text-stone-400">⬆ 기반: 없음 (이 분야의 시초)</div>`}
+
+          ${outList ? `
+            <div class="mb-3">
+              <div class="text-xs text-stone-500 mb-1">⬇ 영향을 준 후속 (${(outgoing[id] || []).length})</div>
+              <ul class="space-y-1 text-xs text-stone-700">${outList}</ul>
+            </div>
+          ` : `<div class="mb-3 text-xs text-stone-400">⬇ 후속: 없음 (현재 가장 최신)</div>`}
+
+          ${m.link ? `<a href="${escapeHtml(m.link)}" target="_blank" class="inline-block text-xs text-blue-600 underline">원문 arXiv →</a>` : ''}
+        `;
+      }
+
+      function resetDetail() {
+        if (!detail) return;
+        detail.innerHTML = `
+          <div class="text-stone-500 text-center py-12">
+            <div class="text-3xl mb-2">👈</div>
+            <div>왼쪽 그래프에서<br>아무 노드나 클릭하세요</div>
+            <div class="text-xs mt-2 text-stone-400">한국어 설명 + 영향 관계가 여기 표시됩니다</div>
+          </div>
+        `;
+      }
+
       cy.on('tap', 'node', evt => {
         const n = evt.target;
         cy.elements().removeClass('faded highlighted');
         cy.elements().difference(n.closedNeighborhood()).addClass('faded');
         n.closedNeighborhood().addClass('highlighted');
+        renderDetail(n.id());
       });
       cy.on('tap', evt => {
-        if (evt.target === cy) cy.elements().removeClass('faded highlighted');
+        if (evt.target === cy) {
+          cy.elements().removeClass('faded highlighted');
+          resetDetail();
+        }
       });
     }
 
