@@ -45,11 +45,17 @@
       <input id="modal-name-input" type="text" class="w-full border border-stone-300 rounded px-3 py-2 mb-1" maxlength="10" placeholder="예: Ann">
       <div id="modal-name-error" class="text-xs text-red-600 mb-2 hidden"></div>
       <label class="block text-xs text-stone-500 mb-1">이모지</label>
-      <div id="modal-emoji-row" class="flex gap-2 mb-4">
-        <button data-emoji="🦊" class="emoji-pick text-2xl border border-stone-300 rounded px-3 py-2">🦊</button>
-        <button data-emoji="🐻" class="emoji-pick text-2xl border border-stone-300 rounded px-3 py-2">🐻</button>
-        <button data-emoji="🐯" class="emoji-pick text-2xl border border-stone-300 rounded px-3 py-2">🐯</button>
-        <button data-emoji="🐰" class="emoji-pick text-2xl border border-stone-300 rounded px-3 py-2">🐰</button>
+      <div id="modal-emoji-row" class="grid grid-cols-5 gap-2 mb-4">
+        <button data-emoji="🦊" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🦊</button>
+        <button data-emoji="🐻" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐻</button>
+        <button data-emoji="🐯" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐯</button>
+        <button data-emoji="🐰" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐰</button>
+        <button data-emoji="🐱" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐱</button>
+        <button data-emoji="🐶" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐶</button>
+        <button data-emoji="🐼" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐼</button>
+        <button data-emoji="🐨" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐨</button>
+        <button data-emoji="🦁" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🦁</button>
+        <button data-emoji="🐧" class="emoji-pick text-2xl border border-stone-300 rounded py-2 hover:bg-stone-50">🐧</button>
       </div>
       <button id="modal-save" class="w-full bg-stone-900 text-white rounded py-2 disabled:bg-stone-400" disabled>저장하고 시작</button>
     </div>
