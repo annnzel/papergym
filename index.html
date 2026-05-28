@@ -655,68 +655,136 @@
         return { ...p, id, week, arxivLink };
       }).filter(p => p.week).sort((a, b) => a.week.n - b.week.n);
 
+      // 한국어 짧은 제목 (grid + 카드용)
+      const paperKoreanTitle = {
+        cot: '사고 사슬 (CoT)',
+        react: 'ReAct (생각+행동)',
+        toolformer: 'Toolformer (도구 학습)',
+        instructgpt: 'InstructGPT (RLHF)',
+        cai: 'Constitutional AI',
+        reflexion: 'Reflexion (자기 비판)',
+        attention: 'Transformer (Attention)',
+        gpt3: 'GPT-3 (few-shot)',
+        'scaling-laws': 'Scaling Laws',
+        chinchilla: 'Chinchilla',
+        rag: 'RAG (검색 보강)',
+        memgpt: 'MemGPT (LLM as OS)',
+        tot: 'Tree of Thoughts'
+      };
+      // Phase 4 메타 (한 줄 학습자 설명)
+      const phaseMeta = {
+        1: { name: 'Form Building', desc: 'AI에게 "생각·행동·도구 사용"을 가르치기', color: 'amber' },
+        2: { name: 'Assistant Training', desc: '왜 ChatGPT가 사람 말을 잘 듣는지', color: 'rose' },
+        3: { name: 'LLM Foundation', desc: '현대 LLM의 뼈대 — 왜 갑자기 똑똑해졌나', color: 'emerald' },
+        4: { name: 'Memory & Synthesis', desc: 'AI가 기억하고 통합하는 방법', color: 'violet' }
+      };
+      const phaseText = { amber: 'text-amber-700', rose: 'text-rose-700', emerald: 'text-emerald-700', violet: 'text-violet-700' };
+      // 오늘 위치 (?date= 시뮬 반영) — grid 강조 ring
+      const todayWD = getCurrentWeekAndDay();
+      const currentWeekN = todayWD.status === 'in-progress' ? todayWD.week : null;
+
       view.innerHTML = `
         <h1 class="text-xl font-semibold mb-1">16주 학습 지도</h1>
-        <p class="text-sm text-stone-500 mb-6">13편 본 논문 + 3주 Review + 16편 보충 (옵션)</p>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8">
-          ${curriculum.weeks.map(w => `
-            <div class="border rounded-lg p-3 ${phaseColors[w.phaseColor]} text-xs">
-              <div class="font-semibold">W${w.n}${w.isFinal ? ' 🏆' : ''}</div>
-              <div class="opacity-60">${escapeHtml(w.phaseName)}</div>
-              <div class="mt-1 font-medium">${w.type === 'review' ? '🔁 Review' : (escapeHtml(w.paperId) || '—')}</div>
-            </div>
-          `).join('')}
-        </div>
+        <p class="text-sm text-stone-500 mb-6">4 Phase × 13편 본 논문 + 3주 Review + 보충 16편. 매주 1편씩 함께 읽어요.</p>
 
-        <h2 class="text-lg font-semibold mb-1">Core 13편 — 본 논문</h2>
-        <p class="text-sm text-stone-500 mb-3">매주 1편씩 16주 동안 함께 읽을 정전 논문들.</p>
-        <div class="space-y-2 mb-8">
-          ${corePapers.map(p => `
-            <div class="border border-stone-200 rounded-lg p-3 bg-white">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="inline-block w-2 h-2 rounded-full ${phaseDot[p.week.phaseColor]}"></span>
-                <span class="text-xs font-semibold text-stone-500">W${p.week.n} · ${escapeHtml(p.week.phaseName)}</span>
-              </div>
-              <div class="font-semibold text-sm mb-2">${escapeHtml(p.id.toUpperCase())} <span class="text-xs text-stone-400 font-normal">${escapeHtml(p.paper_id)}</span></div>
-              ${p.study_hook ? `
-                <div class="text-xs space-y-1 mb-2">
-                  <div><span class="text-stone-500">🎯 문제:</span> ${escapeHtml(p.study_hook.problem)}</div>
-                  <div><span class="text-stone-500">💡 핵심:</span> ${escapeHtml(p.study_hook.core_idea)}</div>
-                  <div><span class="text-stone-500">📚 왜 읽나:</span> ${escapeHtml(p.study_hook.why_read)}</div>
+        <div class="space-y-5 mb-10">
+          ${[1,2,3,4].map(ph => {
+            const meta = phaseMeta[ph];
+            const weeks = curriculum.weeks.filter(w => w.phase === ph);
+            return `
+              <div>
+                <div class="mb-2">
+                  <span class="${phaseText[meta.color]} font-bold text-sm">Phase ${ph} · ${escapeHtml(meta.name)}</span>
+                  <span class="text-xs text-stone-500 ml-2">${escapeHtml(meta.desc)}</span>
                 </div>
-              ` : ''}
-              <details class="text-xs text-stone-700">
-                <summary class="cursor-pointer text-stone-500 hover:text-stone-900">한국어 초록 펼치기</summary>
-                <p class="mt-2 leading-relaxed">${escapeHtml(p.korean_abstract)}</p>
-              </details>
-              ${p.arxivLink ? `<a href="${escapeHtml(p.arxivLink)}" target="_blank" class="text-xs text-blue-600 underline mt-2 inline-block">원문 →</a>` : ''}
-            </div>
-          `).join('')}
-        </div>
-
-        <h2 class="text-lg font-semibold mb-1">옵션 reading list — 보충 16편</h2>
-        <p class="text-sm text-stone-500 mb-3">강제 학습 아님. 관심 가면 한국어 abstract만 봐도 OK.</p>
-        <div class="space-y-2 mb-8">
-          ${supplementals.map(p => `
-            <div class="border border-stone-200 rounded-lg p-3 bg-white">
-              <div class="font-semibold text-sm">${escapeHtml(p.koreanTitle)}</div>
-              <div class="text-xs text-stone-500 mb-1">${escapeHtml(p.title)}</div>
-              <div class="text-sm text-stone-700">${escapeHtml(p.hook)}</div>
-              ${p.link ? `<a href="${escapeHtml(p.link)}" target="_blank" class="text-xs text-blue-600 underline">원문 →</a>` : ''}
-            </div>
-          `).join('')}
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  ${weeks.map(w => {
+                    const isCur = currentWeekN === w.n;
+                    const label = w.type === 'review' ? '🔁 Review' : (paperKoreanTitle[w.paperId] || w.paperId || '—');
+                    return `
+                      <div class="border rounded-lg p-3 ${phaseColors[w.phaseColor]} text-xs ${isCur ? 'ring-2 ring-stone-900 ring-offset-1' : ''}">
+                        <div class="font-bold">W${w.n}${w.isFinal ? ' 🏆' : ''}${isCur ? ' · 오늘' : ''}</div>
+                        <div class="mt-1 font-medium leading-snug">${escapeHtml(label)}</div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
 
         <h2 class="text-lg font-semibold mb-1">🕸️ 29편 계보 지도</h2>
         <p class="text-sm text-stone-500 mb-3">Core 13 (큰 원, 실선) + 보충 16 (작은 점선) · 노드 클릭 → 영향 관계 강조 · 드래그/줌 가능</p>
         <div class="flex gap-3 mb-2 text-xs text-stone-500 flex-wrap">
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fbbf24"></span>Phase 1 Form Building</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fb7185"></span>Phase 2 Assistant</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#34d399"></span>Phase 3 Foundation</span>
-          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#a78bfa"></span>Phase 4 Memory</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fbbf24"></span>Phase 1</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#fb7185"></span>Phase 2</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#34d399"></span>Phase 3</span>
+          <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#a78bfa"></span>Phase 4</span>
         </div>
         <div id="lineage-graph" class="bg-white border border-stone-200 rounded-lg" style="height: 560px;"></div>
-        <p class="text-xs text-stone-400 mt-2 text-center">실선 화살표 = 직접 후속 (evolves) · 점선 화살표 = 응용/확장 (ext) · 빈 곳 클릭하면 강조 해제</p>
+        <p class="text-xs text-stone-400 mt-2 mb-10 text-center">실선 화살표 = 직접 후속 (evolves) · 점선 화살표 = 응용/확장 (ext) · 빈 곳 클릭하면 강조 해제</p>
+
+        <h2 class="text-lg font-semibold mb-1">Core 13편 — 본 논문</h2>
+        <p class="text-sm text-stone-500 mb-4">제목 클릭하면 한국어 초록 + 원문 링크가 펼쳐집니다.</p>
+        <div class="space-y-5 mb-10">
+          ${[1,2,3,4].map(ph => {
+            const meta = phaseMeta[ph];
+            const items = corePapers.filter(p => p.week.phase === ph);
+            if (items.length === 0) return '';
+            return `
+              <div>
+                <h3 class="${phaseText[meta.color]} font-semibold text-sm mb-2">Phase ${ph} · ${escapeHtml(meta.name)}</h3>
+                <div class="space-y-1">
+                  ${items.map(p => `
+                    <details class="border border-stone-200 rounded-lg bg-white group">
+                      <summary class="cursor-pointer p-3 hover:bg-stone-50 text-sm flex items-start gap-2 list-none">
+                        <span class="inline-block w-2 h-2 rounded-full ${phaseDot[p.week.phaseColor]} mt-1.5 flex-shrink-0"></span>
+                        <span class="flex-1">
+                          <span class="font-semibold">W${p.week.n} · ${escapeHtml(paperKoreanTitle[p.id] || p.id)}</span>
+                          <span class="block text-xs text-stone-500 mt-0.5">${escapeHtml((p.study_hook && p.study_hook.core_idea) || '')}</span>
+                        </span>
+                        <span class="text-stone-400 group-open:rotate-180 transition-transform text-xs flex-shrink-0">▼</span>
+                      </summary>
+                      <div class="px-3 pb-3 text-xs space-y-2 border-t border-stone-100">
+                        ${p.study_hook ? `
+                          <div class="space-y-1 pt-2">
+                            <div><b class="text-stone-500">🎯 문제</b>: ${escapeHtml(p.study_hook.problem)}</div>
+                            <div><b class="text-stone-500">💡 핵심</b>: ${escapeHtml(p.study_hook.core_idea)}</div>
+                            <div><b class="text-stone-500">📚 왜 읽나</b>: ${escapeHtml(p.study_hook.why_read)}</div>
+                          </div>
+                        ` : ''}
+                        <p class="text-stone-700 leading-relaxed">${escapeHtml(p.korean_abstract)}</p>
+                        ${p.arxivLink ? `<a href="${escapeHtml(p.arxivLink)}" target="_blank" class="text-xs text-blue-600 underline">원문 →</a>` : ''}
+                      </div>
+                    </details>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <h2 class="text-lg font-semibold mb-1">옵션 reading list — 보충 16편</h2>
+        <p class="text-sm text-stone-500 mb-4">강제 학습 아님. 제목 클릭하면 한국어 abstract + 원문 펼침.</p>
+        <div class="space-y-1 mb-8">
+          ${supplementals.map(p => `
+            <details class="border border-stone-200 rounded-lg bg-white group">
+              <summary class="cursor-pointer p-3 hover:bg-stone-50 text-sm flex items-start gap-2 list-none">
+                <span class="flex-1">
+                  <span class="font-semibold">${escapeHtml(p.koreanTitle)}</span>
+                  <span class="block text-xs text-stone-500 mt-0.5">${escapeHtml(p.hook)}</span>
+                </span>
+                <span class="text-stone-400 group-open:rotate-180 transition-transform text-xs flex-shrink-0">▼</span>
+              </summary>
+              <div class="px-3 pb-3 text-xs space-y-2 border-t border-stone-100">
+                <p class="text-stone-500 pt-2">${escapeHtml(p.title)}</p>
+                <p class="text-stone-700 leading-relaxed">${escapeHtml(p.abstractKo)}</p>
+                ${p.link ? `<a href="${escapeHtml(p.link)}" target="_blank" class="text-xs text-blue-600 underline">원문 →</a>` : ''}
+              </div>
+            </details>
+          `).join('')}
+        </div>
       `;
       renderLineageGraph();
     }
