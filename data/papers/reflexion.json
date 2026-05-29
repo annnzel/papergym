@@ -1,0 +1,319 @@
+{
+  "id": "reflexion",
+  "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+  "venue": "NeurIPS 2023",
+  "arxivId": "2303.11366",
+  "phase": 2,
+  "koreanTitle": "Reflexion — 자연어 self-reflection으로 학습 없이 RL 효과",
+  "hook": "Weight update 0. inference 시점 자연어 반성으로 RL 효과. HumanEval 91% pass@1 — 이전 SOTA GPT-4 80% 능가.",
+  "abstractKo": "Reflexion은 LLM agent가 시행착오에서 학습할 때 weight update 없이 자연어 reflection만 사용하는 framework이다. 기존 RL은 weight 업데이트 + 많은 학습 데이터 필요했는데, Reflexion은 binary success signal → 자연어 self-reflection → episodic memory에 저장 → 다음 trial에서 활용. 3 LM 협업: Actor(행동 생성, ReAct/CoT 기반) + Evaluator(결과 평가, binary/scalar) + Self-Reflection(자연어 반성). 3 task 평가: (1) AlfWorld decision making +22% (ReAct+Reflexion 130/134) (2) HotpotQA reasoning +20% (3) HumanEval code generation **91% pass@1** (이전 SOTA GPT-4 80% 능가). Cursor 자기 디버깅 · Claude Code 시행착오 학습 · 모든 agent framework의 'retry with feedback' 패턴의 원조. Phase 2의 정점 — 학습 없이 정렬·개선 가능.",
+  "days": [
+    {
+      "n": 1,
+      "range": "§1 Intro — Verbal RL 정의 + 3 task overview",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘 분량은 'Reflexion이 무엇이고 왜 필요한가'입니다. §1 Introduction.\n\n**Phase 2 정점 — 학습 없이 RL 효과**\n\nPhase 2의 진화 패턴:\n\n- **W5 InstructGPT**: 사람 피드백 + weight update (RLHF)\n- **W6 CAI**: AI 피드백 + weight update (RLAIF) — 사람 라벨 ↓\n- **W7 Reflexion**: **자연어 reflection + weight update 0** — 학습 자체 제거\n\nReflexion은 inference 시점에 'verbal reinforcement'로 학습 효과를 냅니다. **'agent가 어제 실패한 경험을 한 줄 메모로 남기고, 오늘 다시 풀 때 그 메모 보고 더 잘함'**. 그 메모 = self-reflection.\n\n**Traditional RL의 한계**\n\n기존 강화학습 (Q-learning, PPO 등):\n\n- **Weight update 필요** — model fine-tune 비용 큼\n- **많은 학습 데이터 필요** — 수만~수백만 trial\n- **Gradient descent + computation expensive**\n- **Scalar reward** (e.g., 0 or 1)에 신호 압축 — 학습 신호 빈약\n\nLanguage agents가 RL로 학습하려면 이 모든 비용 발생. Reflexion이 우회.\n\n**Reflexion의 핵심 아이디어**\n\n**Binary success signal → verbal reflection → next trial에 활용**\n\n1. Agent가 task 시도 → 결과 (success/fail) 받음\n2. 실패하면 **'왜 실패했는가'를 자연어로 self-reflect**\n3. 그 reflection을 **episodic memory에 저장**\n4. 다음 trial 시 memory를 context로 → 같은 실수 안 함\n\n**'Verbal gradient'** — 숫자 gradient가 아닌 자연어로 'concrete direction to improve' 제공. 사람의 학습 방식(이전 실수 반성)에 가까움.\n\n**Reflexion의 4가지 장점** (저자들 §1)\n\n- **Lightweight** — weight update 없음. fine-tune 비용 0\n- **Nuanced feedback** — scalar reward보다 풍부한 자연어 피드백\n- **Interpretable episodic memory** — 사람이 모델의 학습 과정 직접 읽음\n- **Explicit hints** — 다음 trial에 구체적 action 제안\n\n**3 task에서 검증 — 결과 미리보기**\n\n- **(1) Decision making — AlfWorld**: ReAct + Reflexion = **130/134 task 풀이 (97%)**. baseline ReAct만 75%. **+22% 절대 향상**\n- **(2) Reasoning — HotpotQA**: episodic memory + Reflexion = baseline 대비 **+20%**\n- **(3) Code generation — HumanEval**: **91% pass@1 — 이전 SOTA GPT-4 80% 능가**. self-generated unit tests + reflection 활용. Rust로도 일반화 (68%)\n\n**핵심 메시지** — Reflexion은 **'fine-tune 없이 시행착오 학습'**. 모든 현대 AI agent의 '재시도 + 피드백 활용' 패턴의 원조. Cursor의 자기 디버깅 · Claude Code의 시행착오 · OpenAI Operator의 retry — 모두 Reflexion의 응용.",
+      "figure": {
+        "id": "Figure 1 — 3 task examples (Decision/Programming/Reasoning)",
+        "captionKo": "Reflexion이 3 task에서 작동하는 방식. **(1) Decision making (AlfWorld)**: 행동 → Rule/LM Heuristic으로 Hallucination 감지 → Reflection ('I tried...but...') → 수정된 행동. **(2) Programming (HumanEval)**: 코드 생성 → Self-generated unit tests로 binary reward (fail) → Reflection (wrong because '...') → 수정 코드. **(3) Reasoning (HotpotQA)**: 추론 → EM grading으로 binary reward (incorrect) → Reflection (factual mistake) → 수정 추론. **공통 패턴**: trajectory → evaluation → reflection → 다음 trial context.",
+        "imagePath": "data/papers/reflexion/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "verbal reinforcement learning",
+          "ko": "자연어 강화학습",
+          "memo": "weight update 없이 자연어 reflection으로 RL 효과. Reflexion의 핵심 정의"
+        },
+        {
+          "en": "self-reflection",
+          "ko": "자기 반성",
+          "memo": "실패 시 '왜 실패했는가' 자연어 분석. episodic memory에 저장"
+        },
+        {
+          "en": "episodic memory",
+          "ko": "에피소드 메모리",
+          "memo": "trial 간 누적되는 reflection 저장소. 다음 trial의 context"
+        },
+        {
+          "en": "binary success signal",
+          "ko": "이진 성공 신호",
+          "memo": "task pass/fail 정보만. Reflexion이 이걸 verbal reflection으로 변환"
+        },
+        {
+          "en": "lightweight learning",
+          "ko": "경량 학습",
+          "memo": "weight update 0 + fine-tune 비용 0. inference 시점에만 동작"
+        },
+        {
+          "en": "verbal gradient",
+          "ko": "자연어 gradient",
+          "memo": "수치 gradient의 자연어 대안. 'concrete direction to improve'"
+        }
+      ],
+      "analogy": {
+        "title": "오답노트의 힘 — 학습 없이 성장",
+        "body": "수험생이 시험 친 뒤 **'어떤 문제 왜 틀렸나'를 한 줄 메모(오답노트)**로 남기고, 다음 시험 전에 그 메모 다시 보면 같은 실수 줄어듭니다. 뇌 자체(weight)는 안 바뀌었어요. 단 **메모가 다음 시험의 context**. Reflexion이 정확히 이것 — LLM의 weight 안 건드리고, 매 trial 끝에 reflection 메모 추가 → 다음 trial 때 그 메모 보고 더 잘함. **사람의 학습 방식**과 가장 가까운 LLM agent 패턴."
+      },
+      "question": "Reflexion은 **'학습 없이 학습'** 메커니즘. 이게 본인 일에 어떻게 적용될 수 있을까요? (예: 같은 type의 task 반복 시 매번 메모 활용)"
+    },
+    {
+      "n": 2,
+      "range": "§3 Method — Actor + Evaluator + Self-Reflection + Memory + Algorithm",
+      "estimatedMinutes": 40,
+      "pages": 2,
+      "translationKo": "오늘은 Reflexion의 작동 방식 — 3 LM 협업 + memory + algorithm. §3.\n\n**3 LM 협업**\n\nReflexion은 3개의 LLM이 협업합니다:\n\n- **Actor (M_a)**: 텍스트·행동 생성. **CoT 또는 ReAct로 작동** (W1·W2 응용)\n- **Evaluator (M_e)**: Actor의 trajectory 평가 → reward score (binary or scalar)\n- **Self-Reflection (M_sr)**: Evaluator 결과 받아 **자연어 reflection 생성** — 'concrete experience summary'\n\n**Memory — Short-term + Long-term**\n\n- **Short-term memory (trajectory τ)**: 현재 trial의 (action, observation) 시퀀스. fine-grained recent details\n- **Long-term memory (mem)**: 이전 trial들의 self-reflection 누적. distilled important experiences\n\n사람의 기억과 유사 — '오늘 일은 자세히, 작년 일은 요약만'.\n\n**Reflexion Algorithm**\n\n```\n1. Initialize Actor, Evaluator, Self-Reflection: M_a, M_e, M_sr\n2. Initialize policy π_θ(a_i | s_i), θ = {M_a, mem}\n3. Generate initial trajectory τ_0 using π_θ\n4. Evaluate τ_0 using M_e\n5. Generate initial self-reflection sr_0 using M_sr\n6. Set mem ← [sr_0]\n7. Set t = 0\n8. while M_e not pass or t < max trials do\n9.   Generate τ_t = [a_0, o_0, a_1, ...] using π_θ\n10.  Evaluate τ_t using M_e\n11.  Generate self-reflection sr_t using M_sr\n12.  Append sr_t to mem\n13.  Increment t\n14. end while\n15. return\n```\n\n**핵심: while loop** — Evaluator가 pass 또는 max trials (보통 1-3)까지 trial 반복. 매 trial 끝에 reflection 추가.\n\n**3 components 디테일**\n\n**Actor** — 다양한 모델 사용 가능:\n\n- **Chain of Thought (W1)** — 단일 step reasoning\n- **ReAct (W2)** — Thought-Action-Observation loop\n- + Memory component (mem) — episodic context 추가\n\n**Evaluator** — task별 다른 방법:\n\n- **Reasoning (HotpotQA)**: Exact Match (EM) grading\n- **Decision making (AlfWorld)**: pre-defined heuristic functions (rule-based)\n- **Programming (HumanEval)**: self-generated unit tests\n\n**Self-Reflection** — 가장 중요한 component:\n\n- Input: trajectory τ + reward (fail)\n- Output: 자연어 reflection — 'in trial X, I did Y but it failed because Z. Next time I should do W'\n- **신호 증폭** — sparse binary reward을 nuanced verbal feedback으로\n\n예시 (저자들 §3):\n\n'In a multi-step decision-making task, when the agent receives a failure signal, it can infer that a specific action a_i led to subsequent incorrect actions. The agent can then verbally state that it should have taken a different action a'_i...'\n\n**Memory bound**\n\nMemory size Ω (보통 1-3). 너무 크면 context window 초과. 가장 최근 reflections만 유지.\n\n**핵심 메시지** — Reflexion은 (a) 3 LM 협업 (b) 2-level memory (c) iterative trial-reflection-retry loop. **모든 component가 LLM** — agent framework의 modular 설계.",
+      "figure": {
+        "id": "Figure 2 — Reflexion Diagram + Algorithm",
+        "captionKo": "**왼쪽 Diagram**: Agent box 안 — Self-reflection (LM) + Evaluator (LM) + Trajectory + Experience(long-term memory) + Actor (LM). External feedback + Internal feedback → Self-reflection → Reflective text → Experience → Actor → Trajectory. **오른쪽 Algorithm**: while loop — Evaluator pass or t < max trials: Generate τ → Evaluate → Generate sr → Append to mem → Increment t. **3 LM(Actor·Evaluator·Self-Reflection) + Memory + Loop**가 Reflexion의 핵심 구조.",
+        "imagePath": "data/papers/reflexion/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "Actor (M_a)",
+          "ko": "액터",
+          "memo": "행동 생성 LLM. CoT 또는 ReAct 기반. 3 LM 중 1번"
+        },
+        {
+          "en": "Evaluator (M_e)",
+          "ko": "평가자",
+          "memo": "trajectory 평가 LLM. binary/scalar reward 생성. EM/heuristic/unit test"
+        },
+        {
+          "en": "Self-Reflection (M_sr)",
+          "ko": "자기 반성자",
+          "memo": "자연어 reflection 생성 LLM. trajectory + reward → verbal feedback"
+        },
+        {
+          "en": "trajectory τ",
+          "ko": "궤적",
+          "memo": "(action, observation) 시퀀스. short-term memory"
+        },
+        {
+          "en": "episodic memory (mem)",
+          "ko": "에피소드 메모리",
+          "memo": "이전 trial reflection 누적. long-term memory. size Ω=1~3"
+        },
+        {
+          "en": "max trials",
+          "ko": "최대 시도",
+          "memo": "while loop 종료 조건. 보통 1-3. 너무 많으면 cost ↑"
+        }
+      ],
+      "analogy": {
+        "title": "팀워크 — 실무자 · 검수자 · 코치",
+        "body": "Actor = 실무자 (실제 task 수행). Evaluator = 검수자 (잘했나 평가). Self-Reflection = 코치 (실패하면 '왜 실패했는지 한 줄 메모'). 메모는 **장기 노트(episodic memory)** 에 누적. 다음 task 시 실무자가 그 노트 보고 시작. **3 역할 분리**가 핵심 — 각 역할이 다른 LLM (실제론 같은 GPT-4를 다른 prompt로 호출)이면 specialization 효과."
+      },
+      "question": "Reflexion의 3 LM 중 본인이 가장 중요하다고 생각하는 건 누구? (Actor / Evaluator / Self-Reflection) 왜?"
+    },
+    {
+      "n": 3,
+      "range": "§4.1 + §4.2 AlfWorld + HotpotQA — Decision + Reasoning",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 Reflexion의 첫 2 task — 의사결정과 추론. §4.1 + §4.2.\n\n**4.1 AlfWorld — Sequential Decision Making**\n\nAlfWorld(W2 ReAct에서도 나옴): 텍스트 기반 가상 가정환경. agent가 'put pepper shaker on drawer' 같은 명령 받음. 6 task types, 134 evaluation tasks.\n\n**Setup**:\n\n- **Actor**: ReAct (W2 응용) + 2-shot trajectory example\n- **Evaluator** (binary):\n  - **Heuristic**: 같은 action 3번 반복 OR 30 step 초과 → fail\n  - **GPT (LM-as-judge)**: LLM이 trajectory 분류 (success/fail)\n- **Self-Reflection**: trajectory + fail reason → 'I tried...but...because...' 자연어 reflection\n- 12 iterative learning steps (12 trials)\n\n**결과 (Figure 3)**\n\nProportion of solved tasks (y) vs Trial number (x):\n\n- ReAct only (회색): 0.65 → 0.75 (10 trial 후, marginal 향상)\n- **ReAct + Reflexion (Heuristic)** (파랑): 0.7 → **0.97 (130/134 task, 11 trial 후)**\n- **ReAct + Reflexion (GPT)** (녹색): 0.7 → 0.95 (heuristic이 약간 우월)\n\n**+22% 절대 향상** (ReAct only 75% → Reflexion 97%).\n\n**Failure analysis (Figure 3b)**\n\nReAct only의 실패 원인 분류:\n\n- **Hallucination (37%)**: '내가 pepper shaker 가졌다' 가짜 믿음 → 다음 행동 망가짐\n- **Inefficient planning (33%)**: 무계획 무한 시도\n\nReflexion으로 둘 다 **거의 0**으로 감소.\n\n**왜 작동하나** — long-term memory가 두 패턴 도움:\n\n- (1) **Early mistake 빨리 식별** — 'last trial에서 cabinet 1에 없었다' 메모\n- (2) **너무 많은 surface 탐색 회피** — '이미 cabinet 1-6, countertop 1-3 다 봤다, drawer 시도' 메모\n\n**4.2 HotpotQA — Reasoning**\n\nHotpotQA(W2에서도): Wikipedia 기반 multi-hop QA. 113k Q&A pairs.\n\n**Setup**:\n\n- Reasoning only (no search): **CoT (W1)** + ground truth context Cgt → answer\n- Reasoning + retrieval: **ReAct (W2)** + Wikipedia API → answer\n- Self-reflection: 2-shot prompt\n- 3 consecutive 실패까지 retry (allowed multiple trials)\n\n**결과 (Figure 4)**\n\nProportion of solved 100 HotpotQA questions, Trial 0~6:\n\n- CoT only · ReAct only: **첫 trial에서 풀린 task 외 추가 학습 없음** (probabilistic improvement만, no failed task recovery)\n- **ReAct + Reflexion**: 매 trial마다 향상. 6 trial 후 baseline 대비 **+20%**\n- CoT + Reflexion (GT context): 비슷한 향상\n- **Episodic Memory(EPM) + Reflexion** (panel c): EPM only baseline 대비 **+8% 추가 향상** — reflection이 핵심 (memory만으론 부족)\n\n**EPM ablation의 의미** — '단순히 이전 trial 기억'만으론 부족. **'왜 실패했는지 verbal reflection'**이 핵심 학습 신호.\n\n**핵심 메시지** — 두 task 모두 **Reflexion이 강한 baseline (ReAct) 위에 + 22%, +20% 추가 향상**. 학습 없이. 특히 (1) hallucination 식별 (2) inefficient planning 회피 효과. self-reflection 자체가 핵심 — memory만으로는 부족.",
+      "figure": {
+        "id": "Figure 3 — AlfWorld Success Rate (Reflexion +22%)",
+        "captionKo": "**왼쪽**: Proportion of Solved Environments vs Trial Number (1~10). ReAct only(회색 점선) 0.65→0.75. **ReAct + Reflexion (Heuristic, 파랑) 0.7→0.97 (97%, 130/134 task)**. ReAct + Reflexion (GPT, 녹색) 0.7→0.95. **+22% 절대 향상**. **오른쪽**: Failure analysis. ReAct only의 실패 — Hallucination 37% · Inefficient Planning 33%. Reflexion으로 둘 다 거의 0. **자기 반성이 두 핵심 실패 패턴 해결**.",
+        "imagePath": "data/papers/reflexion/fig3.png"
+      },
+      "glossary": [
+        {
+          "en": "AlfWorld (Reflexion)",
+          "ko": "AlfWorld",
+          "memo": "text 기반 가상 가정환경. 134 tasks. Reflexion 97% 풀이 (ReAct 단독 75%)"
+        },
+        {
+          "en": "iterative learning steps",
+          "ko": "반복 학습 단계",
+          "memo": "while loop trials. AlfWorld 12 trials, HotpotQA 3-6 trials"
+        },
+        {
+          "en": "hallucination (AlfWorld)",
+          "ko": "환각 (AlfWorld)",
+          "memo": "agent가 가지지 않은 item 가졌다 가정. 실패 원인 37% → Reflexion 거의 0"
+        },
+        {
+          "en": "inefficient planning",
+          "ko": "비효율 계획",
+          "memo": "무계획 무한 시도. 실패 원인 33% → Reflexion 거의 0"
+        },
+        {
+          "en": "HotpotQA (Reflexion)",
+          "ko": "HotpotQA",
+          "memo": "multi-hop QA. Reflexion +20% over baselines"
+        },
+        {
+          "en": "episodic memory ablation",
+          "ko": "EPM 절제",
+          "memo": "memory만 vs memory+reflection. reflection이 핵심 (+8%)"
+        }
+      ],
+      "analogy": {
+        "title": "재시험 + 오답노트",
+        "body": "수험생이 같은 시험을 12번 봅니다. 시험 1: 65점. **'어디서 틀렸나' 한 줄 메모(reflection)**. 시험 2: 메모 보고 응시 → 75점. ... 시험 12: **97점**. 사람과 동일 패턴 — **반복 + 반성 = 학습**. Reflexion이 LLM agent에 같은 메커니즘 적용. 단순 재시도(ReAct only)는 marginal 향상 — **반성 메모가 핵심**."
+      },
+      "question": "AlfWorld·HotpotQA에서 **memory만 vs memory+reflection** 차이 — 자기 반성의 verbal 형태가 핵심. 본인 일에 '재시도 + 오답노트' 패턴을 어떻게 적용할 수 있을까요?"
+    },
+    {
+      "n": 4,
+      "range": "§4.3 Programming — HumanEval 91% pass@1",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 Reflexion의 가장 충격적 결과 — HumanEval **91% pass@1**. 이전 SOTA GPT-4 80% 능가. §4.3.\n\n**Programming Task setup**\n\n**Benchmarks**:\n\n- **HumanEval (Python · Rust)**: function body generation\n- **MBPP (Python · Rust)**: programming benchmark, Python에서 starter\n- **LeetcodeHardGym (new benchmark)**: Reflexion 저자들 신설. 40 Leetcode hard questions, October 2022 이후 (GPT-4 학습 데이터 cutoff 이후 → memorization 회피)\n\n**MultiPL-E**: Python ↔ Rust 번역 도구. 다른 언어로 일반화 가능성 측정.\n\n**Setup (programming-specific)**:\n\n- Actor: code generation (CoT)\n- Evaluator: **self-generated unit tests** (key innovation)\n- Self-Reflection: code + failed tests → 'why fail + how to fix'\n- Max memory = 1 experience (one trial reflection만 유지)\n\n**Self-generated Unit Tests — 핵심 innovation**\n\n이전 code-gen은 ground truth tests에 의존 (CodeT, AlphaCode). Reflexion은:\n\n1. CoT prompt로 6개 diverse unit tests 생성\n2. AST validation으로 syntactically valid한 것만 keep\n3. 이걸 test suite T = {t_0, t_1, ..., t_n}으로 사용\n4. 코드 생성 → test suite 실행 → 실패 시 reflection → 재생성\n\n**Pass@1 정확도 + ground truth 없이 작동** — fully self-supervised.\n\n**Table 1 — Pass@1 Results**\n\n| Benchmark | Prev SOTA | SOTA pass@1 | **Reflexion** |\n| --- | --- | --- | --- |\n| HumanEval (PY) | 65.8 (CodeT + GPT-3.5) | 80.1 (GPT-4) | **91.0** |\n| HumanEval (RS) | — | 60.0 (GPT-4) | **68.0** |\n| MBPP (PY) | 67.7 (CodeT + Codex) | **80.1 (GPT-4)** | 77.1 |\n| MBPP (RS) | — | 70.9 (GPT-4) | **75.4** |\n| Leetcode Hard (PY) | — | 7.5 (GPT-4) | **15.0** |\n\n**충격적 결과**:\n\n- **HumanEval (PY) 91.0%** — GPT-4 SOTA 80.1% 대비 **+11%**\n- **HumanEval (RS) 68.0%** — GPT-4 60% 대비 **+8%** (Rust 일반화)\n- **Leetcode Hard 15.0%** — GPT-4 7.5% 대비 **2배** (cutoff 이후 문제로 memorization 회피)\n- MBPP (PY)만 GPT-4 SOTA 못 넘김 (77.1 vs 80.1) — false positive unit tests 문제\n\n**MBPP false positive 분석 (Table 2)**\n\nMBPP (PY)는 unit test가 부정확해 false positive (잘못된 코드를 pass로 표시) 발생. **16.3%** false positive rate → 91.0%는 못 도달.\n\nHumanEval (PY)은 1.4% false positive — Reflexion 효과 충분히 발휘.\n\n**Ablation (Table 3) — Test generation + Self-reflection 둘 다 필수**\n\nHumanEval (RS) 50 hardest:\n\n- Base model (no test, no reflection): 60%\n- Test gen omission (no test, reflection만): 52% — **test 없으면 reflection 못 함**\n- Self-reflection omission (test만, reflection 없음): 60% — **reflection 없으면 base와 동일**\n- **Reflexion (test + reflection): 68%**\n\n**핵심 통찰** — test generation과 self-reflection은 **함께 필요**. test가 evaluator로 작동 → reflection이 verbal feedback 생성. 둘 중 하나 빠지면 baseline.\n\n**핵심 메시지** — Reflexion의 HumanEval **91% pass@1**은 (a) self-generated unit tests (b) verbal reflection (c) iterative retry의 조합. ground truth tests 없이 작동. GPT-4 SOTA를 같은 모델로 + 11%. **Cursor·Claude Code의 자기 디버깅 패턴의 원조** — 코드 task에서 self-test + retry는 이 논문 이후 표준.",
+      "figure": {
+        "id": "Figure 4 + Table 1 — HotpotQA + HumanEval results",
+        "captionKo": "**Figure 4 (위)**: HotpotQA 100 questions 결과. (a) Reflexion ReAct vs Reflexion CoT (b) CoT GT only (c) episodic memory ablation. 모든 panel에서 Reflexion이 baseline 대비 +20% 향상. **memory만으로는 부족 — reflection이 핵심**. **Table 1 (아래)**: Pass@1 by 모델/언어. **HumanEval Python: Reflexion 91.0% (GPT-4 SOTA 80.1% 능가)**. Rust 68.0% (GPT-4 60% 능가). Leetcode Hard 15.0% (GPT-4 7.5% 2배). **3개 SOTA 갱신** — same GPT-4 모델로.",
+        "imagePath": "data/papers/reflexion/fig4.png"
+      },
+      "glossary": [
+        {
+          "en": "HumanEval",
+          "ko": "HumanEval",
+          "memo": "code function body 생성 benchmark. Python 164 문제. Reflexion 91% pass@1"
+        },
+        {
+          "en": "MBPP",
+          "ko": "MBPP",
+          "memo": "Most Basic Python Problems. unit test false positive 문제로 Reflexion 한계"
+        },
+        {
+          "en": "LeetcodeHardGym",
+          "ko": "LeetcodeHardGym",
+          "memo": "Reflexion 저자 신설. 40 hard, GPT-4 cutoff 이후 → memorization 회피"
+        },
+        {
+          "en": "self-generated unit tests",
+          "ko": "자가 생성 unit tests",
+          "memo": "CoT로 6 diverse tests 생성 → AST validation → test suite. ground truth 없이"
+        },
+        {
+          "en": "pass@1",
+          "ko": "pass@1",
+          "memo": "한 번 시도로 통과 비율. code gen의 표준 지표"
+        },
+        {
+          "en": "false positive unit tests",
+          "ko": "false positive 테스트",
+          "memo": "잘못된 코드를 pass로 표시. MBPP 16.3% → Reflexion 효과 제한"
+        }
+      ],
+      "analogy": {
+        "title": "자가 시험 + 오답 분석 = SOTA",
+        "body": "기존 code-gen = **'정답 시험지 + 답 맞춰보기'** (CodeT, AlphaCode). Reflexion = **'학생이 자기 시험문제 만들고 (self-generated tests) 답 → 틀린 이유 한 줄 메모 (reflection) → 다시 풀이'**. 정답 시험지 없어도 작동. **'시험 + 오답노트'**가 GPT-4 단순 호출보다 11% 향상. Cursor의 자기 디버깅·Claude Code의 'test → fix → test' 패턴이 정확히 이것."
+      },
+      "question": "HumanEval 91% pass@1 — Reflexion 같은 'self-test + reflection' 패턴이 본인이 자주 하는 작업(코딩 아니어도) 중 어디에 적용 가능할까요?"
+    },
+    {
+      "n": 5,
+      "range": "정리 + 한계 + 계보 (Cursor · Phase 3 motivation)",
+      "estimatedMinutes": 30,
+      "pages": 1,
+      "translationKo": "한 주 마지막 — Reflexion의 의미와 한계, Phase 3로의 연결.\n\n**한 주 핵심 한 줄**\n\nReflexion은 **weight update 없이 자연어 self-reflection으로 RL 효과**를 내는 framework. 3 LM (Actor + Evaluator + Self-Reflection) + episodic memory + iterative trial. AlfWorld +22% · HotpotQA +20% · **HumanEval 91% pass@1 (GPT-4 SOTA 80% 능가)**. Phase 2의 정점 — 학습 없이 정렬·개선 가능.\n\n**왜 W7에 읽나** — Reflexion은 **'inference 시점에 학습 효과'**의 가장 깨끗한 증명. CAI(W6)까지는 학습 단계에 self-critique. Reflexion은 inference만으로. Cursor의 자기 디버깅 · Claude Code의 시행착오 · OpenAI Operator의 retry — **모든 현대 AI agent의 'retry + feedback' 패턴의 원조**. Phase 2 전체(InstructGPT → CAI → Reflexion)의 진화 끝.\n\n**솔직한 한계** (저자들 §5 명시)\n\n1. **Non-optimal local minima** — verbal reflection이 local optimum에 갇힐 수 있음. policy 최적화 한계\n2. **Memory limit — sliding window** — episodic memory 최대 capacity 제한. 너무 많은 trial 정보 잃음\n3. **Code generation 한계** — non-deterministic functions, hardware-specific functions, parallel/concurrent behavior 테스트 어려움\n4. **MBPP false positive** — self-generated tests의 한계. ground truth 없이 16% false positive\n5. **Self-evaluation 의존** — Evaluator/Self-Reflection이 약하면 전체 framework 약함. small model에선 작동 안 함\n\n**계보 연결 — Reflexion 이후 무엇이 왔는가**\n\n- **Self-Debugging (Chen 2023)**: code-specific Reflexion 응용. compiler feedback 활용\n- **Cursor의 자기 디버깅**: code → 실행 → error → 자기 수정 — Reflexion 패턴 직접 응용\n- **Claude Code의 시행착오 학습**: test 실행 → 실패 → 분석 → 수정\n- **OpenAI Operator (2024)**: 웹 task에서 'retry with feedback' loop\n- **AutoGPT의 task loop**: 'task → result → reflection → next task' 패턴\n\n**오늘날 도구 연결**\n\n- **Cursor / Windsurf / Claude Code**: code 생성 → 실행 → fail → reflection → 수정. **Reflexion 패턴의 가장 큰 production 응용**\n- **ChatGPT 'self-correction' 기능**: 'wait, let me check that...' — inline self-reflection\n- **LangChain의 retry chains**: retry + verbal feedback이 표준 chain pattern\n- **AI 코드리뷰 도구 (Greptile, Codium)**: AI가 PR diff 보고 review comments — Evaluator + Self-Reflection 패턴\n\n**Phase 2 전체 정리 — 사람 → AI → Verbal 진화**\n\n- **W5 InstructGPT (RLHF)**: 사람 피드백 + weight update. 사람 라벨 100k+. ChatGPT 원조\n- **W6 CAI (RLAIF)**: AI 피드백 + weight update. 사람 라벨 0 (harmless). Claude 원조\n- **W7 Reflexion (Verbal RL)**: 자연어 reflection + weight update 0. fine-tune 없음. Cursor 원조\n\n**진화 방향** — 사람 의존 ↓ · 학습 비용 ↓ · 실시간성 ↑\n\n**다음 주 (W8) — Phase 2 Review**\n\nPhase 2 3편 통합 정리. **새 논문 X** — CoT/ReAct/Toolformer Review(W4)와 같은 패턴. CoT·ReAct·Toolformer 3편이 'LLM 능력 끌어내기'였다면, InstructGPT·CAI·Reflexion 3편이 '사람 의도에 정렬'. W4와 같이 5일 lighter content + 통합 quiz + Phase 3 (W9 Attention) preview.\n\n**Phase 3 미리보기 — Attention Is All You Need (W9)**\n\n2017 Vaswani et al. **모든 현대 LLM의 시발점**. Attention mechanism 도입 → Transformer architecture → BERT/GPT/Claude의 backbone. Phase 1(능력) · Phase 2(정렬)는 이 기초 위에 쌓인 것. 이제 **'그 기초 자체'**를 보는 단계. 8주 후.",
+      "figure": {
+        "id": "Table 2 + Table 3 — HumanEval Ablation (test gen + reflection 둘 다 필수)",
+        "captionKo": "**Table 2**: HumanEval/MBPP false positive rate. HumanEval (PY) 1.4% vs MBPP (PY) 16.3% — MBPP의 self-generated test 한계. **Table 3 Ablation** (HumanEval Rust 50 hardest): Base 60% · Test gen omission 52% (test 없으면 reflection 못 함) · Self-reflection omission 60% (reflection 없으면 base와 동일) · **Reflexion(test + reflection) 68%**. 시사: **두 component 모두 필수** — 빠지면 baseline. test = evaluator 역할 · reflection = verbal feedback 역할.",
+        "imagePath": "data/papers/reflexion/fig5.png"
+      },
+      "glossary": [
+        {
+          "en": "verbal RL (verbal reinforcement)",
+          "ko": "자연어 RL",
+          "memo": "weight update 없이 자연어로 RL 효과. Reflexion의 신조어"
+        },
+        {
+          "en": "Cursor's self-debugging",
+          "ko": "Cursor 자기 디버깅",
+          "memo": "code → execute → error → reflection → fix. Reflexion 직접 응용"
+        },
+        {
+          "en": "AutoGPT task loop",
+          "ko": "AutoGPT 태스크 루프",
+          "memo": "task → result → reflection → next task. Reflexion 패턴"
+        },
+        {
+          "en": "self-correction in ChatGPT",
+          "ko": "ChatGPT 자기 수정",
+          "memo": "'wait, let me check...' inline reflection. Reflexion 응용"
+        },
+        {
+          "en": "Phase 2 evolution",
+          "ko": "Phase 2 진화",
+          "memo": "사람(RLHF) → AI(RLAIF) → Verbal(Reflexion). 사람 의존 ↓ · 비용 ↓"
+        },
+        {
+          "en": "non-optimal local minima",
+          "ko": "비최적 국소 최소",
+          "memo": "verbal reflection이 갇힐 수 있는 함정. Reflexion 한계 1번"
+        }
+      ],
+      "analogy": {
+        "title": "Phase 2 전체 — 사람 → AI → 자율 진화",
+        "body": "**W5 InstructGPT** = 신입을 사수가 1:1 코칭 (사람 100k+ 라벨). **W6 CAI** = 사규 16조 + 자가 검토 (사람 라벨 0). **W7 Reflexion** = 매 일과 끝 오답노트 (학습 0 · 메모만). **점진적으로 사람·학습 의존 ↓ → AI 자율 ↑**. Cursor의 그 '자기 디버깅' 능력 = Phase 2 3편의 결합 결과. Claude Code의 시행착오 학습 = Reflexion 패턴 + Toolformer 도구 호출 + CoT 사고."
+      },
+      "question": "Phase 2 3편 (InstructGPT · CAI · Reflexion) 중 본인 일에 **가장 큰 임팩트**가 있을 것 같은 건? 왜?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "Reflexion의 'verbal reinforcement learning' 핵심은?",
+      "options": [
+        "전통적 RL의 PPO 알고리즘 사용",
+        "Weight update 없이 자연어 self-reflection을 episodic memory에 누적해 다음 trial에서 활용 — 학습 비용 0",
+        "더 큰 reward model 학습",
+        "사람 피드백을 더 자세히 수집"
+      ],
+      "correct": 1,
+      "explain": "§1·§3 핵심 정의. Reflexion은 **fine-tune·gradient descent 0**. 매 trial 끝에 자연어 reflection 생성 → memory에 저장 → 다음 trial context로. '**사람의 학습 방식(이전 실수 반성)**'과 가까움. Phase 2의 정점 — 학습 없이 정렬·개선."
+    },
+    {
+      "q": "Reflexion의 3 LM 구조는?",
+      "options": [
+        "Actor + Critic + Reward Model",
+        "Actor (행동 생성) + Evaluator (결과 평가) + Self-Reflection (자연어 반성) — 모두 LLM",
+        "Generator + Discriminator + Reward",
+        "Teacher + Student + Critic"
+      ],
+      "correct": 1,
+      "explain": "§3 정의. **Actor (M_a)**: CoT/ReAct 기반 행동 생성. **Evaluator (M_e)**: binary/scalar reward. **Self-Reflection (M_sr)**: trajectory + reward → 자연어 reflection. **모든 component가 LLM** — agent framework의 modular 설계."
+    },
+    {
+      "q": "Reflexion + ReAct on AlfWorld 결과는?",
+      "options": [
+        "ReAct only와 동일 (75%)",
+        "**130/134 task (97%) - +22% 절대 향상**. Hallucination 37%→거의 0, Inefficient Planning 33%→거의 0",
+        "ReAct only보다 약간 떨어짐",
+        "50% 미만"
+      ],
+      "correct": 1,
+      "explain": "Figure 3. ReAct only 75% → Reflexion 97% (130/134). **+22% 절대 향상**. 핵심 — Reflexion이 (1) hallucination (가지지 않은 item 가졌다 가정) (2) inefficient planning (무계획 무한 시도) 두 패턴 해결. memory만으론 부족 — verbal reflection이 핵심."
+    },
+    {
+      "q": "Reflexion의 HumanEval **91% pass@1** 결과의 핵심 innovation은?",
+      "options": [
+        "더 큰 모델 사용 (GPT-5)",
+        "Self-generated unit tests + verbal reflection + iterative retry — ground truth tests 없이 작동",
+        "Wikipedia 데이터 추가",
+        "Hand-written prompts"
+      ],
+      "correct": 1,
+      "explain": "§4.3. **Self-generated unit tests** (CoT로 6 diverse tests 생성 + AST validation) + reflection이 핵심. **GPT-4 단순 호출 80% → Reflexion 91%**. ground truth tests 없이. ablation: test와 reflection 둘 중 하나만 있으면 baseline (60% Rust). 둘 다 필요."
+    },
+    {
+      "q": "Phase 2 3편 (InstructGPT · CAI · Reflexion)의 진화 방향은?",
+      "options": [
+        "모델 크기 확대",
+        "사람 피드백(RLHF) → AI 피드백(RLAIF) → 자연어 reflection (Verbal RL) — 사람 의존·학습 비용·실시간성 개선",
+        "Inference 속도 향상",
+        "다국어 지원 확대"
+      ],
+      "correct": 1,
+      "explain": "Phase 2 전체 진화 패턴. **W5 InstructGPT (RLHF)**: 사람 100k+ 라벨 + weight update. **W6 CAI (RLAIF)**: 사람 라벨 0(harmless) + weight update. **W7 Reflexion**: weight update 0, 자연어 reflection만. **점진적으로 사람·학습 의존 ↓ → AI 자율 ↑ → 실시간성 ↑**. 현대 모든 AI agent(Claude Code, Cursor)가 이 진화의 product."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "review-phase2",
+    "nextTitle": "Phase 2 Review — Assistant Training 통합 정리",
+    "teaser": "다음 주(W8)는 **Phase 2 Review** — InstructGPT(RLHF) · CAI(RLAIF) · Reflexion(Verbal RL) 3편 통합 정리. 새 논문 X — 대신 (1) 3편의 진화 패턴(사람→AI→자연어) (2) 본인 일에 적용 reflection (3) Phase 3 (W9 Attention) motivation 정리. 토 통합 quiz + 일 Phase 3 preview. Phase 1(능력) · Phase 2(정렬) 끝나고 Phase 3는 **'그 기초 자체'** — 모든 현대 LLM의 backbone Transformer architecture로."
+  }
+}

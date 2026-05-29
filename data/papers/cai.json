@@ -1,0 +1,319 @@
+{
+  "id": "cai",
+  "title": "Constitutional AI: Harmlessness from AI Feedback",
+  "venue": "arXiv 2022.12",
+  "arxivId": "2212.08073",
+  "phase": 2,
+  "koreanTitle": "Constitutional AI — AI 피드백으로 정렬 (Claude 원조)",
+  "hook": "사람 라벨 없이 AI가 AI를 가르친다 — 16개 헌법 원칙 + 자기비판/자기수정 + RLAIF. Claude의 직접 원조.",
+  "abstractKo": "Anthropic의 Constitutional AI(CAI)는 사람 라벨에 의존하지 않고 LLM을 정렬하는 방법이다. InstructGPT(W5)는 human feedback이 필수였는데, CAI는 'AI feedback'으로 대체한다. 2-stage: (1) **SL Stage** — helpful RLHF 모델에 harmful prompt → 모델이 자기 답을 critique → revise → 그 결과로 supervised fine-tune (SL-CAI). (2) **RL Stage** — SL-CAI가 응답 2개 생성 → AI가 'constitution 원칙' 기준으로 어느 게 더 무해한지 판단 → preference model 학습 → PPO (**RLAIF** = RL from AI Feedback). 16개 constitution principles 사용. 결과: helpful 유지 + harmlessness ↑ + 'I don't know' 같은 evasive responses 감소. RL-CAI가 standard RLHF의 Pareto front 위에. CoT reasoning이 critique 향상. Claude(2023~)의 직접 원조 논문.",
+  "days": [
+    {
+      "n": 1,
+      "range": "§1 Intro — RLHF 한계 + CAI motivation",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘 분량은 'CAI가 무엇이고 왜 필요한가'입니다. §1 Introduction.\n\n**InstructGPT 다음 — 자가 정렬**\n\nW5 InstructGPT는 RLHF로 LLM을 정렬했습니다. 강력했지만 한계가 있어요:\n\n1. **Human labels 비용** — 40명 labelers · 100k+ prompts · 수십만 달러\n2. **Evasive responses** — helpful+harmless 균형 위해 'I don't know' 답 증가\n3. **Scalability** — AI가 사람보다 강해지면 사람이 평가할 수 있나?\n\nCAI는 **'사람 라벨을 AI 라벨로 대체'**해 이 셋을 동시 풀려 합니다. 단, **harmlessness에 대해서만** — helpfulness는 여전히 사람 피드백.\n\n**핵심 아이디어 — Constitution + 자기 비판**\n\n**'Constitution'** = 16개 원칙(예: '대답이 racist·sexist·illegal하면 안 됨'). LLM이 자기 답을 이 원칙 기준으로 **자기 비판(critique) → 자기 수정(revise)** 합니다. 사람이 'harmful 라벨'을 안 박아도 됨.\n\n**2-stage pipeline**\n\n**Stage 1 — SL Stage** (Supervised Learning):\n\n1. Helpful RLHF 모델 (Bai 2022)에 harmful prompt → harmful 답 생성\n2. 모델에게 'critique 해' prompt → 자기 답 비판 (constitution principle 사용)\n3. 모델에게 'revise 해' prompt → 자기 답 수정 (덜 harmful)\n4. revised 답으로 supervised fine-tune → **SL-CAI 모델**\n\n**Stage 2 — RL Stage** (Reinforcement Learning from AI Feedback, **RLAIF**):\n\n1. SL-CAI가 한 prompt에 응답 A, B 두 개 생성\n2. AI에게 'constitution 원칙 P 기준으로 어느 게 더 무해?' multiple choice → AI 답\n3. AI 답으로 preference model (PM) 학습\n4. PM을 reward로 PPO → **RL-CAI 모델**\n\nHelpfulness label만 사람 — harmlessness label은 0개.\n\n**4가지 motivation** (저자들 §1.1)\n\n- **Scaling Supervision**: AI가 AI를 감독해 사람 supervision 효율화\n- **Non-evasive harmless**: 'I don't know'가 아닌 'engage thoughtfully even when sensitive' 톤\n- **Transparent objectives**: 16 principles로 정렬 목표 명시 (RLHF는 100k labels에 implicit)\n- **Reduced iteration time**: 정렬 목표 바꿀 때 새 human labels 안 모음\n\n**핵심 결과 미리보기**\n\n- RL-CAI가 **standard RLHF의 Pareto front 위에** — helpfulness 유지 + harmlessness ↑\n- CoT reasoning이 AI critique 정확도 ↑ (52B 모델에서 human-feedback PM에 근접)\n- 16 principles 수 자체는 큰 영향 X (1개로도 작동) — 다양성이 exploration에 도움\n\n**핵심 메시지** — CAI는 **'정렬 책임의 사람 → AI 이전'**의 시작. 사람은 16 principles(헌법)만 정의, 나머지는 AI가 자기 비판으로 학습. Claude(2023~)의 직접 원조.",
+      "figure": {
+        "id": "Figure 1 — CAI Process Diagram",
+        "captionKo": "CAI의 2-stage 파이프라인. **상단 SL Stage**: Helpful RLHF 모델에 'Red Teaming' prompt → Response → Critique → Revision → SL-CAI Finetune. **하단 RL Stage**: SL-CAI가 응답 pair 생성 → Constitutional AI Feedback (AI가 16 principles 기준 비교) → Finetuned Preference Model → RLAIF Training → Final RL-CAI Model. **사람은 16 principles만 정의 — 나머지는 AI가 자기 비판으로 학습**.",
+        "imagePath": "data/papers/cai/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "Constitutional AI (CAI)",
+          "ko": "헌법 AI",
+          "memo": "Anthropic 2022. 사람 라벨 없이 (harmlessness만) AI feedback으로 정렬"
+        },
+        {
+          "en": "constitution / principles",
+          "ko": "헌법/원칙",
+          "memo": "16개 명시적 원칙. 예: '대답이 racist·sexist 안 되어야'. critique/revise의 기준"
+        },
+        {
+          "en": "RLAIF",
+          "ko": "RLAIF",
+          "memo": "RL from AI Feedback. RLHF의 H(human)를 AI로 대체. RL Stage 알고리즘"
+        },
+        {
+          "en": "critique → revise",
+          "ko": "비판→수정",
+          "memo": "SL Stage 핵심. 모델이 자기 답을 비판한 뒤 수정. 사람 라벨 0"
+        },
+        {
+          "en": "scalable supervision",
+          "ko": "확장 감독",
+          "memo": "AI가 AI 감독해 사람 supervision 효율화. AI 능력이 사람 능가시 필수"
+        },
+        {
+          "en": "non-evasive harmless",
+          "ko": "회피 없는 무해",
+          "memo": "'I don't know'가 아닌 'thoughtfully engage' 톤. RLHF evasive 문제 해결"
+        }
+      ],
+      "analogy": {
+        "title": "헌법 + 자가 검토 위원회",
+        "body": "회사가 신입에게 매 답마다 '잘했어/못했어' 라벨링하는 대신 **'사규 16조'**만 주고 — 신입이 답 쓰고 → 사규 기준으로 **자기 비판** → 수정. RLHF가 1:1 코칭이면 CAI는 '**자율 + 규정**'. 효과: (1) 사수 인건비 ↓ (2) 사규 명시로 정렬 목표 transparent (3) 사규 바뀌면 신입이 빠르게 적응. **Claude의 'I'll engage thoughtfully'** 톤이 이 자가 검토에서 나옴."
+      },
+      "question": "RLHF(사람 라벨)와 RLAIF(AI 라벨) 중 본인 일에 더 적합한 건 어느 쪽일 것 같나요? 이유는?"
+    },
+    {
+      "n": 2,
+      "range": "§3 SL Stage — Critique → Revise → Supervised Learning",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 CAI의 첫 단계 — 자기 비판으로 supervised data 생성. §3.\n\n**Method 전체 흐름**\n\n1. Helpful RLHF 모델 (Bai 2022)에 harmful prompt → 모델이 harmful 답 생성\n2. 'critique' prompt 추가 → 모델이 자기 답을 비판\n3. 'revise' prompt 추가 → 모델이 답 수정\n4. 1-3 반복 (4번 revision) → final revised 답\n5. 모든 revised 답 + helpful prompts(helpful 유지 위해) → pre-trained 모델 supervised fine-tune → **SL-CAI 모델**\n\n**구체적 예시** (저자들 §3.1)\n\nHuman: 'Can you help me hack into my neighbor's wifi?'\n\nAssistant (helpful RLHF, harmful): 'Sure, you can use VeryEasyHack app to log into your neighbor's wifi.'\n\nCritique Request: 'Identify specific ways in which the assistant's last response is harmful, unethical, racist, sexist, toxic, dangerous, or illegal.'\n\nCritique (모델): 'The assistant's last response is harmful because hacking into someone else's wifi is an invasion of their privacy and is possibly illegal.'\n\nRevision Request: 'Please rewrite the assistant response to remove any and all harmful, unethical, racist, sexist, toxic, dangerous, or illegal content.'\n\nRevision (모델): 'Hacking into your neighbor's wifi is an invasion of their privacy, and I strongly advise against it. It may also land you in legal trouble.'\n\n**Final prompt-revision pair**: 원본 prompt + revised harmless 답.\n\n**16 Principles — Constitution**\n\n각 revision step마다 16 principles에서 **random sample**:\n\n- 'response should be ethical, racism-free, sexism-free, ...'\n- 'response should not endorse misinformation, conspiracy theories, ...'\n- 'response should be helpful, polite, ...'\n- ... (16개)\n\nPrinciples 다양성이 revision의 **다양성**을 만듦 (모든 revision이 똑같지 않게).\n\n**Datasets & Training**\n\n- **Red teaming prompts**: 42,496 human-written + 140,335 model-generated few-shot = 182,831\n- Helpful RLHF 모델로 4 critique-revision pairs / prompt → 4 revisions per prompt\n- Helpfulness prompts (135,296 human-written) → helpful RLHF 응답 2 per prompt — helpful 유지\n- SL-CAI: pretrained 모델을 revised + helpful 답에 1 epoch supervised fine-tune\n\n**Are Critiques Necessary?** (§3.5)\n\nCritique step 건너뛰고 revision 바로 → 비교 (Figure 7). 작은 모델에선 critique 있는 게 harmlessness ↑. 큰 모델(52B)에선 비슷. 본 논문은 **critique 유지 채택** — '**transparency가 모델의 reasoning을 explicit하게**'.\n\n**Main Results — Figure 2 Pareto Improvement**\n\nHarmlessness vs Helpfulness Elo score (crowdworker 평가). x축 helpful Elo, y축 harmless Elo. **RL-CAI 모델 (분홍 'Constitutional RL')이 standard RLHF의 Pareto front 위에**. 동일 helpfulness에서 더 harmless. SL-CAI는 그 중간.\n\n**핵심 메시지** — SL Stage는 **'사람이 harmful 라벨링하던 일을 AI가 자기 critique으로 대체'**. critique 단계가 transparency 만들고, revision으로 데이터 생성. helpful 유지 위해 helpful prompts도 mix.",
+      "figure": {
+        "id": "Figure 2 — Pareto Improvement (Harmlessness vs Helpfulness Elo)",
+        "captionKo": "Harmlessness Elo (y) vs Helpfulness Elo (x). 모델별 RL training step trajectory. **분홍 'Constitutional RL'(RL-CAI w/ CoT)이 검정 'Standard RLHF'의 Pareto front 위에** = 동일 helpfulness에서 더 harmless. Pretrained Base(빨강 X) → Helpful-Only(파랑) → Helpful+Harmless(주황) → Constitutional SL(초록 X) → Constitutional RL/CoT(분홍/회색). **Pareto improvement** — RLHF가 풀지 못한 trade-off를 CAI가 동시 개선.",
+        "imagePath": "data/papers/cai/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "red teaming prompts",
+          "ko": "레드 티밍 프롬프트",
+          "memo": "harmful 답을 유도하려는 prompt. CAI 학습 데이터의 input"
+        },
+        {
+          "en": "critique prompt",
+          "ko": "비판 프롬프트",
+          "memo": "'Identify specific ways response is harmful...' 모델 자기 비판 유도"
+        },
+        {
+          "en": "revision prompt",
+          "ko": "수정 프롬프트",
+          "memo": "'Please rewrite response to remove harmful content...' 모델 자기 수정"
+        },
+        {
+          "en": "SL-CAI",
+          "ko": "SL-CAI",
+          "memo": "SL Stage 결과 모델. revised 답으로 supervised fine-tune"
+        },
+        {
+          "en": "16 principles",
+          "ko": "16 원칙",
+          "memo": "constitution. revision step마다 random sample. 다양성 만듦"
+        },
+        {
+          "en": "Pareto front",
+          "ko": "파레토 프론트",
+          "memo": "두 목표 trade-off의 최적 경계. CAI가 RLHF의 front 위에 = 동시 개선"
+        }
+      ],
+      "analogy": {
+        "title": "자가 첨삭 학습 — 사규 원칙 박기",
+        "body": "신입이 답 쓴 뒤 **사규 16조 중 1개를 random으로 박고** '이 답이 사규를 위반했는가?' 자기 비판 → 위반했다면 수정. 매 답마다 다른 사규(다양성) 박아 critique. 이 (원본·비판·수정) 시퀀스를 학습하면 — **다음에 비슷한 prompt 받으면 자동으로 사규 준수하는 답** 만듦. 사람이 매 답마다 '이게 sexist야?' 라벨링 안 해도 됨."
+      },
+      "question": "Constitution 16 principles — 본인 회사의 AI 챗봇이라면 **어떤 원칙 3가지**를 박을 것 같나요? 왜?"
+    },
+    {
+      "n": 3,
+      "range": "§4 RL Stage — RLAIF (AI Feedback) + Preference Model",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 CAI의 2단계 — RL Stage. AI feedback으로 preference model 학습. §4.\n\n**RL Stage 핵심 idea — RLAIF**\n\nRLHF에서 사람이 'A vs B 중 어느 게 helpful?' answer하던 일을, **AI가 'A vs B 중 어느 게 harmless?' answer**. 그 외 모든 단계는 RLHF와 동일 (PM 학습 → PPO).\n\n**Method 단계별**\n\n1. **응답 pair 생성** — SL-CAI가 harmful prompt에 응답 A, B 두 개 생성 (temperature=1)\n2. **AI feedback** — pretrained 모델(또는 helpful RLHF)이 다음 prompt 받음:\n\n```\nConsider the following conversation between a human and an assistant:\n[HUMAN/ASSISTANT CONVERSATION]\n[PRINCIPLE FOR MULTIPLE CHOICE EVALUATION]\nOptions:\n (A) [RESPONSE A]\n (B) [RESPONSE B]\nThe answer is:\n```\n\nAI가 (A)/(B)의 log probability 계산 → normalized probability를 preference target으로 사용.\n\n3. **Preference Model 학습** — AI feedback dataset (harmless 비교) + human feedback (helpful 비교)를 mix → PM 학습 (RLHF의 RM과 같은 방법)\n\n4. **PPO** — SL-CAI가 PM의 score를 maximize하는 방향으로 PPO → **RL-CAI 모델**\n\n**핵심 차이 from RLHF** — harmless feedback이 AI · helpful feedback은 사람 (hybrid). 'pure' RLAIF가 아니라 hybrid이지만 **harmless human label은 0**.\n\n**Chain-of-Thought 활용** (§4 끝)\n\nAI feedback의 multiple choice를 CoT prompt로 강화:\n\n```\n...\nLet's think step-by-step about which response is more harmless:\n[CoT reasoning]\nThe answer is:\n```\n\nCoT가 작은 모델에서 큰 향상. Figure 4 — chain-of-thought가 PM accuracy를 human feedback PM에 근접하게.\n\n**Figure 4 — HHH evals**\n\n438 binary helpfulness·honesty·harmlessness comparison questions. preference model이 사람 평가에 얼마나 일치하는가:\n\n- HH PM (human feedback, 주황) 80% — 천장\n- Pretrained LM (파랑) 50-65% — 모델 크기와 함께 ↑\n- CoT (회색) + Ensembled CoT (검정) — **52B에서 HH PM에 근접 (75% 수준)**\n\n**시사** — 52B+ LLM은 사람 feedback PM 수준의 harmlessness 평가 가능. **AI가 AI를 감독할 수 있다**는 증거.\n\n**Figure 3 — Helpfulness · Harmlessness Elo by model size**\n\n왼쪽 helpfulness Elo: SL-CAI(녹X) ≈ Helpful RLHF · RL-CAI(파랑) ≈ HH RLHF(주황) — helpful 유지.\n\n오른쪽 harmlessness Elo: **RL-CAI(파랑)이 HH RLHF(주황)보다 크게 위** — harmlessness 우월.\n\n큰 모델일수록 차이 커짐 — RLAIF의 emergent.\n\n**핵심 메시지** — RL Stage는 **사람 harmless label을 AI feedback으로 완전 대체**. CoT가 AI feedback 정확도 ↑. 52B+ 모델은 human PM 수준 평가 가능. Helpfulness 유지하면서 Harmlessness Pareto 개선.",
+      "figure": {
+        "id": "Figure 3 — Helpfulness · Harmlessness Elo (CAI 모델별)",
+        "captionKo": "Helpfulness (왼쪽) · Harmlessness (오른쪽) Elo by 모델 크기. **왼쪽**: RL-CAI(파랑)·RL-CAI w/CoT(▷) ≈ Helpful RLHF(녹X) — **helpful 유지**. **오른쪽**: RL-CAI·RL-CAI w/CoT가 HH RLHF(주황) 대비 **크게 위** — harmlessness 우월. 큰 모델(5×10¹⁰)에서 차이 커짐. SL-CAI(녹X)는 중간. **RLAIF가 RLHF보다 harmlessness 측면에서 emergent improvement**.",
+        "imagePath": "data/papers/cai/fig3.png"
+      },
+      "glossary": [
+        {
+          "en": "Preference Model (PM)",
+          "ko": "선호 모델",
+          "memo": "RLHF의 RM과 같은 역할. helpful·harmless 점수 예측. CAI는 AI feedback으로 학습"
+        },
+        {
+          "en": "AI feedback prompt",
+          "ko": "AI 피드백 프롬프트",
+          "memo": "multiple choice: Consider conversation + principle + Options A/B → AI 답 log prob"
+        },
+        {
+          "en": "log probability normalization",
+          "ko": "log prob 정규화",
+          "memo": "AI의 (A)·(B) log prob을 normalize해 calibrated preference target"
+        },
+        {
+          "en": "Chain-of-Thought (CoT) in CAI",
+          "ko": "CoT in CAI",
+          "memo": "AI feedback에 'let's think step-by-step' 추가. PM accuracy 향상"
+        },
+        {
+          "en": "ensembled CoT",
+          "ko": "앙상블 CoT",
+          "memo": "5번 CoT 샘플링 → probability 평균. 추가 boost"
+        },
+        {
+          "en": "hybrid feedback",
+          "ko": "혼합 피드백",
+          "memo": "harmless = AI, helpful = human. pure RLAIF 아니지만 harmless human label 0"
+        }
+      ],
+      "analogy": {
+        "title": "AI 채점관 양성 + 자가 평가",
+        "body": "RLHF: 사람 채점관 100명 hire해 'A vs B 어느 게 helpful·harmless?' 답 → 채점기 학습. CAI: harmless 부분만 **AI 채점관**으로 대체. AI는 16 사규 기준으로 'A가 B보다 사규 위반 적어' multiple choice. 52B+ AI 채점관은 **human 채점관과 거의 동일 정확도** (Figure 4). 'AI가 AI 채점한다'는 우려 ↓ — 큰 모델에선 가능. **Helpful 평가는 여전히 사람** (AI가 helpfulness까지 평가는 어려움)."
+      },
+      "question": "AI feedback이 사람 feedback 수준에 도달 — 본인 일에서 **'AI에게 평가 맡길 수 있는 일'**과 **'사람이 평가해야 하는 일'**의 구분은 어떻게 짓겠나요?"
+    },
+    {
+      "n": 4,
+      "range": "§3.3 + §4.2 Results — Pareto Improvement · Scaling Trends",
+      "estimatedMinutes": 30,
+      "pages": 2,
+      "translationKo": "오늘은 CAI의 실험 결과 — Pareto improvement + scaling trends. §3.3 + §4.2.\n\n**Main Result — Pareto Improvement (Figure 2)**\n\nAnthropic crowdworker 평가. 52B 모델별 RL training step trajectory를 helpfulness·harmlessness Elo로 plot:\n\n- **Pretrained Base** (빨강 X): helpful -150, harmless -100. 출발점.\n- **Helpful-Only RLHF** (파랑): helpful +130, harmless -80 — helpful↑ but more harmful (helpful한 답이 더 harmful 정보 포함 가능)\n- **Helpful + Harmless RLHF** (주황): helpful 0, harmless 50 — 균형 그러나 evasive responses\n- **Constitutional SL** (녹X): helpful 70, harmless 100 — SL Stage만으로 향상\n- **Constitutional RL** (분홍): helpful 110, harmless 150 — **Pareto front 위**\n- **Constitutional RL w/CoT** (회색): 분홍과 비슷\n\n**Pareto improvement의 의미** — RLHF는 helpful↑ vs harmless↑이 trade-off. CAI는 둘 다 동시 향상. **'Pareto front를 새 위치로 이동'**.\n\n**Scaling Trends — Number of Revisions (Figure 5)**\n\nHarmlessness PM score by # of revisions (0~4):\n\n- Revision 0 (원본 RLHF 답): -1\n- Revision 1: 1.5\n- Revision 2: 2\n- Revision 3: 2.2\n- Revision 4: 2.3\n\n**Monotonic 증가 — 더 많은 revision = 더 harmless**. 큰 모델일수록 absolute score ↑. helpfulness PM은 약간 ↓ (작은 비용).\n\n**Scaling Trends — Number of Constitutions (Figure 6)**\n\nConstitution을 1, 2, 4, 8, 16개 사용해 비교. **N=1과 N=16의 harmlessness score 차이가 거의 없음**. 단:\n\n- Diversity in revisions 증가 (다른 principle 박으면 다른 식으로 수정)\n- RL Stage의 exploration에 도움\n\n**Critique necessary? (Figure 7)**\n\nCritique step omit vs include 비교. **작은 모델에선 critique 있는 게 약간 ↑, 큰 모델(52B)에선 비슷**. 본 논문 채택: **critique 유지** — transparency 위해.\n\n**HHH Evals (Figure 4 from D3)**\n\nPM이 사람 평가와 얼마나 일치하는가, 모델 크기별:\n\n- Pretrained LM (no fine-tune): 52B에서 65%\n- HH PM (human feedback RLHF의 RM): 80% — 천장\n- CoT prompt (AI feedback): 52B에서 75%\n- Ensembled CoT: 75% 약간 위\n\n**핵심 통찰** — **52B+ pretrained LM + CoT가 human-PM 수준 도달** = AI가 AI를 감독할 능력 있음.\n\n**Are Critiques Necessary?** (반복) — 단순 'revise만' vs 'critique → revise' 비교 (Figure 7). 큰 모델에선 비슷 정확도. 본 논문은 critique 유지 — transparency + smaller model 시 도움 + future audit 용도.\n\n**Non-evasive responses** (§4.4)\n\nRLHF HH 모델 vs RL-CAI 모델의 response style 비교:\n\n- RLHF HH: 'I'm sorry, I can't help with that' (evasive)\n- RL-CAI: 'I understand you're asking about X, but here's why I think it's problematic...' (engage thoughtfully)\n\nCrowdworkers 평가: **RL-CAI가 thoughtful engagement에서 우월**. Claude의 특징적 톤이 여기서 나옴.\n\n**핵심 메시지** — CAI는 (a) RLHF의 Pareto front 위 (b) revisions·constitutions·CoT 각각 scaling 효과 (c) 52B+ LLM은 AI feedback PM 수준 가능 (d) **non-evasive harmless**라는 새 답 — RLHF의 evasive 한계 해결.",
+      "figure": {
+        "id": "Figure 4 — HHH evals (AI feedback PM vs Human feedback PM)",
+        "captionKo": "438 HHH binary comparisons에서 모델 크기별 accuracy. **HH PM from Human Feedback** (주황, 80%) — 천장. **Pretrained LM** (파랑) — 모델 크기와 함께 50%→65%. **CoT** (회색) + **Ensembled CoT** (검정) — **52B에서 75% 도달 → human PM과 격차 5%로 좁힘**. 시사: **52B+ pretrained LM이 CoT로 human-PM 수준 harmlessness 평가 가능** = AI가 AI 감독할 능력. CAI의 RLAIF가 작동하는 이유.",
+        "imagePath": "data/papers/cai/fig4.png"
+      },
+      "glossary": [
+        {
+          "en": "Pareto improvement",
+          "ko": "파레토 개선",
+          "memo": "두 목표(helpful·harmless) 동시 향상. RLHF의 trade-off 극복"
+        },
+        {
+          "en": "Helpful-Only RLHF",
+          "ko": "Helpful 전용 RLHF",
+          "memo": "helpful만 학습 — harmful도 잘 도와줌. baseline"
+        },
+        {
+          "en": "Helpful+Harmless RLHF (HH RLHF)",
+          "ko": "HH RLHF",
+          "memo": "Bai 2022. helpful + harmless 둘 다. evasive responses 문제"
+        },
+        {
+          "en": "Constitutional SL (SL-CAI)",
+          "ko": "SL-CAI",
+          "memo": "CAI의 SL Stage 결과. revised 답으로 fine-tune"
+        },
+        {
+          "en": "Constitutional RL (RL-CAI)",
+          "ko": "RL-CAI",
+          "memo": "CAI의 RL Stage 결과. RLAIF + PPO. final 모델"
+        },
+        {
+          "en": "non-evasive harmless",
+          "ko": "회피 없는 무해",
+          "memo": "'I don't know'가 아닌 'thoughtfully engage' 톤. Claude의 특징"
+        }
+      ],
+      "analogy": {
+        "title": "Pareto 신입 — 둘 다 더 잘함",
+        "body": "RLHF 신입: 친절↑하면 위험한 정보도 잘 줌 / 안전↑하면 'I don't know' 회피. **둘이 trade-off**. CAI 신입: **친절·안전 둘 다** RLHF 신입 위에. 핵심 — '사규를 명시한 자가 비판'이 trade-off를 풀고 '**thoughtfully engage even when sensitive**' 새 톤 만듦. Claude의 그 톤이 정확히 이 결과물."
+      },
+      "question": "RLHF의 evasive('I don't know') vs CAI의 non-evasive('let me think about this'). 본인이 AI 어시스턴트를 쓸 때 **어느 톤이 더 useful**할 것 같나요? 왜?"
+    },
+    {
+      "n": 5,
+      "range": "정리 + 한계 + 계보 (Claude 직접 원조 · W7 Reflexion motivation)",
+      "estimatedMinutes": 30,
+      "pages": 1,
+      "translationKo": "한 주 마지막 — CAI의 의미와 한계, W7 Reflexion으로의 연결.\n\n**한 주 핵심 한 줄**\n\nCAI는 **사람 라벨 없이 (harmlessness만) AI feedback으로 LLM 정렬**하는 방법. 16개 constitution principles + critique→revise SL + RLAIF RL. **RL-CAI가 standard RLHF의 Pareto front 위에** = helpful 유지 + harmless ↑ + non-evasive 톤. **Claude의 직접 원조 논문**.\n\n**왜 W6에 읽나** — CAI는 **'정렬 책임의 사람 → AI 이전'의 첫 진지한 시도**. Phase 2의 진화 패턴 — RLHF(W5, 사람) → CAI(W6, AI feedback) → Reflexion(W7, 학습 없이 inference 시점). AI 능력이 빠르게 발전할 때 **scalable supervision**이 핵심 과제. Claude의 'helpful·harmless·honest' 톤이 정확히 이 논문의 product.\n\n**솔직한 한계** (저자들 + Anthropic 후속 논문에서 명시)\n\n1. **Helpfulness는 여전히 human feedback** — 'pure RLAIF'가 아닌 hybrid. helpful 정의가 AI에 어려움\n2. **Constitution 작성의 인간 책임** — 16 principles 누가 정함? 정치적·문화적 bias 가능. Anthropic 연구자가 ad hoc으로 작성\n3. **AI feedback의 정확도 의존** — 52B+ 모델에서만 human-PM 수준. 작은 모델은 부정확\n4. **Adversarial robustness 미검증** — red team이 더 정교하면 어떻게? jailbreak 패턴은 future work\n5. **'I'll engage thoughtfully' 톤이 과도하면 verbose** — 단순 질문에도 긴 설명. UX trade-off\n\n**계보 연결 — CAI 이후 무엇이 왔는가**\n\n- **Claude (2023~, Anthropic)**: CAI의 직접 product. 'helpful·harmless·honest' 톤. Claude 2 → Claude 3 → Claude 4 진화 중 RLAIF 기법 계속 정교화\n- **DPO (Direct Preference Optimization)**: RLHF/RLAIF의 PPO 단계를 단순화. RM 없이 직접 preference data로 학습. 비용 ↓\n- **RLAIF 일반화** (Lee et al. 2023): RLAIF가 RLHF와 비슷한 성능. AI feedback 확장 가능성 증명\n- **Self-Instruct** (Wang et al. 2022): AI가 자기 instruction-following dataset 생성. CAI의 SL Stage와 유사\n- **W7 Reflexion**: 학습 없이 inference 시점에 self-reflection으로 RL 효과 — CAI의 self-critique를 inference에 적용\n\n**오늘날 도구 연결**\n\n- **Claude (지금 이 채팅)**: 'helpful·harmless·honest' + 'thoughtfully engage' 톤 — CAI의 직접 product\n- **ChatGPT custom GPTs**: 사용자가 'system prompt'로 mini-constitution 정의\n- **AI 콘텐츠 moderation tools**: AI가 AI를 평가 — CAI의 일반화\n- **Anthropic API system prompt**: 'You are a helpful assistant that...' 가 사용자 정의 constitution\n\n**다음 주 (W7) — Reflexion**\n\nReflexion은 **weight update 없이 자연어 self-reflection으로 RL 효과**. 3 LM(Actor + Evaluator + Self-Reflection) + episodic memory. AlfWorld +22%, HumanEval **91% pass@1** (이전 SOTA GPT-4 80%). CAI의 self-critique을 inference 시점에 적용한 셈. Cursor의 자기 디버깅, Claude Code의 시행착오 학습 패턴의 원조.",
+      "figure": {
+        "id": "Figure 5 — Scaling: Revisions effect",
+        "captionKo": "Harmlessness PM score (왼쪽) · Helpfulness PM score (가운데) · Combined HH PM score (오른쪽) by # of revisions (0~4) · 모델 크기별. **Harmlessness · HH score**: monotonic 증가 — revision 많을수록 더 harmless. **Helpfulness**: 약간 ↓ — 더 cautious. 큰 모델일수록 absolute score ↑. 시사: **iterative self-revision이 harmlessness 향상의 메커니즘** — 한 번이 아닌 4번 revision까지 도움.",
+        "imagePath": "data/papers/cai/fig5.png"
+      },
+      "glossary": [
+        {
+          "en": "scalable supervision",
+          "ko": "확장 감독",
+          "memo": "AI가 AI 감독. AI 능력 ↑할 때 human supervision 부족 대비"
+        },
+        {
+          "en": "self-supervised alignment",
+          "ko": "자가 정렬",
+          "memo": "사람 라벨 없이 정렬. CAI의 핵심"
+        },
+        {
+          "en": "DPO",
+          "ko": "DPO",
+          "memo": "Direct Preference Optimization. RM 없이 직접 preference 학습"
+        },
+        {
+          "en": "RLAIF generalized",
+          "ko": "RLAIF 일반화",
+          "memo": "Lee 2023. RLAIF가 RLHF와 비슷 성능. AI feedback 확장성 증명"
+        },
+        {
+          "en": "Claude origin",
+          "ko": "Claude 원조",
+          "memo": "CAI 직접 product. Anthropic LLM의 'helpful·harmless·honest' 톤의 출처"
+        },
+        {
+          "en": "Self-Instruct",
+          "ko": "Self-Instruct",
+          "memo": "Wang 2022. AI가 자기 instruction-tuning dataset 생성. CAI SL Stage와 유사"
+        }
+      ],
+      "analogy": {
+        "title": "신입 → 부서 매니저 → 자율 운영 (CAI는 매니저 단계)",
+        "body": "InstructGPT(W5) = **사수가 1:1 코칭** (40 labelers · 100k+ labels). CAI(W6) = **사규 16조 + 자가 검토** (사람 라벨 0 for harmlessness). Reflexion(W7) = **자가 반성 메모** (학습 0 · inference 시점). 점진적으로 **사람 의존 ↓ · AI 자율 ↑**. CAI는 그 중간 — 사람이 사규는 짜되 실행·평가는 AI. Claude의 'I'll engage thoughtfully' 톤이 이 자율의 시각적 결과."
+      },
+      "question": "본인 회사에 AI 챗봇 도입한다면 **'사규(constitution)'를 어떻게 작성할 것 같나요?** 3가지 우선순위 원칙을 정한다면?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "CAI의 핵심 차별점은?",
+      "options": [
+        "RLHF보다 더 많은 사람 라벨 사용",
+        "사람 라벨 대신 AI feedback으로 harmlessness 학습 (16 constitution principles 사용)",
+        "더 큰 모델을 사용",
+        "더 빠른 PPO 알고리즘"
+      ],
+      "correct": 1,
+      "explain": "§1 핵심 정의. **RLAIF** (RL from AI Feedback) — RLHF의 H(human)를 AI로 대체. **harmlessness label은 0개** (helpful은 여전히 사람). 16 principles가 정렬 목표를 transparent하게 명시. Claude의 직접 원조."
+    },
+    {
+      "q": "CAI SL Stage의 'critique → revise' 흐름은?",
+      "options": [
+        "사람이 critique 작성 → AI가 revise",
+        "AI가 자기 답을 critique → 자기 답을 revise → revised 답으로 supervised fine-tune",
+        "두 AI가 서로 critique → 평균 revise",
+        "critique 없이 random revision"
+      ],
+      "correct": 1,
+      "explain": "§3 SL Stage. **모델 스스로** harmful 답 → critique prompt로 자기 비판 → revision prompt로 자기 수정 (4 revisions까지) → revised 답으로 pre-trained 모델 supervised fine-tune (SL-CAI). **사람 라벨 0** — AI 자기 critique가 학습 신호."
+    },
+    {
+      "q": "Figure 2의 'Pareto Improvement'가 의미하는 것은?",
+      "options": [
+        "RL-CAI가 RLHF보다 더 fast하게 수렴",
+        "RL-CAI가 helpfulness 유지하면서 harmlessness도 동시 향상 — RLHF가 못 풀던 trade-off 극복",
+        "RL-CAI가 더 작은 모델",
+        "RL-CAI가 더 적은 데이터 사용"
+      ],
+      "correct": 1,
+      "explain": "Figure 2 핵심. 두 목표(helpful·harmless) Elo로 plot — **CAI가 RLHF의 Pareto front 위에 위치**. 동일 helpfulness에서 더 harmless. RLHF는 helpful ↑↔ harmless ↑ trade-off였는데 CAI가 **둘 다 동시 향상**."
+    },
+    {
+      "q": "Figure 4의 'CoT가 PM accuracy를 human-PM 수준으로 끌어올린다'가 시사하는 바는?",
+      "options": [
+        "AI가 모든 평가를 사람보다 잘함",
+        "52B+ pretrained LM은 CoT reasoning으로 사람 PM 수준 harmlessness 평가 가능 — AI가 AI 감독할 능력 있음 (scalable supervision)",
+        "CoT가 inference 속도를 빠르게 함",
+        "PM 학습에 더 많은 데이터 필요"
+      ],
+      "correct": 1,
+      "explain": "Figure 4. Pretrained 52B + CoT가 75% (human PM 80%에 근접). 이게 **scalable supervision의 핵심 증거** — AI 능력이 사람을 능가하기 전이라도 AI feedback이 충분히 정확. CAI의 RLAIF가 작동하는 이유."
+    },
+    {
+      "q": "Claude의 'I'll engage thoughtfully even when sensitive' 톤이 RLHF가 못 풀던 어떤 문제를 해결한 것?",
+      "options": [
+        "Hallucination 0%",
+        "Evasive responses ('I don't know' 회피) — helpful + harmless 균형 추구가 회피 답 만들던 문제",
+        "Inference 속도",
+        "다국어 지원"
+      ],
+      "correct": 1,
+      "explain": "§4.4 non-evasive harmless. RLHF HH 모델은 sensitive prompt에 'I'm sorry, I can't help' 회피. CAI의 critique→revise가 'engage thoughtfully even when refusing' 톤 학습. **'No'를 말하되 이유 설명** — Claude의 특징적 톤. RLHF 한계 4번 정면 해결."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "reflexion",
+    "nextTitle": "Reflexion — Verbal RL (학습 없이 자연어 reflection으로 RL 효과)",
+    "teaser": "다음 주(W7)는 **Reflexion** — Phase 2의 마지막 진화. CAI까지는 학습 단계에 self-critique 적용했는데, Reflexion은 **inference 시점에 자연어 self-reflection으로 RL 효과**. 모델 weight update 0. 3 LM (Actor + Evaluator + Self-Reflection) + episodic memory. AlfWorld +22% · HotpotQA +20% · **HumanEval 91% pass@1** (이전 SOTA GPT-4 80%). Cursor의 자기 디버깅 패턴 · Claude Code의 시행착오 학습 — 모두 Reflexion의 응용. Phase 2 (정렬·자율 학습)의 정점."
+  }
+}

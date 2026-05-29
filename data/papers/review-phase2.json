@@ -1,0 +1,294 @@
+{
+  "id": "review-phase2",
+  "title": "Phase 2 Review — Assistant Training (InstructGPT · CAI · Reflexion)",
+  "venue": "Internal Review",
+  "arxivId": "",
+  "phase": 2,
+  "koreanTitle": "Phase 2 통합 정리 — 사람 → AI → 자연어 정렬의 진화",
+  "hook": "InstructGPT가 사람을 빌렸고, CAI가 AI에 위임했고, Reflexion이 학습 자체를 빼냈다 — Phase 2 정렬의 큰 그림.",
+  "abstractKo": "Phase 2 3편(InstructGPT W5 · CAI W6 · Reflexion W7)은 'LLM을 사람 의도에 정렬하는 방법'에 대한 세 가지 답이었다. **사람 피드백 → AI 피드백 → 자연어 reflection** 순으로 진화. 이번 주는 새 논문 X — (1) 세 편 비교 (2) 본인 일에 적용 reflection (3) Phase 3 (W9 Attention) motivation. Phase 1(능력 끌어내기) · Phase 2(사람 의도 정렬)가 끝나고, Phase 3는 모든 현대 LLM의 backbone인 Transformer architecture로.",
+  "days": [
+    {
+      "n": 1,
+      "range": "Phase 2 한 줄 정리 — 3편 진화 패턴",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "Phase 2 (Assistant Training) 3편을 한 자리에서 봅니다.\n\n**3편의 핵심 한 줄**\n\n- **W5 InstructGPT**: 사람 피드백(RLHF · 100k+ labels) + weight update. **1.3B가 175B GPT-3을 helpful 평가에서 이김**. ChatGPT 원조.\n- **W6 CAI**: AI 피드백(RLAIF · harmless labels 0) + weight update. **16 constitution + 자기 비판/수정** + Pareto improvement. Claude 원조.\n- **W7 Reflexion**: 자연어 reflection + **weight update 0**. **HumanEval 91% pass@1** (GPT-4 SOTA 80% 능가). Cursor·Claude Code 원조.\n\n**3편의 공통 질문**\n\n**'LLM을 사람 의도에 어떻게 정렬할 것인가?'** 세 편이 다른 답:\n\n- InstructGPT: 사람이 답을 직접 demonstration·ranking\n- CAI: 사람이 사규(16 principles)만 짜고 AI가 자기 비판\n- Reflexion: 학습 자체 없이 inference 시점에 자기 반성\n\n**진화 패턴 — 사람 → AI → 자율**\n\n**점진적으로 사람 의존 ↓ · 학습 비용 ↓ · 실시간성 ↑**:\n\n- W5 InstructGPT: 사람 라벨 100k+ · 학습 단계 · 비용 큼\n- → W6 CAI: 사람 라벨 0 (harmless) · 학습 단계 · 비용 ↓\n- → W7 Reflexion: 학습 0 · inference 시점 · 실시간\n\n**현대 AI agent의 실제 패턴**\n\nClaude Code · ChatGPT · Cursor 등 production agent는 **3 layer 결합**:\n\n- **RLHF/RLAIF로 학습된 base 모델** (Helpful + Harmless tone) — InstructGPT/CAI\n- **System prompt로 추가 정렬** — 사용자 또는 회사가 mini-constitution 정의\n- **Inference 시점 reflection** — code 실행 fail → 자기 수정. Reflexion 패턴\n\n**이번 주 할 일**\n\n새 논문은 안 봅니다. 대신:\n\n- D2~D4: 세 편 각각 재방문 + **본인 일에 적용한 사례 reflection**\n- D5: 세 편 결합 + Phase 3 (Attention W9) motivation\n- 토: Phase 2 통합 quiz 5문제\n- 일: Phase 3 (Attention Is All You Need) preview",
+      "figure": {
+        "id": "Phase 2 세 진화 (InstructGPT Fig 1 재사용)",
+        "captionKo": "Phase 2의 출발 — InstructGPT의 'RLHF가 모델 크기보다 큰 효과' 결과 (Fig 1). 100배 작은 1.3B가 175B GPT-3을 이김. 이게 **alignment(정렬)의 가치를 정량화한 첫 증거**. CAI와 Reflexion은 이 출발 위에 '사람 → AI → 자연어' 진화 더함.",
+        "imagePath": "data/papers/instructgpt/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "Phase 2 — Assistant Training",
+          "ko": "Phase 2 정렬",
+          "memo": "LLM을 사람 의도와 정렬. RLHF → RLAIF → Verbal RL 3 단계 진화"
+        },
+        {
+          "en": "alignment",
+          "ko": "정렬",
+          "memo": "답이 사람 의도·가치와 일치하게. 정답 ≠ helpful answer 구분"
+        },
+        {
+          "en": "RLHF/RLAIF/Verbal RL",
+          "ko": "3 정렬 패러다임",
+          "memo": "사람·AI·자연어 reflection 3 방식. 각각 W5·W6·W7"
+        },
+        {
+          "en": "Helpful · Harmless · Honest",
+          "ko": "도움·무해·정직",
+          "memo": "Anthropic이 정의한 alignment 3 axis. Phase 2의 평가 기준"
+        },
+        {
+          "en": "scalable supervision",
+          "ko": "확장 감독",
+          "memo": "AI 능력 ↑할 때 사람 감독 부족 대비. CAI/Reflexion의 motivation"
+        }
+      ],
+      "analogy": {
+        "title": "신입 정렬 진화 — 1:1 코칭 → 사규 → 오답노트",
+        "body": "**W5 InstructGPT** = 사수 1:1 코칭 (사람 100k+ 라벨). **W6 CAI** = 사규 16조 + 자가 검토 (사람 라벨 0). **W7 Reflexion** = 매일 오답노트 (학습 0). **점진적으로 사람 의존 ↓ · AI 자율 ↑**. Cursor의 자기 디버깅 능력 = Phase 2 3편의 결합 결과."
+      },
+      "question": "Phase 2의 3편 중 **본인 일에 가장 임팩트**가 클 것 같은 건? 왜?"
+    },
+    {
+      "n": 2,
+      "range": "W5 InstructGPT 재방문 — 본인 일 적용",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W5 InstructGPT를 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**InstructGPT 한 줄 정리**\n\nRLHF(Reinforcement Learning from Human Feedback) 3-step 정립: **SFT → RM → PPO**. 40명 labelers · 100k+ prompts · GPT-3 기반. **1.3B InstructGPT가 175B GPT-3 helpful 평가에서 이김** (100배 작은 모델).\n\n**핵심 발견 (다시 보면)**\n\n- **alignment > 모델 크기**: 100배 작은 모델이 alignment로 이김\n- **TruthfulQA 2배 향상**: hallucination 41%→21%\n- **Toxic output 25% 감소** (respectful prompt 시)\n- **Alignment tax**: public NLP 감소 → **PPO-ptx mix**로 완화\n- **HHH framework**: Helpful · Honest · Harmless — 평가의 표준 axis\n- **Generalization**: code · multilingual instruction도 잘 함 (학습 안 한 영역) — **'instruction-following 메타 개념' 학습**\n\n**오늘날 어디서 보이나**\n\n- **ChatGPT (2022.11)**: InstructGPT의 직접 product화. 5일 만에 1M 사용자\n- **GPT-4**: RLHF + reasoning 능력 강화\n- **Llama-2 chat / Mistral instruct**: 오픈소스 RLHF 응용\n- **Claude 1/2/3/4**: RLHF + CAI 결합\n- **모든 'chat' 모델의 친절한 톤**: InstructGPT의 그 톤이 표준이 됨\n\n**본인 일 reflection**\n\n본인이 ChatGPT/Claude 쓰면서 **'친절한 톤'이 가장 가치 있던 순간**:\n\n- 'no'를 정중하게 말함 — 'I can't help with X, but I can suggest Y'\n- 모호한 요청을 명확하게 되물음 — 'Did you mean A or B?'\n- 사용자 의도 추측해서 답함 — 단순 instruction-following 넘어서\n- toxic 내용 자연스럽게 회피하면서도 useful 답\n\n**솔직한 한계 (다시)** — InstructGPT는 (1) 여전히 simple mistakes (2) false premises 답함 (3) over-confidence (4) labelers 40명의 가치만 반영 (정치·문화 bias 가능) (5) helpful + harmless tension. 이게 **W6 CAI의 motivation**.\n\n**Anthropic의 후속 — Claude는 InstructGPT를 어떻게 발전시켰나**\n\n- RLHF + CAI 결합 (둘 다 사용)\n- 'I'll engage thoughtfully even when sensitive' 톤 — RLHF의 evasive 한계 해결\n- system prompt로 미니 constitution 정의 — 사용자 정렬\n- Claude 4: thinking 모드 + tool use + reflection 결합 = Phase 1·2 전체 응용",
+      "figure": {
+        "id": "InstructGPT Figure 2 (재방문)",
+        "captionKo": "InstructGPT의 3-step 파이프라인. **Step 1 SFT** (labeler demo로 supervised) → **Step 2 RM** (labeler ranking으로 reward model) → **Step 3 PPO** (RM reward로 RL fine-tune). 이 3-step이 **ChatGPT/Claude 학습의 표준 골격**이 됨. 모든 modern chat model이 이 패턴.",
+        "imagePath": "data/papers/instructgpt/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "RLHF 3-step",
+          "ko": "RLHF 3단계",
+          "memo": "SFT → RM → PPO. ChatGPT/Claude 학습의 표준 골격"
+        },
+        {
+          "en": "1.3B > 175B",
+          "ko": "1.3B > 175B",
+          "memo": "alignment의 가치 정량화. RLHF가 모델 크기보다 큰 효과"
+        },
+        {
+          "en": "alignment tax",
+          "ko": "정렬 비용",
+          "memo": "RLHF 후 public NLP 감소. PPO-ptx mix로 완화"
+        },
+        {
+          "en": "HHH framework",
+          "ko": "HHH 프레임워크",
+          "memo": "Helpful·Honest·Harmless. alignment 평가의 표준 axis"
+        },
+        {
+          "en": "ChatGPT origin",
+          "ko": "ChatGPT 원조",
+          "memo": "InstructGPT를 dialog history + safety filter 추가해 product화"
+        }
+      ],
+      "analogy": {
+        "title": "친절한 신입 — InstructGPT의 가치",
+        "body": "GPT-3 175B = 인터넷 모든 글 읽은 박학다식 신입(독서량은 많지만 매너 없음). **InstructGPT 1.3B = 같은 신입을 사람이 '이런 답이 좋고 저런 답은 별로' 수만 케이스 가르친 버전**. 결과: 100배 작은 신입이 박학다식 신입보다 **실무에 도움**. ChatGPT/Claude의 그 친절한 톤이 정확히 이 결과."
+      },
+      "question": "본인이 ChatGPT/Claude 쓰면서 **InstructGPT의 RLHF 톤(친절 + 의도 추측)이 가장 가치 있던 순간**은? 한 문장으로."
+    },
+    {
+      "n": 3,
+      "range": "W6 CAI 재방문 — 본인 일 적용",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W6 CAI를 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**CAI 한 줄 정리**\n\n**RLHF의 사람 라벨을 AI feedback으로 대체** (harmlessness만). 2-stage: **SL Stage** (critique → revise → fine-tune) + **RL Stage** (RLAIF · AI feedback PM). **16 constitution principles**. **RL-CAI가 standard RLHF의 Pareto front 위에** — helpful + harmless 동시 향상.\n\n**핵심 발견 (다시 보면)**\n\n- **사람 라벨 0 (harmless)**: 사람은 16 principles만 정의\n- **Pareto improvement**: helpful + harmless 동시 향상 (RLHF는 trade-off)\n- **Non-evasive harmless**: 'I don't know'가 아닌 'engage thoughtfully' 톤\n- **CoT가 AI feedback 정확도 ↑**: 52B+ pretrained LM이 human-PM 수준 (75% vs 80%)\n- **Scalable supervision의 증명**: AI 감독이 가능한 영역\n\n**오늘날 어디서 보이나**\n\n- **Claude (지금 이 채팅)**: 'helpful·harmless·honest' + 'thoughtfully engage' 톤 — CAI 직접 product\n- **Anthropic API system prompt**: 'You are a helpful assistant that...' — 사용자 정의 constitution\n- **ChatGPT custom GPTs**: instructions = mini-constitution\n- **AI 콘텐츠 moderation tools**: AI가 AI 평가 — RLAIF의 응용\n- **Lee 2023 'RLAIF'**: RLAIF가 RLHF와 비슷 성능 — CAI의 일반화\n\n**본인 일 reflection**\n\n본인이 Claude 쓰면서 **'non-evasive harmless'(회피 없는 무해) 톤이 가치 있던 순간**:\n\n- 민감 주제도 회피하지 않고 'thoughtfully engage'\n- 'No' 답하면서도 이유 설명 + 대안 제시\n- 사용자 의도가 좀 위험해 보여도 'I'll address this carefully' 톤\n- 단순 instruction-following 넘어서 사용자 진짜 needs 파악\n\n**RLHF Claude vs CAI Claude — 차이 느껴본 적?**\n\nClaude 1 (RLHF 중심) → Claude 2/3/4 (CAI 비중 ↑). 차이:\n\n- 회피 답('I can't help') 감소\n- 'engage even when sensitive' 적극성\n- 'why I'm hesitant' 설명 늘어남\n\n**솔직한 한계 (다시)** — CAI는 (1) constitution을 누가 짜나 (정치·문화 bias) (2) helpfulness는 여전히 human feedback (3) AI feedback 정확도는 52B+ 모델에서만 (4) adversarial robustness 미검증 (5) verbose 가능. 이게 **W7 Reflexion의 motivation** — 학습 자체 빼고 inference 시점에 self-critique 적용.",
+      "figure": {
+        "id": "CAI Figure 1 (재방문)",
+        "captionKo": "CAI의 2-stage 파이프라인 — **SL Stage** (critique → revise → SL-CAI Finetune) + **RL Stage** (AI feedback → PM → RLAIF → RL-CAI). **사람은 16 principles만 정의** — 나머지는 AI 자기 비판. Claude의 'thoughtfully engage' 톤의 직접 원조.",
+        "imagePath": "data/papers/cai/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "RLAIF",
+          "ko": "RLAIF",
+          "memo": "RL from AI Feedback. RLHF의 H(human)를 AI로 대체"
+        },
+        {
+          "en": "16 constitution principles",
+          "ko": "16 헌법 원칙",
+          "memo": "사람이 정의. critique/revise의 기준. 정렬 목표 transparent"
+        },
+        {
+          "en": "Pareto improvement",
+          "ko": "파레토 개선",
+          "memo": "helpful + harmless 동시 향상. RLHF의 trade-off 극복"
+        },
+        {
+          "en": "non-evasive harmless",
+          "ko": "회피 없는 무해",
+          "memo": "Claude의 'thoughtfully engage' 톤. CAI의 핵심 차별점"
+        },
+        {
+          "en": "Claude origin",
+          "ko": "Claude 원조",
+          "memo": "CAI 직접 product. Anthropic LLM의 그 톤의 출처"
+        }
+      ],
+      "analogy": {
+        "title": "헌법 자율 운영 — CAI의 가치",
+        "body": "회사가 신입에게 매 답마다 라벨링하는 대신 **'사규 16조'만 주고 — 신입이 자기 비판·자가 수정**. RLHF가 1:1 코칭이면 CAI는 '자율 + 규정'. 효과: (1) 사수 인건비 ↓ (2) 사규 명시로 정렬 목표 transparent (3) 사규 바뀌면 빠르게 적응. **Claude의 'I'll engage thoughtfully'** 톤이 이 자가 검토에서 나옴."
+      },
+      "question": "본인 회사에 AI 챗봇 도입한다면 **'사규(constitution) 3가지'**는 무엇으로 정할 건가요?"
+    },
+    {
+      "n": 4,
+      "range": "W7 Reflexion 재방문 — 본인 일 적용",
+      "estimatedMinutes": 25,
+      "pages": 0,
+      "translationKo": "W7 Reflexion을 다시 짚고, **본인 일에 적용한 사례**를 정리합니다.\n\n**Reflexion 한 줄 정리**\n\n**Weight update 0 + 자연어 self-reflection으로 RL 효과**. 3 LM (Actor + Evaluator + Self-Reflection) + episodic memory + iterative trial. **HumanEval 91% pass@1 (GPT-4 SOTA 80% 능가)** · AlfWorld +22% · HotpotQA +20%.\n\n**핵심 발견 (다시 보면)**\n\n- **학습 없이 RL 효과**: weight update 0. inference 시점에만\n- **HumanEval 91% pass@1**: GPT-4 단독 80% → Reflexion +11% (같은 모델로)\n- **Self-generated unit tests**: ground truth 없이. AI가 자기 시험 만듦\n- **Verbal feedback > scalar**: binary success를 자연어 reflection으로 증폭\n- **Hallucination/Inefficient planning 거의 0**: AlfWorld 두 실패 패턴 해결\n- **Memory + Reflection 둘 다 필수**: memory만으론 부족, ablation +8%만\n\n**오늘날 어디서 보이나**\n\n- **Cursor / Windsurf / Claude Code**: code → 실행 → fail → reflection → 수정. **Reflexion 패턴의 가장 큰 production 응용**\n- **ChatGPT 'self-correction'**: 'wait, let me check...' inline reflection\n- **LangChain retry chains**: retry + verbal feedback 표준 패턴\n- **AI 코드 리뷰 (Greptile, Codium)**: AI가 PR diff 보고 review\n- **AutoGPT task loop**: task → result → reflection → next task\n- **OpenAI Operator (2024)**: 웹 task에서 retry with feedback\n\n**본인 일 reflection**\n\n본인이 AI 도구 쓰면서 **'재시도 + 자기 수정'이 강력했던 순간**:\n\n- Cursor가 코드 작성 → test fail → 자기 분석 → 수정\n- Claude Code가 bash error → 자기 진단 → 다른 접근\n- ChatGPT가 답 작성 → 'wait, 이게 맞는지 다시 봐야...' 자기 수정\n- AI가 문서 분석 → 'this seems off, let me re-read' 재확인\n\n**Reflexion 패턴 vs 단순 retry**\n\nReflexion: **'왜 실패했나'를 자연어로 분석**한 후 재시도. 단순 retry: 같은 prompt로 다시. 차이:\n\n- 단순 retry: 같은 실수 반복 가능\n- Reflexion: 'last time I assumed X, but the test showed Y, so I should try Z' — **구체적 학습 신호**\n\n**솔직한 한계 (다시)** — Reflexion은 (1) non-optimal local minima 가능 (2) memory sliding window 한계 (3) self-evaluation 약하면 전체 framework 약함 (small model에선 안 됨) (4) non-deterministic functions 테스트 어려움 (5) MBPP 같은 false positive unit tests 한계. 단 **'학습 없이 시행착오 학습'**의 가장 깨끗한 증명.",
+      "figure": {
+        "id": "Reflexion Figure 1 (재방문)",
+        "captionKo": "Reflexion이 3 task에서 작동하는 방식 — Decision/Programming/Reasoning. **공통 패턴**: trajectory → evaluation (binary fail) → reflection ('I tried...but...because...') → 수정된 다음 trial. **'학습 없이 시행착오 학습'**의 가장 깨끗한 framework. 모든 현대 AI agent의 'retry + feedback' 패턴의 원조.",
+        "imagePath": "data/papers/reflexion/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "verbal RL",
+          "ko": "자연어 RL",
+          "memo": "weight update 0 + 자연어 reflection. Reflexion의 신조어"
+        },
+        {
+          "en": "self-generated unit tests",
+          "ko": "자가 unit tests",
+          "memo": "ground truth 없이 작동. HumanEval 91% pass@1의 핵심"
+        },
+        {
+          "en": "Cursor self-debug",
+          "ko": "Cursor 자기 디버깅",
+          "memo": "code → 실행 → error → reflection → fix. Reflexion 직접 응용"
+        },
+        {
+          "en": "Claude Code 시행착오",
+          "ko": "Claude Code 시행착오",
+          "memo": "test → fail → 자기 진단 → 다른 접근. Reflexion 패턴"
+        },
+        {
+          "en": "memory + reflection 필수",
+          "ko": "메모리+반성 필수",
+          "memo": "memory만 +8% vs Reflexion +20%. reflection이 핵심 신호"
+        }
+      ],
+      "analogy": {
+        "title": "오답노트 — Reflexion의 가치",
+        "body": "수험생이 같은 시험 12번 보는 중 **매 시험 끝에 '어디서 왜 틀렸나' 한 줄 메모(reflection)**. 다음 시험 전에 메모 보고 응시. 뇌(weight)는 안 바뀜. 단 **메모가 context**. 97점 도달 (단순 재시도는 75점). **사람의 학습 방식**과 가장 가까운 LLM agent 패턴. Cursor의 자기 디버깅이 정확히 이것."
+      },
+      "question": "본인 일에 **'재시도 + 자기 분석 메모'** 패턴(Reflexion)을 적용할 수 있는 영역은? 어떻게?"
+    },
+    {
+      "n": 5,
+      "range": "Phase 2 결합 + Phase 3 (Attention W9) motivation",
+      "estimatedMinutes": 30,
+      "pages": 0,
+      "translationKo": "Phase 2의 세 편을 결합한 큰 그림 + Phase 3 (모든 LLM의 기초 · Transformer) motivation.\n\n**한 주 핵심 한 줄**\n\nPhase 2는 **'LLM을 사람 의도에 정렬하는 3가지 방법'**의 학습. RLHF(사람) → RLAIF(AI) → Verbal RL(자연어 reflection). 점진적으로 사람 의존 ↓ · 학습 비용 ↓ · 실시간성 ↑. 이 셋의 결합이 오늘날 모든 production AI assistant의 핵심.\n\n**셋의 진화 패턴 — 한 표로**\n\n- **사람 의존**: 100k+ labels (W5) → harmless 0 (W6) → 0 (W7)\n- **학습 비용**: SFT+RM+PPO (W5) → SL+RLAIF (W6) → 0 (W7)\n- **시점**: 학습 단계 (W5,6) → inference 단계 (W7)\n- **데이터 출처**: 사람 (W5) → 16 principles (W6) → binary signal (W7)\n- **production 응용**: ChatGPT (W5) → Claude (W6) → Cursor/Claude Code (W7)\n\n**현대 AI agent의 실제 패턴**\n\nClaude · ChatGPT · Cursor 등은 **3 layer 결합**:\n\n- **Base 모델 정렬**: RLHF (helpful) + CAI (harmless) — W5 + W6\n- **System prompt**: 사용자/회사가 mini-constitution 정의 — W6 응용\n- **Inference 시점**: code 실행 fail → 자기 수정. Reflexion 패턴 — W7\n\n**Phase 1 + Phase 2 결합 — 현대 AI agent의 풀 골격**\n\nPhase 1 (능력) + Phase 2 (정렬) = 오늘날 Claude Code 같은 production agent:\n\n- **CoT (W1)** — thinking mode, 답 전 풀이\n- **ReAct (W2)** — tool use loop (Read → Edit → Bash → 또 생각)\n- **Toolformer (W3)** — 사용자가 prompt 안 줘도 도구 자동 호출 (fine-tune 학습)\n- **InstructGPT (W5)** — 친절한 helpful 톤\n- **CAI (W6)** — 'thoughtfully engage even when sensitive' 균형\n- **Reflexion (W7)** — test fail → 자기 분석 → 재시도\n\n**6편의 결합이 정확히 현대 AI assistant의 골격**.\n\n**Phase 1 + Phase 2가 풀지 못한 큰 문제**\n\nPhase 1·2는 **'어떻게 LLM을 활용할 것인가'**에 집중. 단:\n\n- **LLM 자체는 무엇인가?** Transformer architecture가 어떻게 작동?\n- **모델을 더 크게 키우면 어떻게 되나?** Scaling laws\n- **데이터 vs 모델 크기 trade-off**: 같은 비용에 어떻게 분배?\n- **GPT-3 같은 큰 모델은 왜 그렇게 강력한가?** Few-shot learning\n\n이게 **Phase 3 — LLM Foundation**의 motivation. 그 동안 'LLM이 있다 가정' 위에 능력·정렬을 쌓았는데, 이제 **'그 LLM 자체'**를 보는 단계.\n\n**Phase 3 미리보기 — Attention Is All You Need (W9)**\n\nVaswani et al. 2017. **모든 현대 LLM의 시발점**:\n\n- **Transformer architecture** 도입\n- **Attention mechanism** 핵심 — 'self-attention'으로 sequence 처리\n- RNN/LSTM 폐기 → 병렬 처리 가능 → 대규모 학습 가능\n- BERT · GPT · Claude · Gemini 모두 Transformer 기반\n\nPhase 3는 4편: **Attention (W9) → GPT-3 (W10) → Scaling Laws (W11) → Chinchilla (W12)**. LLM의 기초·진화·한계를 본격적으로 본다.\n\n**다음 주(W9)는 Phase 3 시작 — Attention**. Phase 1·2(응용)에서 Phase 3(기초)로. 'AI가 어떻게 작동하는가'의 가장 깊은 층.",
+      "figure": {
+        "id": "Reflexion Figure 2 — Agent Diagram (Phase 2 정점)",
+        "captionKo": "Reflexion의 agent diagram — Phase 2 진화의 정점. **3 LM (Actor·Evaluator·Self-Reflection) + episodic memory + iterative loop** = 학습 없이 시행착오 학습. Phase 2의 InstructGPT→CAI→Reflexion 진화 끝. 다음 주(W9)부터 Phase 3 — '이 모든 LLM의 backbone Transformer architecture'.",
+        "imagePath": "data/papers/reflexion/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "Phase 3 — LLM Foundation",
+          "ko": "Phase 3 기초모델",
+          "memo": "Attention(W9) → GPT-3(W10) → Scaling(W11) → Chinchilla(W12). 4편"
+        },
+        {
+          "en": "Transformer",
+          "ko": "트랜스포머",
+          "memo": "Vaswani 2017. 모든 현대 LLM의 backbone architecture"
+        },
+        {
+          "en": "attention mechanism",
+          "ko": "어텐션 메커니즘",
+          "memo": "self-attention. sequence 병렬 처리. RNN 폐기"
+        },
+        {
+          "en": "scaling laws",
+          "ko": "스케일링 법칙",
+          "memo": "model size · data · compute 의 trade-off. W11 주제"
+        },
+        {
+          "en": "Phase 1+2 결합",
+          "ko": "Phase 1+2 결합",
+          "memo": "CoT·ReAct·Toolformer·InstructGPT·CAI·Reflexion = 현대 AI agent 골격"
+        }
+      ],
+      "analogy": {
+        "title": "운동 정렬 → 기초 해부학",
+        "body": "Phase 1 = 운동 자세 습득 (CoT·ReAct·Toolformer). Phase 2 = 매너 정렬 (RLHF·CAI·Reflexion). 이제 **Phase 3 = 기초 해부학 — 근육·뼈가 어떻게 작동하는가** (Transformer · Attention · Scaling). 이걸 알면 (a) 왜 어떤 운동이 잘 작동하는지 (b) 어떤 부상이 가능한지 (c) 더 효율적 훈련 디자인이 가능. Phase 1·2가 '응용'이었다면 Phase 3는 '원리'."
+      },
+      "question": "Phase 1(능력) · Phase 2(정렬) · Phase 3(기초) — 본인이 AI를 더 깊이 이해하려고 할 때 **가장 알고 싶은 영역**은? 왜?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "Phase 2 3편(InstructGPT · CAI · Reflexion)의 공통 질문은?",
+      "options": [
+        "모델을 어떻게 더 크게 만들 것인가",
+        "LLM을 사람 의도에 어떻게 정렬할 것인가",
+        "LLM 안에 잠재된 능력을 어떻게 끌어낼 것인가",
+        "어떤 architecture를 사용할 것인가"
+      ],
+      "correct": 1,
+      "explain": "Phase 2의 공통 주제 = **alignment(정렬)**. 3편 모두 같은 질문에 다른 답. InstructGPT(사람), CAI(AI feedback), Reflexion(자연어 reflection). (2)는 **Phase 1(W1-3)의 질문**(능력 끌어내기), (3)는 **Phase 3(W9-12)의 질문**(기초 architecture)."
+    },
+    {
+      "q": "Phase 2의 진화 패턴 — 사람 의존 변화는?",
+      "options": [
+        "100k+ labels → 100k+ labels → 100k+ labels (변화 없음)",
+        "100k+ labels (W5 InstructGPT) → harmless 0 (W6 CAI) → 0 (W7 Reflexion). **점진적으로 사람 의존 ↓ · 학습 비용 ↓ · 실시간성 ↑**",
+        "0 → 100k → 1M (증가)",
+        "AI 라벨로 전환"
+      ],
+      "correct": 1,
+      "explain": "Phase 2의 핵심 진화. **W5 InstructGPT**: 사람 100k+ labels + weight update. **W6 CAI**: 사람 라벨 0(harmless) + weight update. **W7 Reflexion**: weight update 0, inference 시점 자연어 reflection만. **사람 의존·학습 비용 둘 다 점진적 감소**."
+    },
+    {
+      "q": "InstructGPT의 1.3B가 175B GPT-3을 helpful 평가에서 이긴 이유는?",
+      "options": [
+        "1.3B가 더 새로운 모델",
+        "RLHF가 모델 크기보다 큰 alignment 효과 — 사람 피드백으로 'helpful' 정의를 직접 학습",
+        "175B가 학습 데이터 부족",
+        "1.3B가 더 많은 데이터"
+      ],
+      "correct": 1,
+      "explain": "Figure 1 핵심 결과. **alignment > 모델 크기**. 같은 GPT-3 architecture, 같은 pre-training data, 차이는 RLHF만. labeler preference라는 'helpful'을 직접 학습한 게 100배 크기 차이를 압도. Phase 1(키우기)보다 Phase 2(정렬)가 더 효율적 영역이 있다는 증거."
+    },
+    {
+      "q": "CAI의 'Pareto improvement'가 의미하는 것은?",
+      "options": [
+        "더 빠른 학습 속도",
+        "helpful + harmless 동시 향상 — RLHF가 못 풀던 trade-off 극복. RL-CAI가 standard RLHF의 Pareto front 위에",
+        "더 작은 모델",
+        "더 적은 메모리"
+      ],
+      "correct": 1,
+      "explain": "Figure 2 핵심. 두 목표(helpful·harmless) Elo로 plot — **RL-CAI가 RLHF의 Pareto front 위에**. RLHF는 helpful↑↔harmless↑ trade-off였는데 CAI가 **둘 다 동시 향상**. 핵심 — '사규 16조 + 자가 비판'이 trade-off를 풀고 'non-evasive harmless' 새 톤 만듦. Claude의 'thoughtfully engage' 톤."
+    },
+    {
+      "q": "현대 production AI agent (Claude Code · Cursor · ChatGPT)에서 Phase 2 3편 중 어떻게 사용되는가?",
+      "options": [
+        "InstructGPT만",
+        "CAI만",
+        "Reflexion만",
+        "셋 모두 결합 — Base 모델은 RLHF+CAI로 학습(helpful+harmless 톤), System prompt로 미니 constitution, Inference 시점에 Reflexion 패턴(self-correction)"
+      ],
+      "correct": 3,
+      "explain": "현대 AI agent는 **3 layer 결합**. (1) Base 모델 학습 = InstructGPT(RLHF) + CAI(RLAIF) → helpful + harmless 톤 (2) System prompt = 사용자/회사가 mini-constitution 정의 (CAI 응용) (3) Inference 시점 = code 실행 fail → 자기 수정 (Reflexion 패턴). 이게 Phase 2 학습의 가장 큰 take-away — **셋이 서로 대체가 아니라 보완**."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "attention",
+    "nextTitle": "Attention Is All You Need — 모든 LLM의 시발점 (Phase 3 시작)",
+    "teaser": "다음 주(W9)부터 **Phase 3 — LLM Foundation** 시작. 첫 논문은 **Vaswani et al. 2017 'Attention Is All You Need'** — Transformer architecture 도입. **모든 현대 LLM(BERT·GPT·Claude·Gemini)의 backbone**. 핵심 idea: RNN 폐기 + self-attention으로 sequence 병렬 처리 → 대규모 학습 가능. Phase 1(능력)·Phase 2(정렬)가 '응용'이었다면, Phase 3는 그 모든 응용을 가능하게 한 **기초 architecture**. 'AI가 어떻게 작동하는가'의 가장 깊은 층."
+  }
+}

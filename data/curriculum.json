@@ -69,7 +69,7 @@
       "phase": 2,
       "phaseName": "Assistant Training",
       "phaseColor": "rose",
-      "paperId": null,
+      "paperId": "review-phase2",
       "type": "review",
       "reviewOf": [
         "instructgpt",

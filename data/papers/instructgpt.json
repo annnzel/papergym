@@ -1,0 +1,319 @@
+{
+  "id": "instructgpt",
+  "title": "Training language models to follow instructions with human feedback",
+  "venue": "NeurIPS 2022",
+  "arxivId": "2203.02155",
+  "phase": 2,
+  "koreanTitle": "InstructGPT — RLHF로 LLM을 사람 의도에 정렬",
+  "hook": "1.3B 모델이 175B GPT-3을 이긴다 — 사람 피드백으로 정렬하면. ChatGPT의 직접 원조.",
+  "abstractKo": "LLM을 크게 만든다고 자동으로 사용자 의도에 맞는 답을 주진 않는다 — 거짓·해롭거나 그저 도움 안 되는 답을 쉽게 만든다. InstructGPT는 RLHF(Reinforcement Learning from Human Feedback)로 이 alignment 문제를 푼다. 3-step: (1) SFT — 40명 labeler가 prompt에 desired 답 demonstration → GPT-3 fine-tune (2) RM — 모델 출력 4-9개를 labeler가 ranking → reward model 학습 (3) PPO — reward model을 reward signal로 RL fine-tune. 결과: 1.3B InstructGPT가 175B GPT-3보다 사람 평가에서 더 helpful (100배 작은 모델로 이김). TruthfulQA truthfulness 2배 향상, hallucination 41%→21%. 일부 public NLP 성능 감소(alignment tax)는 PPO-ptx mix로 완화. ChatGPT/Claude의 그 친절한 톤이 어디서 왔는지의 시발점.",
+  "days": [
+    {
+      "n": 1,
+      "range": "§1 Introduction — alignment 문제 + 1.3B > 175B 핵심 결과",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘 분량은 'InstructGPT가 무엇이고 왜 필요한가'입니다. §1 Introduction.\n\n**Phase 2 시작 — alignment 문제**\n\nPhase 1(W1-W3)에서는 LLM의 능력(reasoning · tool use · self-supervised tool learning)을 키우는 방법을 배웠습니다. 그런데 능력이 커진다고 답이 '도움이 되는' 건 아닙니다. 큰 LLM도 자주 — **거짓을 만들고 · 편향·toxic한 답을 내고 · 사용자가 원한 게 아닌 답**을 줍니다. 이게 alignment 문제.\n\n**왜 그런가** — pre-training objective의 misalignment\n\n현대 LLM의 학습 목표는 '웹 페이지에서 다음 토큰 예측'. 이건 'follow user instructions helpfully and safely'와 **다른 목표**입니다. 그래서 큰 모델일수록 web text의 패턴(거짓 자신감·toxic 언어)을 더 잘 모방할 수 있어요.\n\n**3가지 정렬 기준** (Askell et al. 2021)\n\n- **Helpful**: 사용자의 task 완성에 도움\n- **Honest**: 사실 꾸며내지 않고 misleading 안 함\n- **Harmless**: 사람·환경에 물리적·심리적·사회적 해 안 끼침\n\n**InstructGPT의 답 — RLHF**\n\nReinforcement Learning from **Human Feedback**. 사람의 선호를 reward signal로 LLM을 fine-tune합니다. 3-step:\n\n1. **SFT**: 40명 labeler hire → labeler가 prompt에 desired 답 demonstration → GPT-3 supervised fine-tune\n2. **RM**: 모델 출력 4-9개를 labeler가 ranking → reward model 학습 ('어느 답이 더 좋은가' 예측)\n3. **PPO**: Reward model을 reward signal로 GPT-3을 RL fine-tune (Schulman 2017 PPO 알고리즘)\n\n**충격적 결과 미리보기**\n\n- **1.3B InstructGPT 답을 사람이 175B GPT-3 답보다 선호** — **100배 작은 모델로 이김**\n- 175B InstructGPT vs 175B few-shot prompted GPT-3 = **85±3% 선호**\n- TruthfulQA truthfulness **2배 향상**\n- closed-domain task에서 **hallucination 41%→21%**\n- toxic output **25% 감소** (respectful prompt 시)\n- public NLP dataset 성능은 약간 감소 (alignment tax) → **PPO-ptx mix로 완화**\n\n**핵심 메시지** — '크게 키우기'(Phase 1)만으로는 부족하다. **사람의 의도와 정렬**되어야 진짜 useful한 LLM이 된다. ChatGPT(2022.11)의 그 친절한 톤이 정확히 이 논문의 결과물.",
+      "figure": {
+        "id": "Figure 1 — Human eval win rate",
+        "captionKo": "InstructGPT vs GPT-3 baselines, 모델 크기별 사람 평가 win rate(175B SFT 기준). **PPO-ptx(빨강)와 PPO(주황)가 1.3B에서도 175B GPT-3을 능가**. SFT(초록)만으로도 큰 향상. GPT prompted(하늘)·GPT(파랑)는 baseline. 결론: **RLHF가 모델 크기보다 훨씬 큰 효과** — 100배 작은 1.3B 모델로 175B를 이김.",
+        "imagePath": "data/papers/instructgpt/fig1.png"
+      },
+      "glossary": [
+        {
+          "en": "alignment",
+          "ko": "정렬",
+          "memo": "LLM의 답이 사람 의도·가치와 일치하게 만들기. Phase 2의 핵심 주제"
+        },
+        {
+          "en": "RLHF",
+          "ko": "RLHF",
+          "memo": "Reinforcement Learning from Human Feedback. 사람 선호를 reward로 LLM fine-tune"
+        },
+        {
+          "en": "SFT (Supervised Fine-Tuning)",
+          "ko": "지도 파인튠",
+          "memo": "사람이 쓴 demonstration으로 LLM fine-tune. RLHF의 1단계"
+        },
+        {
+          "en": "Reward Model (RM)",
+          "ko": "보상 모델",
+          "memo": "사람 ranking을 학습한 모델. '얼마나 helpful한가' 점수 예측"
+        },
+        {
+          "en": "PPO",
+          "ko": "PPO",
+          "memo": "Proximal Policy Optimization. RL 알고리즘. RM을 reward로 LLM fine-tune"
+        },
+        {
+          "en": "alignment tax",
+          "ko": "정렬 비용",
+          "memo": "RLHF 후 일부 public NLP 성능 감소. PPO-ptx(pre-train mix)로 완화"
+        }
+      ],
+      "analogy": {
+        "title": "박학다식 신입 vs 직장 매너 교육 받은 신입",
+        "body": "GPT-3 175B = 인터넷 모든 글 읽은 박학다식 신입. 그런데 회사 와서 답할 때 — 자신 있게 틀린 사실 말하기·말투가 거칠기·고객이 원한 게 아닌 답주기. **InstructGPT = 같은 신입을 사람이 가르친 버전**. '이런 답이 좋고 저런 답은 별로'를 수만 케이스 보여주면, 1.3B 작은 신입이 175B 박학다식 신입보다 **실제 일에 도움**됩니다. ChatGPT가 그 친절한 톤인 이유."
+      },
+      "question": "1.3B InstructGPT가 175B GPT-3보다 사람 평가에서 **더 helpful**합니다. 100배 작은데 이긴다는 게 본인 일에 주는 교훈은 무엇인가요?"
+    },
+    {
+      "n": 2,
+      "range": "§3.1-3.4 Methodology — 3 step pipeline (SFT·RM·PPO)",
+      "estimatedMinutes": 40,
+      "pages": 2,
+      "translationKo": "오늘은 InstructGPT가 어떻게 만들어졌는지 — 3-step 파이프라인 자세히. §3.1-3.4.\n\n**전체 그림 (Figure 2)**\n\nStep 1: SFT → Step 2: RM → Step 3: PPO. 이 3단계가 ChatGPT/Claude의 학습 핵심.\n\n**Step 1 — Supervised Fine-Tuning (SFT)**\n\n- **40명 labelers** Upwork/ScaleAI에서 hire — screening test로 helpfulness 인식 잘하는 사람 선별\n- Labeler가 prompt에 **desired 답을 직접 demonstration** (13k SFT prompts)\n- GPT-3을 이 demonstration으로 supervised fine-tune (16 epochs)\n- Output: **SFT 모델** (RM의 시작점)\n\n**Step 2 — Reward Modeling (RM)**\n\n- SFT 모델이 prompt 하나에 **K=4~9개 응답 생성**\n- Labeler가 K개를 best→worst **ranking** (33k RM prompts)\n- Reward Model (6B parameters)이 이 ranking을 학습\n\n**RM loss 수식**:\n\nloss(θ) = -E[log(σ(r_θ(x, y_w) - r_θ(x, y_l)))]\n\n여기서 y_w는 labeler가 선호한 답, y_l는 덜 선호한 답. r_θ(x,y)는 reward model의 scalar score. **'선호된 답에 더 높은 점수'**를 학습.\n\n**Step 3 — Reinforcement Learning (PPO)**\n\n- SFT 모델을 RM의 score를 maximize하는 방향으로 fine-tune (PPO 알고리즘)\n- 31k PPO prompts (no human labels, RM이 reward 제공)\n\n**PPO objective**:\n\nobjective(φ) = E[r_θ(x,y) - β·log(π_φ(y|x)/π_SFT(y|x))] + γ·E[log(π_φ(x))]\n\n3가지 term:\n\n- **r_θ(x,y)**: RM이 준 reward — 최대화\n- **β·log(π/π_SFT)**: KL penalty — SFT에서 너무 멀어지지 않게 (over-optimization 방지)\n- **γ·log(π(x))**: pre-train mix — public NLP 성능 보존 (alignment tax 완화). γ=0이면 'PPO', γ>0이면 'PPO-ptx'\n\n**Use Case 분포 (Table 1)** — labeler-collected\n\n- Generation 45.6% · Open QA 12.4% · Brainstorming 11.2% · Chat 8.4% · Rewrite 6.6% · Summarization 4.2% · Classification 3.5% · Other 3.5% · Closed QA 2.6% · Extract 1.9%\n\n**대부분 generative task** (분류·QA보다). 이게 ChatGPT가 'creative writing'에 강한 이유.\n\n**핵심 메시지** — RLHF는 **사람의 직관적 'helpful' 판단을 모델에 새기는 메커니즘**. 핵심은 (a) labeler quality (40명 screen) (b) RM의 ranking 학습 (c) PPO + KL penalty의 안정성.",
+      "figure": {
+        "id": "Figure 2 — 3-step RLHF pipeline",
+        "captionKo": "InstructGPT의 3-step. **Step 1 SFT**: labeler가 demonstration 작성 → GPT-3 supervised fine-tune. **Step 2 RM**: 모델이 K개 응답 → labeler best→worst ranking → Reward Model 학습. **Step 3 PPO**: 새 prompt → SFT 모델이 응답 → RM이 reward 계산 → PPO로 SFT 모델 update. 이 3-step이 ChatGPT/Claude 학습의 골격.",
+        "imagePath": "data/papers/instructgpt/fig2.png"
+      },
+      "glossary": [
+        {
+          "en": "labeler",
+          "ko": "라벨러",
+          "memo": "OpenAI가 hire한 40명 contractors. 사람 demonstration·ranking 제공"
+        },
+        {
+          "en": "demonstration",
+          "ko": "데모",
+          "memo": "labeler가 prompt에 desired 답을 직접 쓴 것. SFT 학습 데이터"
+        },
+        {
+          "en": "ranking",
+          "ko": "랭킹",
+          "memo": "labeler가 K=4-9개 응답을 best→worst 순서로 정렬. RM 학습 데이터"
+        },
+        {
+          "en": "KL penalty",
+          "ko": "KL 페널티",
+          "memo": "PPO objective의 β term. SFT에서 너무 멀어지지 않게. over-optimization 방지"
+        },
+        {
+          "en": "pretrain mix (PPO-ptx)",
+          "ko": "프리트레인 믹스",
+          "memo": "PPO objective의 γ term. pre-train objective 보존으로 alignment tax 완화"
+        },
+        {
+          "en": "use case distribution",
+          "ko": "사용 분포",
+          "memo": "Generation 45.6%·Open QA 12.4%·Brainstorming 11.2%. 대부분 generative"
+        }
+      ],
+      "analogy": {
+        "title": "신입 교육 3단계 — 모범사례·평가·실전",
+        "body": "**Step 1 SFT** = 신입에게 '잘 쓴 답 13,000개 사례'를 보여주고 따라 쓰게 함. **Step 2 RM** = 신입이 쓴 답 4-9개를 사수가 'best→worst' 순서 매김 → 이걸 학습한 채점기(reward model)가 신입 답을 자동 채점. **Step 3 PPO** = 신입이 새 prompt에 답 쓰면 채점기가 점수 매김 → 점수 높이는 방향으로 신입 update. 단 '너무 안 익숙한 답'은 KL penalty로 막아 over-optimization 방지."
+      },
+      "question": "RLHF의 3 step 중 **가장 중요한 단계**가 뭐라고 생각하나요? (SFT vs RM vs PPO) 그렇게 생각하는 이유는?"
+    },
+    {
+      "n": 3,
+      "range": "§3.5-3.6 Models + Evaluation — RM/PPO 수식 + alignment 정의",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 RM/PPO의 기술적 디테일과 'alignment'를 어떻게 측정하는지. §3.5-3.6.\n\n**Models — 3가지 학습 기법**\n\nBase: GPT-3 (175B), Medium: 6B, Small: 1.3B. 각 크기에 3가지 학습:\n\n- **SFT (Supervised Fine-Tuning)**: 13k demonstrations로 16 epochs. RM score 기반 model selection.\n- **RM (Reward Modeling)**: SFT에서 final unembedding layer 제거 → scalar score 출력. **6B RM만 사용** (175B RM은 unstable + 비용 큼).\n- **RL (PPO)**: bandit environment에서 prompt 받아 응답 → RM이 reward → PPO update. KL penalty 추가.\n\n**RM 학습의 트릭 — K-pair 학습**\n\nlabeler가 K=4~9개 응답을 ranking하면, 그 중 C(K,2) = K choose 2개 pair가 나옵니다. K=4면 6개, K=9면 36개. **이 pair들을 single batch element로 학습** (각각 따로 학습 X) — 효율 + overfitting 방지.\n\n**Baselines**\n\n- **GPT-3**: 원본, no fine-tune\n- **GPT-3-prompted**: GPT-3 + few-shot prompt to instruct-following 모드\n- **InstructGPT (PPO-ptx)**: 본 논문의 main 모델\n- **FLAN 175B / T0 175B**: GPT-3을 FLAN/T0 datasets(NLP task instruction 모음)으로 fine-tune. 비교용\n\n**Evaluation — 'alignment'를 어떻게 측정?**\n\nalignment은 모호한 개념. Askell 2021의 **HHH** framework 사용:\n\n- **Helpful**: 사용자 task 완성 도움 + 명확한 instruction 따름. measure = labeler preference rating.\n- **Honest**: 사실 꾸며내지 않음. measure = (1) closed-domain hallucination rate (2) TruthfulQA score.\n- **Harmless**: 사람·환경에 해 안 끼침. measure = (1) labeler judgement on 'inappropriate for customer assistant' (2) RealToxicityPrompts (3) CrowS-Pairs bias.\n\n**Labeler-collected metadata (Table 3)** — 7-point Likert scale + 11 binary metrics:\n\n- Overall quality (1-7)\n- Fails to follow instruction (binary)\n- Inappropriate for customer assistant\n- Hallucination\n- Sexual / Violent content\n- Encourages violence/abuse/terrorism/self-harm\n- Denigrates protected class\n- Gives harmful advice\n- Expresses opinion / moral judgment\n\n이 11개를 사람이 각 답변마다 evaluate → InstructGPT가 GPT-3보다 우월한 axis 측정.\n\n**Held-out labelers — generalization 측정**\n\nTraining labeler 외에 **separate labelers** (training data 안 만든) hire해서 같은 evaluation. **결과: 같은 비율로 InstructGPT 선호** — 특정 labeler 그룹에 over-fit 안 됨.\n\n**핵심 메시지** — alignment 측정은 (a) HHH framework로 의미 정의 (b) labeler preference + metadata로 정량화 (c) held-out으로 generalization 검증. 이 평가 프레임이 ChatGPT/Claude 평가의 표준이 됨.",
+      "figure": {
+        "id": "Table 1 + Table 2 — Use cases + Example prompts",
+        "captionKo": "**Table 1** (왼쪽): API prompt 분포. **Generation 45.6%** · Open QA 12.4% · Brainstorming 11.2% · Chat 8.4% · Rewrite 6.6% · Summarization 4.2% — 대부분 generative task. **Table 2** (오른쪽): 예시 prompts — Brainstorming('List five ideas...'), Generation('Write a short story...'), Rewrite('Outline this summary...'). 이 분포가 ChatGPT가 creative writing/brainstorming에 강한 이유.",
+        "imagePath": "data/papers/instructgpt/fig3.png"
+      },
+      "glossary": [
+        {
+          "en": "HHH framework",
+          "ko": "HHH 프레임워크",
+          "memo": "Helpful·Honest·Harmless. Askell 2021. alignment 정의의 표준 axis"
+        },
+        {
+          "en": "TruthfulQA",
+          "ko": "TruthfulQA",
+          "memo": "사실 정확도 benchmark. InstructGPT가 2배 향상"
+        },
+        {
+          "en": "RealToxicityPrompts",
+          "ko": "RealToxicityPrompts",
+          "memo": "toxic output 측정 benchmark. InstructGPT 25% 감소"
+        },
+        {
+          "en": "held-out labelers",
+          "ko": "헬드아웃 라벨러",
+          "memo": "training data 안 만든 별도 labeler. generalization 검증용"
+        },
+        {
+          "en": "K-pair training",
+          "ko": "K-pair 학습",
+          "memo": "K개 응답에서 C(K,2) pair를 single batch로 학습. overfitting 방지"
+        },
+        {
+          "en": "bandit environment",
+          "ko": "밴딧 환경",
+          "memo": "RL setup. prompt 받고 답 생성하면 episode 끝. 단일 step"
+        }
+      ],
+      "analogy": {
+        "title": "신입 평가 기준표 — 정량화의 힘",
+        "body": "신입 평가를 '걍 잘하는 것 같아' 대신 **11개 binary + 7점 척도**로 평가하면 (1) 어느 axis가 약한지 명확 (2) 학습 신호로 쓸 수 있음 (3) labeler 간 일치도 측정 가능. InstructGPT의 진짜 기여는 **'alignment의 모호함을 측정 가능한 axis로 분해'**한 것. ChatGPT/Claude 모두 이 framework로 평가."
+      },
+      "question": "Labeler 11개 binary axis 중 **본인 일에 AI 답을 평가할 때 가장 중요한 axis 3가지**는 무엇인가요? 왜?"
+    },
+    {
+      "n": 4,
+      "range": "§4 Results — 사람 평가 · 진실성 · toxicity · 일반화",
+      "estimatedMinutes": 35,
+      "pages": 2,
+      "translationKo": "오늘은 InstructGPT의 결과 5가지 영역. §4 Results.\n\n**1. API prompt 분포에서 사람 평가**\n\nHeld-out API prompt set에 5가지 모델 응답 → labeler 선호도:\n\n- **175B PPO-ptx (InstructGPT) > 175B SFT > 175B GPT-prompted > 175B GPT** (Figure 1)\n- **1.3B PPO-ptx > 175B GPT** (100배 작은 모델로 이김)\n- vs 175B GPT-3: PPO-ptx 175B = **85±3% 선호**\n- vs 175B GPT-3-prompted (few-shot instruction): PPO-ptx 175B = **71±4% 선호**\n\n**2. Truthfulness (TruthfulQA)**\n\nInstructGPT가 GPT-3보다 **거의 2배 truthful + informative** 답 생성. adversarially selected questions에서도 동일. 단, '실제 truthful'(internal belief 일치)이 아니라 **'사실 안 꾸며냄'**(closed-domain hallucination 21% vs 41%).\n\n**3. Toxicity (RealToxicityPrompts)**\n\nRespectful prompt시 InstructGPT가 GPT-3 대비 **25% fewer toxic outputs**. 단, **bias** (Winogender, CrowS-Pairs)에서는 큰 차이 없음. alignment가 fairness까지 해결하진 않음.\n\n**4. Public NLP datasets — Alignment tax**\n\nRLHF fine-tune 후 일부 public NLP task에서 **성능 감소**:\n\n- SQuAD ↓, DROP ↓, HellaSwag ↓, WMT FR-EN translation ↓\n\n이게 'alignment tax' — 우리가 신경 쓰는 task에서 비용. 해결: **PPO-ptx mix** (pre-train objective γ>0)로 거의 완화. labeler preference도 유지.\n\n**5. Held-out labelers — Generalization**\n\nTraining labelers 외에 별도 labelers hire → 같은 evaluation. **같은 비율로 InstructGPT 선호** — 특정 그룹에 over-fit 안 됨. 단 broader user groups 평가는 future work.\n\n**Public dataset과 RLHF dataset의 비교 — RLHF가 더 generalize**\n\nGPT-3 175B을 (a) FLAN dataset (b) T0 dataset (c) RLHF dataset 으로 각각 fine-tune. API prompt에서 사람 평가:\n\n- InstructGPT (RLHF) **73.4±2% 선호** vs FLAN baseline 26.8±2%\n- vs T0: InstructGPT **29.8±2% 선호** (T0가 약함)\n\n**Public NLP datasets는 LM 실사용 분포를 반영하지 않음** — labeler-written API prompts가 훨씬 다양.\n\n**Qualitative — RLHF의 흥미로운 generalization**\n\nFine-tune distribution에 거의 없던 task들도 잘 함:\n\n- **Code summarization** + Q&A about code\n- **Multilingual instruction following** (96% English training인데 다국어 instruction 따름)\n\n이게 흥미로운 이유 — '**instruction following이라는 메타 개념**'을 학습했다는 시사. 특정 task가 아니라.\n\n**InstructGPT의 한계 (저자들 인정)**\n\n- 여전히 simple mistakes\n- false premises 답함 (질문 자체가 틀렸어도 답)\n- 'I don't know' 충분히 안 함 (over-confidence)\n- alignment를 '40명 labelers의 선호'에 맞춤 — 누구의 가치인가 question 남음\n\n**핵심 메시지** — RLHF는 (a) sample-efficient (b) generalize well (c) public NLP보다 사용자 task에 맞춤. 단 fairness·broader alignment는 future work.",
+      "figure": {
+        "id": "Table 3 — Labeler-collected metadata (11 axes)",
+        "captionKo": "Labeler가 각 모델 응답마다 평가하는 11 axes. Overall quality(1-7 Likert) + 10 binary (fails to follow / inappropriate / hallucination / sexual / violent / encourages harm / denigrates protected class / harmful advice / expresses opinion / expresses moral judgment). **이 axes의 정량화가 alignment 평가의 표준**이 됨 — Anthropic·Google·OpenAI 모두 비슷한 framework 사용.",
+        "imagePath": "data/papers/instructgpt/fig4.png"
+      },
+      "glossary": [
+        {
+          "en": "API prompt distribution",
+          "ko": "API 프롬프트 분포",
+          "memo": "OpenAI API에 실제 들어오는 prompts. labeler-written + customer-submitted"
+        },
+        {
+          "en": "win rate",
+          "ko": "선호율",
+          "memo": "두 모델 응답 중 한쪽이 사람에게 선호된 비율. RLHF 평가 표준"
+        },
+        {
+          "en": "closed-domain hallucination",
+          "ko": "closed-domain 환각",
+          "memo": "summarization/QA에서 입력에 없는 정보 만들어냄. 41%→21%"
+        },
+        {
+          "en": "alignment tax",
+          "ko": "정렬 비용",
+          "memo": "RLHF 후 public NLP 성능 감소. PPO-ptx로 완화"
+        },
+        {
+          "en": "FLAN / T0",
+          "ko": "FLAN/T0",
+          "memo": "instruction-tuning datasets. public NLP tasks 모음. InstructGPT(RLHF)보다 약함"
+        },
+        {
+          "en": "qualitative generalization",
+          "ko": "정성적 일반화",
+          "memo": "code/multilingual 같이 학습 분포 밖 task도 잘 함. instruction-following 메타 학습"
+        }
+      ],
+      "analogy": {
+        "title": "공무원 시험 vs 실무 시험",
+        "body": "공무원 시험(public NLP) = 정해진 카테고리·정해진 답. 실무 시험(API prompts) = 다양한 사용자 요청·열린 답. 박학다식 신입(GPT-3 175B)은 공무원 시험에선 강하지만 실무 시험에선 자신 있게 틀린 답. InstructGPT 1.3B(RLHF로 실무 학습)는 **공무원 시험 약간 떨어져도(alignment tax) 실무 시험에선 압도적**. ChatGPT가 사용자 task에 강한 이유."
+      },
+      "question": "InstructGPT는 **'instruction-following 메타 개념'**을 학습한 듯 — code/multilingual 같이 학습 안 한 task도 잘 함. 이게 본인이 AI를 쓸 때 주는 시사점은?"
+    },
+    {
+      "n": 5,
+      "range": "정리 + 한계 + 계보 (ChatGPT 직접 원조 · CAI motivation)",
+      "estimatedMinutes": 30,
+      "pages": 1,
+      "translationKo": "한 주 마지막 — InstructGPT의 의미와 한계, 그리고 W6 CAI로 이어지는 흐름.\n\n**한 주 핵심 한 줄**\n\nInstructGPT는 **사람 피드백(RLHF)으로 LLM을 사람 의도에 정렬**하는 표준 방법을 정립했습니다. 3-step(SFT → RM → PPO) 파이프라인 + HHH 평가 framework. **1.3B가 175B를 이김** — alignment이 모델 크기보다 큰 효과.\n\n**왜 W5에 읽나** — InstructGPT가 **ChatGPT·Claude의 직접적 원조**입니다. 2022.11 ChatGPT 출시 = 본질적으로 InstructGPT의 product화. 그 친절한 톤, 'I don't have personal opinions but...' 같은 패턴, instruction-following 능력 — 모두 RLHF의 결과물. Phase 2 전체(W5-W7)가 이 alignment 문제의 해결 진화입니다.\n\n**솔직한 한계** (저자들 §5에서 명시 + Phase 2 motivation)\n\n1. **Human labels 비용** — 40명 labelers · 13k+33k+31k prompts. **수십만 달러** 비용. 더 큰 alignment task에 scale 어려움.\n2. **Labeler bias** — 'helpful'의 정의가 **40명 labelers + Anthropic researchers** 그룹의 가치. 누구의 가치인가 정치적·윤리적 question 남음.\n3. **Helpful + Harmless tension** — helpful하려면 harmful 정보도 줘야 할 수 있음. labelers는 'helpful 우선'으로 training 받음 (final evaluation은 truthful+harmless).\n4. **Evasive responses** — RLHF가 'I don't know' 답을 만들 수 있음. 사용자 helpful 평가 ↓.\n5. **Over-confidence** — InstructGPT가 GPT-3보다 'I don't know' 안 함. 자신 있는 오답 risk.\n6. **Alignment tax** — public NLP 감소 (PPO-ptx로 완화하나 완전 해결 X).\n\n**계보 연결 — InstructGPT 이후**\n\n- **ChatGPT (2022.11)**: InstructGPT의 product화 + dialog history. 5일 만에 1M 사용자.\n- **Claude (2023~, Anthropic)**: W6 **Constitutional AI** 응용. RLHF + RLAIF(AI feedback).\n- **GPT-4 (2023)**: RLHF + reasoning 능력 강화.\n- **Llama-2 chat / Mistral instruct**: 오픈소스 RLHF 응용.\n- **DPO (Direct Preference Optimization, 보충)**: RM 없이 직접 선호 최적화. PPO 복잡함 절반.\n\n**오늘날 도구 연결**\n\n- **ChatGPT의 그 친절한 톤**: InstructGPT RLHF의 직접 product\n- **Claude의 '도움도 되면서 무해' 균형**: RLHF + CAI(W6)\n- **Anthropic API tool_use의 'helpful·harmless' 균형**: 사용자가 'system prompt'로 추가 정렬 가능\n- **모든 chatbot product의 'safety filter'**: RLHF 학습된 reward model의 응용\n\n다음 주(W6)는 **Constitutional AI** — RLHF의 한계 1번(human labels 비용) + 4번(evasive responses)을 정면 돌파. 사람 라벨 없이 **AI feedback (RLAIF)** + 16개 'constitution' principles로 harmlessness 학습. Claude의 직접 원조.",
+      "figure": {
+        "id": "Page 10 — Alignment 정의 + Evaluation",
+        "captionKo": "InstructGPT의 alignment 정의 — **Askell 2021의 HHH framework** 채택. 'Helpful'(useful for user task) · 'Honest'(no fabrication) · 'Harmless'(no harm to people/env). 이게 ChatGPT/Claude 모두의 평가 표준. evaluation은 (1) API distribution preference (2) public NLP datasets — 두 평가가 다른 결과를 줘서 PPO-ptx로 균형 잡음.",
+        "imagePath": "data/papers/instructgpt/fig5.png"
+      },
+      "glossary": [
+        {
+          "en": "ChatGPT origin",
+          "ko": "ChatGPT 원조",
+          "memo": "InstructGPT를 dialog history + safety filter 추가해 product화. 2022.11 출시"
+        },
+        {
+          "en": "DPO",
+          "ko": "DPO",
+          "memo": "Direct Preference Optimization. RM 없이 직접 선호 최적화. PPO 대안 (보충 reading)"
+        },
+        {
+          "en": "evasive responses",
+          "ko": "회피 답변",
+          "memo": "'I don't know'·'I cannot help'. helpful 점수 ↓. CAI(W6)가 해결 시도"
+        },
+        {
+          "en": "over-confidence",
+          "ko": "과확신",
+          "memo": "InstructGPT가 자신 있는 오답. truthful 측정의 한계"
+        },
+        {
+          "en": "scalable supervision",
+          "ko": "확장 가능한 감독",
+          "memo": "human label 의존 줄이기. CAI(W6)의 RLAIF가 이 방향"
+        },
+        {
+          "en": "Helpful · Harmless tension",
+          "ko": "도움-무해 긴장",
+          "memo": "helpful하려면 harmful 정보 줘야 할 수도. 두 목표가 충돌. CAI가 명시적 해결"
+        }
+      ],
+      "analogy": {
+        "title": "친절한 신입 → 부서 매니저 → 자율 운영",
+        "body": "**InstructGPT(W5)** = 사수가 1:1로 가르친 신입(40 labelers · 100k+ prompts). 친절하지만 사람 손이 많이 듦. **CAI(W6)** = 사수가 '회사 헌법' 16조만 주고 신입이 스스로 비판·수정 — **사람 손 90% 줄임**. **Reflexion(W7)** = 신입이 매 trial 끝에 자기 반성 메모 → 다음 trial에 활용. **학습 없이 inference 단계에서 RL 효과**. Phase 2는 alignment 책임의 사람→AI 이전 진화."
+      },
+      "question": "본인이 매일 쓰는 AI(ChatGPT/Claude/Copilot) 중에서 **'친절한 톤'이 가장 잘 느껴지는 것**은 무엇인가요? 그 톤이 본인 일에 어떤 차이를 만드나요?"
+    }
+  ],
+  "saturdayQuiz": [
+    {
+      "q": "InstructGPT의 RLHF 3-step 순서는?",
+      "options": [
+        "PPO → RM → SFT",
+        "SFT → RM → PPO",
+        "RM → SFT → PPO",
+        "SFT → PPO → RM"
+      ],
+      "correct": 1,
+      "explain": "§3.1 정의. **SFT** (사람 demonstration으로 supervised fine-tune) → **RM** (사람 ranking으로 reward model 학습) → **PPO** (RM의 reward signal로 LLM RL update). 이 3-step이 ChatGPT/Claude 학습의 골격."
+    },
+    {
+      "q": "1.3B InstructGPT가 175B GPT-3보다 사람 평가에서 더 helpful — 100배 작은 모델로 이김. 가장 큰 이유는?",
+      "options": [
+        "1.3B 모델이 더 새로 학습됨",
+        "RLHF가 모델 크기보다 큰 alignment 효과 — '도움이 되는 답'을 사람 피드백으로 직접 학습",
+        "175B GPT-3이 더 오래된 dataset 사용",
+        "1.3B 모델이 더 많은 데이터를 봄"
+      ],
+      "correct": 1,
+      "explain": "Figure 1 핵심 결과. **alignment이 모델 크기보다 큰 효과**. 같은 GPT-3 architecture, 같은 pre-training data — 차이는 RLHF만. labeler preference라는 'helpful'의 정의를 직접 학습한 게 핵심. Phase 1(모델 키우기)보다 Phase 2(정렬)가 더 효율적 영역이 있다는 증거."
+    },
+    {
+      "q": "RM(Reward Model) 학습의 loss 함수 핵심은?",
+      "options": [
+        "K개 응답을 각각 따로 학습 (K times update)",
+        "labeler가 선호한 답(y_w)이 덜 선호한 답(y_l)보다 높은 reward score 받도록 학습: -log(σ(r(y_w) - r(y_l)))",
+        "labeler가 직접 점수를 매기고 그 점수를 예측",
+        "모델의 perplexity를 최소화"
+      ],
+      "correct": 1,
+      "explain": "§3.5 RM loss 정의. **pairwise comparison loss**. labeler가 매긴 ranking에서 모든 pair (y_w, y_l)에 대해 'y_w 점수가 y_l보다 높아야 함'. sigmoid + log로 differentiable. K개 응답이면 C(K,2) pairs를 single batch로 학습 (over-fitting 방지)."
+    },
+    {
+      "q": "PPO objective의 'KL penalty' (β·log(π/π_SFT)) 역할은?",
+      "options": [
+        "학습 속도를 빠르게",
+        "Reward Model의 over-optimization 방지 — SFT 모델에서 너무 멀어지지 않게",
+        "labeler ranking 정확도 향상",
+        "메모리 사용량 줄이기"
+      ],
+      "correct": 1,
+      "explain": "§3.5. PPO가 RM의 reward만 최대화하면 **RM의 약점(over-optimization, reward hacking)을 exploit**할 수 있음. KL penalty는 'SFT 모델의 분포와 너무 멀어지지 마' 제약. β 값으로 trade-off (높을수록 SFT 가까이, 낮을수록 reward 최대화). 알맞은 β가 안정성의 핵심."
+    },
+    {
+      "q": "InstructGPT의 'alignment tax'와 그 해결은?",
+      "options": [
+        "alignment tax는 없음",
+        "alignment tax = RLHF 후 public NLP task 성능 감소. 해결 = PPO-ptx mix (pre-train objective γ>0 추가)",
+        "alignment tax = labeler 인건비. 해결 = AI labeler",
+        "alignment tax = inference 속도 감소. 해결 = 모델 압축"
+      ],
+      "correct": 1,
+      "explain": "§4.2. RLHF fine-tune 후 SQuAD/DROP/HellaSwag 등 public NLP에서 성능 ↓. 이게 '**alignment tax**'. 해결: PPO objective에 **γ·log(π(x)) (pre-train mix)** term 추가 → 'PPO-ptx'. labeler preference도 거의 유지하면서 public NLP 성능 거의 회복. 모든 large RLHF 모델의 표준 기법."
+    }
+  ],
+  "sundayPreview": {
+    "nextPaperId": "cai",
+    "nextTitle": "Constitutional AI — AI 피드백으로 정렬 (Claude의 원조)",
+    "teaser": "다음 주(W6)는 Anthropic의 **Constitutional AI (CAI)** — InstructGPT의 한계 2가지(human labels 비용 + evasive responses)를 정면 돌파. 사람 라벨 **없이** harmlessness를 학습하는 방법. 핵심: 16개 'constitution' principles + 모델이 자기 답을 **자기 비판(critique) → 자기 수정(revise)** + AI feedback으로 preference model 학습 (**RLAIF**). 결과: 'helpful 그러나 evasive 안 함' 균형 + scalable supervision. **Claude의 직접 원조 논문** — 그 'I'll engage with this thoughtfully even when sensitive' 톤이 어디서 왔는지."
+  }
+}
