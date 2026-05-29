@@ -67,6 +67,7 @@
     const SUPABASE_KEY = 'sb_publishable_P5XMkx7kq2yzvHXp8uTZ2Q_vxqoGWIy';
     const START_DATE = '2026-06-01';
     const TOTAL_WEEKS = 16;
+    const MAX_MEMBERS = 10;
     const LS = {
       me: 'papergym:me',
       tabsVisited: 'papergym:tabs-visited',
@@ -247,24 +248,46 @@
       const errDiv = document.getElementById('modal-name-error');
       errDiv.classList.add('hidden'); errDiv.textContent = '';
 
+      // 신규 등록 폼 enable (편집 모드/under-cap에서 기본)
+      const nameInput = document.getElementById('modal-name-input');
+      const saveBtn = document.getElementById('modal-save');
+      nameInput.disabled = false;
+      document.querySelectorAll('.emoji-pick').forEach(b => b.disabled = false);
+      // saveBtn은 checkSaveEnabled가 별도 관리
+
       if (me) {
         // 편집 모드 — 기존 멤버 섹션 숨김
         titleEl.textContent = '✏️ 프로필 수정';
         subtitleEl.textContent = '이름과 이모지를 바꿀 수 있어요. 진도는 그대로 유지됩니다.';
         existingDiv.innerHTML = '';
       } else {
-        // 신규 모드 — DB에서 기존 멤버 fetch해서 "본인 찾기" 리스트 노출
+        // 신규 모드 — DB에서 기존 멤버 fetch해서 "본인 찾기" 리스트 + cap 체크
         titleEl.textContent = '👋 처음 오셨네요';
-        subtitleEl.textContent = '팀에 합류해서 16주 코스를 함께 완주해봐요.';
+        subtitleEl.textContent = `팀에 합류해서 16주 코스를 함께 완주해봐요.`;
         existingDiv.innerHTML = '<div class="text-xs text-stone-400 mb-2">불러오는 중...</div>';
         try {
           const { data: ms } = await supa.from('papergym_members')
             .select('user_id, name, emoji, joined_at')
             .order('joined_at', { ascending: true });
+          const count = ms ? ms.length : 0;
+          const isFull = count >= MAX_MEMBERS;
+
+          // 제목/서브타이틀 cap 도달 시 업데이트
+          if (isFull) {
+            titleEl.textContent = '🚫 등록 인원 마감';
+            subtitleEl.textContent = `현재 ${count}/${MAX_MEMBERS}명 — 신규 등록 마감. 이미 등록한 적 있다면 아래에서 본인을 찾으세요.`;
+            // 신규 등록 폼 disable
+            nameInput.disabled = true;
+            saveBtn.disabled = true;
+            document.querySelectorAll('.emoji-pick').forEach(b => b.disabled = true);
+          } else {
+            subtitleEl.textContent = `팀에 합류해서 16주 코스를 함께 완주해봐요. (현재 ${count}/${MAX_MEMBERS}명 등록)`;
+          }
+
           if (ms && ms.length) {
             existingDiv.innerHTML = `
-              <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3">
-                <div class="text-xs text-stone-600 font-medium mb-2">✓ 이미 등록한 적 있다면 본인 클릭:</div>
+              <div class="${isFull ? 'bg-amber-50 border-amber-300' : 'bg-stone-50 border-stone-200'} border rounded-lg p-3 mb-3">
+                <div class="text-xs ${isFull ? 'text-amber-900' : 'text-stone-600'} font-medium mb-2">${isFull ? '✓ 본인 클릭하면 진도 그대로 이어집니다:' : '✓ 이미 등록한 적 있다면 본인 클릭:'}</div>
                 <div class="flex flex-wrap gap-1.5">
                   ${ms.map(m => `
                     <button data-uid="${escapeHtml(m.user_id)}" data-name="${escapeHtml(m.name)}" data-emoji="${escapeHtml(m.emoji)}" data-joined="${escapeHtml(m.joined_at || '')}" class="existing-member-btn flex items-center gap-1.5 bg-white border border-stone-300 rounded-lg px-2 py-1 hover:bg-amber-50 hover:border-amber-400 transition-colors">
@@ -274,9 +297,9 @@
                   `).join('')}
                 </div>
               </div>
-              <div class="text-center text-xs text-stone-400 mb-3">─ 처음이면 아래에 입력 ─</div>
+              <div class="text-center text-xs ${isFull ? 'text-red-500 font-medium' : 'text-stone-400'} mb-3">${isFull ? '🚫 신규 등록은 마감되었습니다' : '─ 처음이면 아래에 입력 ─'}</div>
             `;
-            // 본인 복구 click
+            // 본인 복구 click (cap과 무관 — 기존 멤버는 항상 복구 가능)
             document.querySelectorAll('.existing-member-btn').forEach(btn => {
               btn.addEventListener('click', () => {
                 me = {
@@ -334,10 +357,17 @@
       errDiv.classList.add('hidden'); errDiv.textContent = '';
       const isNew = !me;
 
-      // 신규 등록 시 이름 중복 체크 (case-insensitive)
+      // 신규 등록 시 cap 체크 + 이름 중복 체크 (case-insensitive)
       if (isNew) {
         try {
-          const { data: existing } = await supa.from('papergym_members').select('name');
+          const { data: existing } = await supa.from('papergym_members').select('user_id, name');
+          const count = (existing || []).length;
+          // race condition 방어: modal 열린 사이 다른 사람이 등록했을 수 있음
+          if (count >= MAX_MEMBERS) {
+            errDiv.textContent = `🚫 등록 인원 마감 (${count}/${MAX_MEMBERS}). 이미 등록한 적 있다면 위에서 본인을 찾아주세요.`;
+            errDiv.classList.remove('hidden');
+            return;
+          }
           const dup = (existing || []).some(m => (m.name || '').trim().toLowerCase() === name.toLowerCase());
           if (dup) {
             errDiv.textContent = '⚠️ 이 이름은 이미 사용 중. 다른 이름으로 등록하거나, 위에서 본인을 찾아주세요.';
