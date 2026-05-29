@@ -1372,6 +1372,36 @@
     }
 
     // ===== Boot =====
+    // localStorage me가 DB와 일치하는지 검증. 불일치 시 reset(다른 디바이스/sync로 옛 데이터가 박힌 경우 보호)
+    async function verifyMe() {
+      if (!me) return;
+      try {
+        const { data } = await supa.from('papergym_members')
+          .select('user_id, name, emoji')
+          .eq('user_id', me.userId)
+          .maybeSingle();
+        if (!data) {
+          // DB에 본인 row 없음 — DB 리셋됐거나, 옛 사용자 데이터가 다른 디바이스에서 sync됨
+          localStorage.removeItem(LS.me);
+          me = null;
+          setTimeout(() => showToast('🔄 옛 사용자 정보가 있어 초기화했어요. 다시 등록해주세요.'), 200);
+          return;
+        }
+        // 이름·이모지 일치 확인 (case-insensitive)
+        const dbName = (data.name || '').trim().toLowerCase();
+        const meName = (me.name || '').trim().toLowerCase();
+        if (dbName !== meName || data.emoji !== me.emoji) {
+          localStorage.removeItem(LS.me);
+          me = null;
+          setTimeout(() => showToast('🔄 사용자 정보 불일치 — 초기화했어요. 다시 등록해주세요.'), 200);
+          return;
+        }
+      } catch (e) {
+        // 네트워크 실패 — 옛 me 유지 (오프라인 모드 보장)
+        console.warn('verifyMe failed (network?), keeping local me', e);
+      }
+    }
+
     async function boot() {
       try {
         const res = await fetch('data/curriculum.json');
@@ -1386,7 +1416,9 @@
           </div>`;
         return;
       }
-      // 오프라인 큐 retry
+      // me 검증 — DB에 본인 row가 있고 일치하는지 (다른 디바이스/sync로 옛 데이터 박힌 경우 보호)
+      await verifyMe();
+      // 오프라인 큐 retry (me 살아있을 때만)
       if (me) await flushPending();
       if (!me) {
         showNameModal();
