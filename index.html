@@ -1387,14 +1387,15 @@
           setTimeout(() => showToast('🔄 옛 사용자 정보가 있어 초기화했어요. 다시 등록해주세요.'), 200);
           return;
         }
-        // 이름·이모지 일치 확인 (case-insensitive)
+        // 같은 user_id면 DB가 진실 — 이름·이모지 불일치 시 reset 대신 me를 DB로 sync
+        // (다른 디바이스에서 프로필 변경한 경우 자동 반영)
         const dbName = (data.name || '').trim().toLowerCase();
         const meName = (me.name || '').trim().toLowerCase();
         if (dbName !== meName || data.emoji !== me.emoji) {
-          localStorage.removeItem(LS.me);
-          me = null;
-          setTimeout(() => showToast('🔄 사용자 정보 불일치 — 초기화했어요. 다시 등록해주세요.'), 200);
-          return;
+          me.name = data.name;
+          me.emoji = data.emoji;
+          localStorage.setItem(LS.me, JSON.stringify(me));
+          setTimeout(() => showToast('🔄 다른 디바이스에서 변경한 프로필을 동기화했어요'), 200);
         }
       } catch (e) {
         // 네트워크 실패 — 옛 me 유지 (오프라인 모드 보장)
