@@ -256,10 +256,27 @@
       // saveBtn은 checkSaveEnabled가 별도 관리
 
       if (me) {
-        // 편집 모드 — 기존 멤버 섹션 숨김
+        // 편집 모드 — "본인이 아니에요" 탈출구 표시 (다른 사람 신원이 localStorage에 박힌 경우 대비)
         titleEl.textContent = '✏️ 프로필 수정';
         subtitleEl.textContent = '이름과 이모지를 바꿀 수 있어요. 진도는 그대로 유지됩니다.';
-        existingDiv.innerHTML = '';
+        existingDiv.innerHTML = `
+          <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3 flex items-center justify-between gap-2 flex-wrap">
+            <div class="text-xs text-stone-600">현재 <span class="font-bold">${escapeHtml(me.emoji)} ${escapeHtml(me.name)}</span>(으)로 등록됨</div>
+            <button id="modal-not-me" class="text-xs font-medium text-red-600 hover:text-red-700 underline whitespace-nowrap">본인이 아니에요? 새로 등록하기</button>
+          </div>`;
+        document.getElementById('modal-not-me').addEventListener('click', () => {
+          // localStorage만 초기화 — DB의 기존 멤버 데이터는 건드리지 않음
+          localStorage.removeItem(LS.me);
+          me = null;
+          document.getElementById('me-badge').textContent = '🦊';
+          // 입력 폼 초기화 후 신규 등록 모드로 다시 열기
+          document.getElementById('modal-name-input').value = '';
+          pickedEmoji = null;
+          document.querySelectorAll('.emoji-pick').forEach(b => b.classList.remove('bg-amber-100','border-amber-500'));
+          checkSaveEnabled();
+          showNameModal();
+          if (location.hash === '#team') renderTeam();
+        });
       } else {
         // 신규 모드 — DB에서 기존 멤버 fetch해서 "본인 찾기" 리스트 + cap 체크
         titleEl.textContent = '👋 처음 오셨네요';
