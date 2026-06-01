@@ -955,7 +955,21 @@
 
       view.innerHTML = `
         <h1 class="text-xl font-semibold mb-1">16주 학습 지도</h1>
-        <p class="text-sm text-stone-500 mb-6">4 Phase × 13편 본 논문 + 3주 Review + 보충 16편. 매주 1편씩 함께 읽어요.</p>
+        <p class="text-sm text-stone-500 mb-4">4 Phase × 13편 본 논문 + 3주 Review + 보충 16편. 매주 1편씩 함께 읽어요.</p>
+
+        <a href="https://drive.google.com/drive/folders/15Fu2P0iveRYDBNhui2s2ZWc8eKbuXmr-?usp=sharing" target="_blank" rel="noopener"
+           class="block bg-stone-900 rounded-xl p-4 sm:p-5 mb-8 hover:bg-stone-800 transition-colors group">
+          <div class="flex items-center gap-3 sm:gap-4">
+            <div class="text-3xl flex-shrink-0">📦</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-white font-bold text-sm sm:text-base">논문 PDF 13편 한번에 받기</div>
+              <div class="text-stone-400 text-xs mt-0.5 leading-snug">Core 13편 전체를 Google Drive에서 일괄 다운로드 — 태블릿·인쇄용으로 미리 챙겨두세요</div>
+            </div>
+            <div class="flex-shrink-0 bg-amber-400 text-stone-900 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-lg group-hover:bg-amber-300 transition-colors whitespace-nowrap">
+              ⬇ 다운로드
+            </div>
+          </div>
+        </a>
 
         <div class="space-y-5 mb-10">
           ${[1,2,3,4].map(ph => {
@@ -1009,7 +1023,13 @@
           </div>
         </div>
 
-        <h2 class="text-lg font-semibold mb-1">Core 13편 — 본 논문</h2>
+        <div class="flex items-center justify-between gap-3 mb-1 flex-wrap">
+          <h2 class="text-lg font-semibold">Core 13편 — 본 논문</h2>
+          <a href="https://drive.google.com/drive/folders/15Fu2P0iveRYDBNhui2s2ZWc8eKbuXmr-?usp=sharing" target="_blank" rel="noopener"
+             class="inline-flex items-center gap-1 text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors">
+            📦 PDF 13편 일괄 다운로드
+          </a>
+        </div>
         <p class="text-sm text-stone-500 mb-4">제목 클릭하면 한국어 초록 + 원문 링크가 펼쳐집니다.</p>
         <div class="space-y-5 mb-10">
           ${[1,2,3,4].map(ph => {
