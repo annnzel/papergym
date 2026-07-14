@@ -17,3 +17,7 @@ npm-debug.log*
 
 # Brainstorming mockups (visual companion)
 .superpowers/
+
+# Local agent context (may contain personal/internal notes)
+.claude/
+HANDOFF.md
